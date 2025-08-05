@@ -1,0 +1,133 @@
+#Profibus_DP
+GSD_Revision = 5
+
+;==================== DATOS GENERALES ====================
+Vendor_Name          = "EASYADAC"
+Model_Name           = "STM32F401_VPC3"
+Revision             = "1.0"
+Revision_Number      = 1
+Ident_Number         = 0xADAC
+Protocol_Ident       = 0          ; DP
+Station_Type         = 0          ; Slave
+FMS_supp             = 0
+Hardware_Release     = "1.0"
+Software_Release     = "1.0"
+OrderNumber          = "CAFE"
+Implementation_Type  = "SPI"
+Bitmap_Device        = "EASY_1N"
+
+Redundancy           = 0
+Repeater_Ctrl_Sig    = 0
+24V_Pins             = 0
+Fail_Safe            = 1
+Auto_Baud_supp       = 1
+Freeze_Mode_supp     = 1
+Sync_Mode_supp       = 1
+Set_Slave_Add_supp   = 0
+Min_Slave_Intervall  = 1
+
+;==================== BAUD-RATES Y TSDR ===================
+9.6_supp   = 1
+MaxTsdr_9.6   = 60
+19.2_supp  = 1
+MaxTsdr_19.2  = 60
+45.45_supp = 1
+MaxTsdr_45.45 = 15
+93.75_supp = 1
+MaxTsdr_93.75 = 60
+187.5_supp = 1
+MaxTsdr_187.5 = 60
+500_supp   = 1
+MaxTsdr_500   = 100
+1.5M_supp  = 1
+MaxTsdr_1.5M  = 150
+3M_supp    = 1
+MaxTsdr_3M    = 250
+6M_supp    = 1
+MaxTsdr_6M    = 450
+12M_supp   = 1
+MaxTsdr_12M   = 800
+
+;==================== ESTACIÓN MODULAR ===================
+Modular_Station      = 1
+Max_Module           = 20
+Max_Input_Len        = 244
+Max_Output_Len       = 244
+Max_Data_Len         = 244
+Max_Diag_Data_Len    = 6
+
+;==================== PARÁMETROS USUARIO =================
+Max_User_Prm_Data_Len = 3
+Ext_User_Prm_Data_Const(0) = 0x00,0x00,0x00
+
+;==================== DIAGNÓSTICO ========================
+Slave_Family        = 1
+Slave_Redundancy    = 0
+Diag_Update_Delay   = 1
+Diag_With_Data      = 1
+
+;=========================================================
+;                 DEFINICIÓN DE MÓDULOS
+;   Sintaxis:  Module = "Texto" Ident[,Ident2...]
+;              <Module_Reference>
+;=========================================================
+
+Module = "DI 1 Byte" 0x10
+1
+EndModule
+
+Module = "DI 2 Byte" 0x11
+2
+EndModule
+
+Module = "DI 4 Byte" 0x13
+3
+EndModule
+
+Module = "DI 8 Byte" 0x17
+4
+EndModule
+
+Module = "DI 16 Byte" 0x1F
+5
+EndModule
+
+Module = "DO 1 Byte" 0x20
+6
+EndModule
+
+Module = "DO 2 Byte" 0x21
+7
+EndModule
+
+Module = "DO 4 Byte" 0x23
+8
+EndModule
+
+Module = "DO 8 Byte" 0x27
+9
+EndModule
+
+Module = "DO 16 Byte" 0x2F
+10
+EndModule
+
+Module = "DIO 1 Byte" 0x30
+11
+EndModule
+
+Module = "DIO 2 Byte" 0x31
+12
+EndModule
+
+Module = "DIO 4 Byte" 0x33
+13
+EndModule
+
+Module = "DIO 8 Byte" 0x37
+14
+EndModule
+
+Module = "DIO 16 Byte" 0x3F
+15
+EndModule

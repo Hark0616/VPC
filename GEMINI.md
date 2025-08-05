@@ -1,0 +1,1 @@
+This file is used by Gemini to store information about the project.

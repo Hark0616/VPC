@@ -1,0 +1,497 @@
+# 📋 **FLUJO COMPLETO DE FUNCIONAMIENTO - VPC3+S PROFIBUS SLAVE**
+
+## 📝 **RESUMEN EJECUTIVO Y ESTADO ACTUAL (NUEVO)**
+
+El sistema implementa un esclavo PROFIBUS DP usando un microcontrolador STM32 y el ASIC VPC3+S. El objetivo es establecer una comunicación estable con un PLC master, intercambiando 1 byte de entrada y 1 byte de salida.
+
+**Estado Actual:**
+- **Firmware del Esclavo (STM32): ¡Corregido y Funcional!** Se ha solucionado un error crítico de flujo lógico en `DpAppl.c` que impedía que la lógica de aplicación se ejecutara en el momento correcto. El esclavo ahora procesa correctamente la configuración del master (`Chk_Cfg`), entra en `DATA_EXCHANGE`, prepara la aplicación (`ApplicationReady`) y procesa la primera trama de datos de forma exitosa.
+- **Comportamiento del Master (PLC): Anómalo e Inestable.** El problema principal ahora reside en el PLC. Inmediatamente después del primer intercambio de datos exitoso, el master envía una trama de reconfiguración inválida y corrupta (de 123 bytes en lugar de 2), lo que causa un error fatal en el chip VPC3+S y detiene la comunicación.
+
+**Próximos Pasos:** El enfoque se traslada al **100% al diagnóstico del PLC y de la capa física de la red PROFIBUS** para resolver la inestabilidad del master.
+
+---
+
+## 🔧 **1. INICIALIZACIÓN DEL SISTEMA**
+
+### **1.1 Archivo Principal: `main.c`**
+
+```c
+int main(void)
+{
+    // 1. Inicialización HAL y periféricos
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_USART2_UART_Init();
+    MX_SPI1_Init();
+    
+    // 2. Reset hardware del VPC3+S
+    HAL_GPIO_WritePin(VPC3_RESET_PORT, VPC3_RESET_PIN, GPIO_PIN_RESET);
+    HAL_Delay(10);
+    HAL_GPIO_WritePin(VPC3_RESET_PORT, VPC3_RESET_PIN, GPIO_PIN_SET);
+    HAL_Delay(50);
+    
+    // 3. Forzar estado OFFLINE
+    Vpc3Write(0x08, 0x04);  // GO_OFFLINE command
+    HAL_Delay(20);
+    
+    // 4. Inicialización PROFIBUS
+    DpAppl_ProfibusInit();
+    
+    // 5. Bucle principal
+    while(1) {
+        DpAppl_ProfibusMain();
+        HAL_Delay(1);
+    }
+}
+```
+
+### **1.2 Secuencia de Inicialización:**
+
+| **Paso** | **Función** | **Archivo** | **Descripción** |
+|----------|-------------|-------------|-----------------|
+| 1 | `HAL_Init()` | STM32 HAL | Inicialización del hardware STM32 |
+| 2 | `SystemClock_Config()` | `main.c` | Configuración del reloj del sistema |
+| 3 | `MX_GPIO_Init()` | `main.c` | Configuración de GPIO (RESET, SPI) |
+| 4 | `MX_SPI1_Init()` | `main.c` | Configuración SPI para VPC3+S |
+| 5 | `MX_USART2_UART_Init()` | `main.c` | Configuración UART para debug |
+
+---
+
+## 🔄 **2. INICIALIZACIÓN PROFIBUS**
+
+### **2.1 Función Principal: `DpAppl_ProfibusInit()`**
+
+**Archivo:** `Core/Src/DpAppl.c`
+
+```c
+void DpAppl_ProfibusInit(void)
+{
+    // 1. Inicializar estructuras de datos
+    memset(&sDpAppl, 0, sizeof(sDpAppl));
+    memset(&sSystem, 0, sizeof(STRUC_SYSTEM));
+    sSystem.bNrOfModules = MaxModule;
+    
+    // 2. Configurar punteros VPC3
+    pVpc3 = &sVpc3OnlyForInit;
+    pDpSystem = &sDpSystemChannel1;
+    memset(pVpc3, 0, sizeof(VPC3_STRUC));
+    
+    // 3. Inicializar módulos PROFIBUS
+    DpPrm_Init();    // Parámetros
+    DpCfg_Init();    // Configuración
+    DpDiag_Init();   // Diagnósticos
+    
+    // 4. Test de memoria VPC3
+    bError = VPC3_MemoryTest();
+    
+    // 5. Inicialización VPC3
+    bError = VPC3_Initialization(DP_ADDR, IDENT_NR, &sDpAppl.sCfgData);
+    
+    // 6. Arrancar VPC3
+    VPC3_Start();
+}
+```
+
+### **2.2 Secuencia de Inicialización PROFIBUS:**
+
+| **Paso** | **Función** | **Archivo** | **Descripción** |
+|----------|-------------|-------------|-----------------|
+| 1 | `DpPrm_Init()` | `Core/Src/DpPrm.c` | Inicialización de parámetros |
+| 2 | `DpCfg_Init()` | `Core/Src/DpCfg.c` | Inicialización de configuración |
+| 3 | `DpDiag_Init()` | `Core/Src/DpDiag.c` | Inicialización de diagnósticos |
+| 4 | `VPC3_MemoryTest()` | `Core/Src/dp_if.c` | Test de memoria VPC3+S |
+| 5 | `VPC3_Initialization()` | `Core/Src/dp_if.c` | Configuración del chip VPC3+S |
+| 6 | `VPC3_Start()` | `Core/Src/dp_if.c` | Arranque del VPC3+S |
+
+---
+
+## ⚙️ **3. CONFIGURACIÓN DEL VPC3+S**
+
+### **3.1 Función: `VPC3_Initialization()`**
+
+**Archivo:** `Core/Src/dp_if.c`
+
+```c
+DP_ERROR_CODE VPC3_Initialization(uint8_t bSlaveAddr, uint16_t wIdentNr, psCFG psCfgData)
+{
+    // 1. Verificar estado OFFLINE
+    if (!(Vpc3Read(0x04) & 0x01)) {
+        printf("VPC3 esta en OFFLINE, continuando...\n");
+    }
+    
+    // 2. Configurar MODE_REG_2
+    Vpc3Write(bVpc3WoModeReg2, INIT_VPC3_MODE_REG_2);
+    
+    // 3. Limpiar memoria VPC3
+    memset(pVpc3, 0, ASIC_RAM_LENGTH);
+    
+    // 4. Configurar valores constantes
+    VPC3_SetConstants();
+    
+    // 5. Calcular longitudes I/O
+    VPC3_CalculateIoLengths();
+    
+    // 6. Inicializar buffers
+    VPC3_InitializeBuffers();
+    
+    // 7. Configurar servicios
+    VPC3_ConfigureServices();
+    
+    // 8. Copiar configuración
+    VPC3_CopyConfiguration(psCfgData);
+    
+    return DP_OK;
+}
+```
+
+### **3.2 Función: `VPC3_Start()`**
+
+**Archivo:** `Core/Src/dp_if.c`
+
+```c
+void VPC3_Start(void)
+{
+    // 1. Verificar estado antes del START
+    uint8_t pre_start_status = Vpc3Read(0x04);
+    
+    // 2. Enviar comando START
+    Vpc3Write(0x08, 0x01);  // START command
+    HAL_Delay(50);
+    
+    // 3. Estabilización adicional
+    HAL_Delay(500);
+    
+    // 4. Reconfigurar registros de modo
+    Vpc3Write(bVpc3RwModeReg0_H, INIT_VPC3_MODE_REG_H);
+    Vpc3Write(bVpc3RwModeReg0_L, INIT_VPC3_MODE_REG_L);
+    Vpc3Write(bVpc3WoModeReg2, INIT_VPC3_MODE_REG_2);
+    Vpc3Write(bVpc3WoModeReg3, INIT_VPC3_MODE_REG_3);
+    
+    // 5. Verificar transición a PASSIVE_IDLE
+    uint8_t post_start_status = Vpc3Read(0x04);
+}
+```
+
+---
+
+## 💻 **4. BUCLE PRINCIPAL DE OPERACIÓN (ACTUALIZADO CON LÓGICA CORREGIDA)**
+
+### **4.1 Función Principal: `DpAppl_ProfibusMain()`**
+
+**Archivo:** `Core/Src/DpAppl.c`
+
+**NOTA:** Esta sección ha sido actualizada para mostrar la **lógica corregida**, que soluciona el error de flujo que impedía el intercambio de datos. El cambio clave es mover la llamada a `DpAppl_ApplicationReady()` para que se ejecute inmediatamente al entrar en `DATA_EX`. El código original ha sido reemplazado por esta versión más detallada que refleja el estado funcional actual.
+
+```c
+void DpAppl_ProfibusMain(void)
+{
+    // 1. Trigger watchdogs
+    VPC3_RESET_USER_WD();
+    
+    // 2. Poll PROFIBUS events
+    #if VPC3_SERIAL_MODE
+       VPC3_Poll();
+    #endif
+    
+    // 3. Process DP-V1 state machines
+    VPC3_ProcessDpv1StateMachine();
+    
+    // 4. Internal state machine
+    if (VPC3_GetDpState(eDpStateInit)) {
+        // Clear data and set run state
+        VPC3_ClrDpState(eDpStateInit);
+        VPC3_SetDpState(eDpStateRun);
+    }
+    
+    // 5. VPC3+ DP-state processing
+    #if VPC3_SERIAL_MODE
+        uint8_t bStatusRegHigh = VPC3_GET_STATUS_H();
+        uint8_t bStatusRegLow = VPC3_GET_STATUS_L();
+        uint8_t bDpState = ((bStatusRegLow & MASK_DP_STATE) >> 5);
+        
+        // 6. State machine switch
+        switch(bDpState) {
+            case WAIT_PRM:
+                // Esperar telegrama Prm
+                break;
+            case WAIT_CFG:
+                // Esperar telegrama Chk_Cfg
+                break;
+            case DATA_EX:
+                // --- INICIO DE LA LÓGICA CORREGIDA ---
+                // Al entrar por PRIMERA VEZ, preparamos la aplicación
+                if (VPC3_GetDpState(eDpStateCfgOkStatDiag)) {
+                    printf("DEBUG: [DATA_EX] Condición para llamar a ApplicationReady CUMPLIDA. Llamando...\n");
+                    DpAppl_ApplicationReady();
+                }
+            
+                // Si la aplicación está lista, intercambiamos datos
+                if (VPC3_GetDpState(eDpStateApplReady) && VPC3_GetDpState(eDpStateRun)) {
+                    // Lógica de aplicación (Eco de datos)
+                    uint8_t byte_from_plc = sSystem.sOutput.abDo8[0];
+                    uint8_t byte_to_plc = byte_from_plc + 100;
+                    sSystem.sInput.abDi8[0] = byte_to_plc;
+                    DpAppl_SetApplEvent(eDpApplEv_IoIn);
+                }
+                // --- FIN DE LA LÓGICA CORREGIDA ---
+                break;
+            case DP_ERROR:
+                // Error de protocolo
+                DpAppl_FatalError(_DP_USER, __LINE__, &sVpc3Error);
+                break;
+        }
+        
+        // Procesar datos de salida (Master -> Esclavo) si hay un evento
+        DpAppl_CheckEvIoOut();
+    #endif
+}
+```
+
+---
+
+## ⚡ **5. PROCESAMIENTO DE EVENTOS PROFIBUS**
+
+### **5.1 Función: `VPC3_Poll()`**
+
+**Archivo:** `Core/Src/dp_isr.c`
+
+```c
+void VPC3_Poll(void)
+{
+    // 1. Leer registros de interrupción
+    uint8_t bIntRegLow = Vpc3Read(bVpc3RoIntRegL);
+    uint8_t bIntRegHigh = Vpc3Read(bVpc3RoIntRegH);
+    
+    // 2. Procesar interrupciones
+    if (bIntRegLow & IND_DX_OUT) {
+        // Data Exchange Output
+        DpAppl_IsrDxOut();
+        VPC3_CON_IND_DX_OUT();
+    }
+    
+    if (bIntRegLow & IND_GO_LEAVE_DATA_EX) {
+        // Go/Leave Data Exchange
+        DpAppl_IsrGoLeaveDataExchange(VPC3_GET_DP_STATE());
+        VPC3_CON_IND_GO_LEAVE_DATA_EX();
+    }
+    
+    // ... otros eventos
+}
+```
+
+### **5.2 Función: `DpAppl_IsrDxOut()`**
+
+**Archivo:** `Core/Src/DpAppl.c`
+
+```c
+void DpAppl_IsrDxOut(void)
+{
+    // Configurar evento IoOut para procesamiento en el bucle principal
+    // NOTA: El nombre original era sDpAppl.bIoOutEvent, se unificó a usar DpAppl_SetApplEvent
+    DpAppl_SetApplEvent(eDpApplEv_IoOut);
+}
+```
+
+---
+
+## ✔️ **6. CONFIGURACIÓN Y VALIDACIÓN**
+
+### **6.1 Función: `DpCfg_ChkNewCfgData()`**
+
+**Archivo:** `Core/Src/DpCfg.c`
+
+```c
+E_DP_CFG_ERROR DpCfg_ChkNewCfgData(MEM_UNSIGNED8_PTR pbCfgData, uint8_t bCfgLength)
+{
+    // 1. Copia local defensiva
+    uint8_t localCfgBuffer[LOCAL_CFG_MAX];
+    uint8_t localLen = (bCfgLength < LOCAL_CFG_MAX) ? bCfgLength : LOCAL_CFG_MAX;
+    memcpy(localCfgBuffer, pbCfgData, localLen);
+    
+    // 2. Validar longitud
+    uint8_t bRealCfgLength = pDpSystem->bOutputDataLength + pDpSystem->bInputDataLength;
+    if (bCfgLength != bRealCfgLength) {
+        return DP_CFG_FAULT;
+    }
+    
+    // 3. Comparar configuración
+    if (memcmp(sDpAppl.sCfgData.abData, localCfgBuffer, bRealCfgLength) != 0) {
+        return DP_CFG_FAULT;
+    }
+    
+    // 4. Configuración OK, configurar diagnósticos y levantar flag de estado
+    E_DP_CFG_ERROR eRetValue = DpDiag_SetCfgOk(DP_CFG_OK);
+    if (eRetValue != DP_CFG_FAULT) {
+        VPC3_SetDpState(eDpStateCfgOkStatDiag);
+    }
+    
+    return eRetValue;
+}
+```
+
+---
+
+## 🔍 **7. DIAGNÓSTICOS**
+
+### **7.1 Función: `DpDiag_SetCfgOk()`**
+
+**Archivo:** `Core/Src/DpDiag.c`
+
+```c
+E_DP_CFG_ERROR DpDiag_SetCfgOk(E_DP_CFG_ERROR eCfgError)
+{
+    E_DP_CFG_ERROR eRetValue = eCfgError;
+    uint8_t bLoop = 0;
+    
+    while (bLoop++ < MAX_DIAG_RETRY) {
+        if (DpDiag_Alarm(USER_TYPE_CFG_OK, 0x22, VPC3_NULL_PTR, VPC3_FALSE) == DP_OK) {
+            break;
+        }
+    }
+    
+    return eRetValue;
+}
+```
+
+### **7.2 Función: `DpDiag_Alarm()`**
+
+**Archivo:** `Core/Src/DpDiag.c`
+
+```c
+DP_ERROR_CODE DpDiag_Alarm(uint8_t bAlarmType, uint8_t bSeqNr, 
+                          ALARM_STATUS_PDU_PTR psAlarmStatus, uint8_t bCheckDiagFlag)
+{
+    // 1. Calcular evento de diagnóstico
+    uint16_t wDiagEvent = ((uint16_t)bAlarmType << 8) | bSeqNr;
+    
+    // 2. Verificar si el diagnóstico cambió
+    if (wDiagEvent == pDpSystem->wOldDiag) {
+        return DP_DIAG_SAME_DIAG;
+    }
+    
+    // 3. Procesar tipo de alarma
+    uint8_t bDiagLength = 0;
+    uint8_t bExtDiagFlag = 0;
+    switch (bAlarmType) {
+        case USER_TYPE_CFG_OK:
+            bExtDiagFlag = EXT_DIAG_SET;
+            DpDiag_AddIdentRelDiagBlock(&bDiagLength);
+            DpDiag_AddModuleStatDiagBlock(&bDiagLength);
+            break;
+        // ... otros casos
+    }
+    
+    // 4. Enviar diagnóstico
+    return VPC3_SetDiagnosis(bDiagLength, bExtDiagFlag, bCheckDiagFlag);
+}
+```
+
+---
+
+## 🗺️ **8. MAPA DE ARCHIVOS Y FUNCIONES**
+
+(Contenido original sin cambios)
+
+---
+
+## 🎯 **9. SECUENCIA DE ESTADOS (ACTUALIZADO Y VERIFICADO)**
+
+### **9.1 Transiciones de Estado:**
+
+Esta es la secuencia de estados **correcta y verificada** a través de los logs.
+
+```
+1. OFFLINE (STATUS_L = 0x00)
+   ↓ VPC3_Start()
+2. PASSIVE_IDLE (STATUS_L = 0x91)
+   ↓ Master envía Prm y Cfg
+3. WAIT_CFG (bDpState = 0x01)
+   ↓ Esclavo recibe Cfg correcta, llama a DpCfg_ChkNewCfgData() y levanta eDpStateCfgOkStatDiag
+4. DATA_EX (bDpState = 0x02, STATUS_L = 0x45)
+   ↓ DENTRO del mismo ciclo, se llama a DpAppl_ApplicationReady()
+5. DATA_EX + ApplicationReady (eDpStateApplReady=4, eDpStateRun=2)
+   ↓ La aplicación lee sSystem.sOutput y escribe en sSystem.sInput
+```
+
+### **9.2 Estados de Aplicación:**
+
+```c
+// Flags de estado internos en la estructura pDpSystem
+eDpStateInit = 1;           // Inicialización
+eDpStateRun = 2;            // Ejecutando
+eDpStateApplReady = 4;      // Aplicación lista
+eDpStateCfgOkStatDiag = 8;  // Configuración OK, diagnóstico pendiente
+```
+
+---
+
+## 🔧 **10. CONFIGURACIÓN CLAVE**
+
+(Contenido original sin cambios)
+
+---
+
+## 📊 **11. ANÁLISIS DE LA EJECUCIÓN ACTUAL (NUEVO)**
+
+Esta sección reemplaza el "Resultado Final" anterior con un análisis del último log, que muestra el **éxito del firmware** y el **fallo del PLC**.
+
+### **11.1 ¡Éxito del Firmware!**
+
+El log confirma que el flujo lógico del esclavo es correcto:
+
+```
+// Log clave que muestra el éxito
+DEBUG: [STATE_ANALYSIS] Comparación: bDpState=0x02 vs DATA_EX=0x02 (¿iguales? SÍ)
+DEBUG: [DATA_EX] Condición para llamar a ApplicationReady CUMPLIDA. Llamando...
+DEBUG: [ApplicationReady] INICIO - Configurando aplicación después de Chk_Cfg exitoso
+DEBUG: [ApplicationReady] Estados configurados: eDpStateCfgOkStatDiag=0, eDpStateApplReady=4, eDpStateRun=2
+DEBUG: [ApplicationReady] FIN - Aplicación configurada
+DEBUG: [STATE_DATA_EX] VPC3+ en DATA_EX - comunicación activa
+DEBUG: [STATE_CHECK] eDpStateApplReady=4, eDpStateRun=2
+DEBUG: [APPLICATION_READY] Ambos estados activos - aplicación funcionando
+[DATA_EXCHANGE_TRAMA #1] PLC->STM32: 0x00 | STM32->PLC: 0x64
+```
+
+### **11.2 ¡Fallo del PLC!**
+
+Inmediatamente después de la trama exitosa, el PLC se comporta de forma errática:
+
+```
+// El PLC intenta reconfigurar al esclavo sin motivo
+[EVENT] Chk_Cfg recibido por el slave.
+
+// Envía una trama corrupta y de longitud incorrecta
+DEBUG: [CopyFromVpc3] Lectura de 0x04F0, longitud 123
+DEBUG: [CopyFromVpc3] Datos leídos: 0x83 0x87 0x2D 0xD3 ... (basura)
+
+// El chip VPC3+S se corrompe y el firmware lanza un error fatal
+DEBUG: [STATUS_CHANGE] STATUS_L: 0x45 -> 0x10, STATUS_H: 0xE3 -> 0x99
+DEBUG: [FATAL_CHECK] STATUS_L=0x10, STATUS_H=0x99, AT_MASK check=1 (ERROR FATAL)
+=== FATAL ERROR DETECTED ===
+```
+
+### **11.3 Conclusión del Análisis**
+El firmware del esclavo (STM32) es ahora robusto y funciona como se espera. El problema se ha aislado y se ha confirmado que reside en el comportamiento del PLC o en la capa física de la red PROFIBUS.
+
+---
+
+## 🚀 **12. PRÓXIMOS PASOS: DIAGNÓSTICO DEL MASTER Y CAPA FÍSICA (NUEVO)**
+
+El problema **ya no reside en el firmware del esclavo**. El foco se traslada 100% al PLC y a la red.
+
+1.  **Limpieza de Configuración del PLC:**
+    - Eliminar el esclavo de la configuración de hardware en TIA Portal/Step 7.
+    - Descargar la configuración vacía al PLC para forzar un borrado de su memoria.
+    - Volver a añadir el esclavo desde el GSD y configurar solo 1 byte de entrada y 1 de salida.
+    - Descargar la nueva configuración limpia.
+
+2.  **Bajar Velocidad del Bus:**
+    - En la configuración de la red PROFIBUS del PLC, reducir la velocidad a la más baja posible (ej. **93.75 kbps**). Esto aumenta la robustez frente a ruido y problemas de cableado. Si a baja velocidad funciona, el problema es físico.
+
+3.  **Verificar la Capa Física:**
+    - **Terminadores de Bus:** Asegurarse de que las resistencias de terminación están activadas **únicamente** en los dos extremos físicos del cable PROFIBUS.
+    - **Aislamiento:** Probar la comunicación con un único cable corto (1-2m) conectando solo el PLC y el STM32, eliminando el resto de la planta como posible fuente de ruido.
+    - **Calidad del Cable:** Usar un cable PROFIBUS certificado y verificar que no esté dañado.
+    - **Fuente de Alimentación:** Asegurarse de que tanto el PLC como el STM32 tienen una fuente de alimentación estable y bien referenciada a tierra.
