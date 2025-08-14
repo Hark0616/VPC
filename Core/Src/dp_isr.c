@@ -72,6 +72,25 @@ volatile uint8_t bResult;
       // Log para verificar la máscara de software
       printf("DEBUG: [VPC3_Poll] Eventos hardware leidos: 0x%04X, Mascara de software aplicada: 0x%04X\n",
              pDpSystem->wPollInterruptEvent, pDpSystem->wPollInterruptMask);
+      
+      // Decodificar eventos específicos para análisis
+      uint16_t events = pDpSystem->wPollInterruptEvent;
+      if (events & 0x0001) printf("DEBUG: [VPC3_Poll] - MAC_RESET/CLOCK_SYNC (0x0001)\r\n");
+      if (events & 0x0002) printf("DEBUG: [VPC3_Poll] - GO_LEAVE_DATA_EX (0x0002)\r\n");
+      if (events & 0x0004) printf("DEBUG: [VPC3_Poll] - BAUDRATE_DETECT (0x0004)\r\n");
+      if (events & 0x0008) printf("DEBUG: [VPC3_Poll] - WD_DP_MODE_TIMEOUT (0x0008)\r\n");
+      if (events & 0x0010) printf("DEBUG: [VPC3_Poll] - USER_TIMER_CLOCK (0x0010)\r\n");
+      if (events & 0x0020) printf("DEBUG: [VPC3_Poll] - DXB_LINK_ERROR (0x0020)\r\n");
+      if (events & 0x0040) printf("DEBUG: [VPC3_Poll] - NEW_EXT_PRM_DATA (0x0040)\r\n");
+      if (events & 0x0080) printf("DEBUG: [VPC3_Poll] - DXB_OUT (0x0080)\r\n");
+      if (events & 0x0100) printf("DEBUG: [VPC3_Poll] - NEW_GC_COMMAND (0x0100)\r\n");
+      if (events & 0x0200) printf("DEBUG: [VPC3_Poll] - NEW_SSA_DATA (0x0200)\r\n");
+      if (events & 0x0400) printf("DEBUG: [VPC3_Poll] - NEW_CFG_DATA (0x0400)\r\n");
+      if (events & 0x0800) printf("DEBUG: [VPC3_Poll] - NEW_PRM_DATA (0x0800)\r\n");
+      if (events & 0x1000) printf("DEBUG: [VPC3_Poll] - DIAG_BUFFER_CHANGED (0x1000)\r\n");
+      if (events & 0x2000) printf("DEBUG: [VPC3_Poll] - DX_OUT (0x2000)\r\n");
+      if (events & 0x4000) printf("DEBUG: [VPC3_Poll] - POLL_END_IND (0x4000)\r\n");
+      if (events & 0x8000) printf("DEBUG: [VPC3_Poll] - FDL_IND (0x8000)\r\n");
 
       pDpSystem->wPollInterruptEvent &= pDpSystem->wPollInterruptMask;
 
@@ -97,9 +116,37 @@ volatile uint8_t bResult;
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_DIAG_BUFFER_CHANGED() )
          {
+            printf("🚨 [dp_isr] === IND_DIAG_BUFFER_CHANGED DETECTADO ===\r\n");
+            printf("🚨 [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
+            printf("🚨 [dp_isr] STATUS_L antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
+            printf("🚨 [dp_isr] STATUS_H antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            printf("🚨 [dp_isr] DP_STATE antes del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
+            printf("🚨 [dp_isr] MODE_REG_2 antes del evento: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
+            
+            // Análisis del buffer de diagnóstico
+            uint8_t diag_buffer_sm = Vpc3Read(0x0E); // Diag buffer state machine
+            printf("🚨 [dp_isr] Diag Buffer State Machine: 0x%02X\r\n", diag_buffer_sm);
+            
+            printf("🚨 [dp_isr] Buffer de diagnóstico disponible\r\n");
+            
+            printf("🚨 [dp_isr] Llamando DpDiag_IsrDiagBufferChanged...\r\n");
             DpDiag_IsrDiagBufferChanged();
 
             VPC3_POLL_CON_IND_DIAG_BUFFER_CHANGED();
+            
+            // --- VALIDACIÓN CRÍTICA: Verificar si los punteros se corrompieron ---
+            printf("🚨 [dp_isr] Verificando integridad de punteros después del evento...\r\n");
+            if (VPC3_ValidateSegmentPointers() != DP_OK) {
+                printf("🚨 [dp_isr] PUNTEROS CORRUPTOS DETECTADOS! Intentando recuperación...\r\n");
+                // Los punteros se corrigieron en VPC3_ValidateSegmentPointers si era posible
+            } else {
+                printf("🚨 [dp_isr] Punteros de segmentos validados correctamente\r\n");
+            }
+            
+            printf("🚨 [dp_isr] STATUS_L después del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
+            printf("🚨 [dp_isr] STATUS_H después del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            printf("🚨 [dp_isr] DP_STATE después del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
+            printf("🚨 [dp_isr] === FIN IND_DIAG_BUFFER_CHANGED ===\r\n");
          } /* if( VPC3_POLL_IND_DIAG_BUFFER_CHANGED() ) */
 
          /*------------------------------------------------------------------*/
@@ -122,11 +169,16 @@ volatile uint8_t bResult;
 
             do
             {
-                               bPrmLength = VPC3_GET_PRM_LEN();
+                uint8_t *prmBufPtr;
+                VPC3_ADR prmAddr;
+                
+                bPrmLength = VPC3_GET_PRM_LEN();
 
+                printf("DEBUG: [dp_isr] PRM Length: %d bytes\r\n", bPrmLength);
+                
                 // --- VALIDACIÓN CRÍTICA: Verificar puntero PRM antes de leer ---
-                VPC3_UNSIGNED8_PTR prmBufPtr = VPC3_GET_PRM_BUF_PTR();
-                VPC3_ADR prmAddr = (VPC3_ADR)prmBufPtr;
+                prmBufPtr = VPC3_GET_PRM_BUF_PTR();
+                prmAddr = (VPC3_ADR)prmBufPtr;
                 
                 printf("DEBUG: [dp_isr] PRM Buffer Ptr: 0x%08X, Addr: 0x%04X\r\n", (unsigned int)prmBufPtr, prmAddr);
                 
@@ -193,11 +245,16 @@ volatile uint8_t bResult;
 
             do
             {
+               uint8_t *cfgBufPtr;
+               VPC3_ADR cfgAddr;
+               
                bCfgLength = VPC3_GET_CFG_LEN();
                
+               printf("DEBUG: [dp_isr] CFG Length: %d bytes\r\n", bCfgLength);
+               
                // --- VALIDACIÓN CRÍTICA: Verificar puntero CFG antes de leer ---
-               VPC3_UNSIGNED8_PTR cfgBufPtr = VPC3_GET_CFG_BUF_PTR();
-               VPC3_ADR cfgAddr = (VPC3_ADR)cfgBufPtr;
+               cfgBufPtr = VPC3_GET_CFG_BUF_PTR();
+               cfgAddr = (VPC3_ADR)cfgBufPtr;
                
                printf("DEBUG: [dp_isr] CFG Buffer Ptr: 0x%08X, Addr: 0x%04X\r\n", (unsigned int)cfgBufPtr, cfgAddr);
                

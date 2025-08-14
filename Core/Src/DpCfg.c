@@ -17,8 +17,8 @@ enum
 
 #define DpApplCfgDataLength ((uint8_t)0x02) // Total de 2 bytes para la configuración de dos módulos
 const uint8_t DpApplDefCfg[DpApplCfgDataLength] = {
-    0x20,   // ID del módulo "DI 1 Byte" del GSD
-    0x10    // ID del módulo "DO 1 Byte" del GSD (REVISAR POR QUE DEBERIA SER 0xC0)
+    0x20,   // ID del módulo "DO 1 Byte" del GSD
+    0x10    // ID del módulo "DI 1 Byte" del GSD
 };
 /*#define DpApplCfgDataLength ((uint8_t)0x08)
 const uint8_t DpApplDefCfg[DpApplCfgDataLength] = {
