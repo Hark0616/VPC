@@ -27,7 +27,8 @@ Core/Src/dp_isr.o: ../Core/Src/dp_isr.c ../Core/Inc/platform.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Core/Inc/DpCfg.h ../Core/Inc/dpl_list.h ../Core/Inc/dp_if.h \
- ../Core/Inc/dp_inc.h ../Core/Inc/main.h
+ ../Core/Inc/dp_inc.h ../Core/Inc/main.h ../Core/Inc/dp_inc.h \
+ ../Core/Inc/dp_if.h
 
 ../Core/Inc/platform.h:
 
@@ -94,3 +95,7 @@ Core/Src/dp_isr.o: ../Core/Src/dp_isr.c ../Core/Inc/platform.h \
 ../Core/Inc/dp_inc.h:
 
 ../Core/Inc/main.h:
+
+../Core/Inc/dp_inc.h:
+
+../Core/Inc/dp_if.h:

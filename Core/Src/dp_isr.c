@@ -36,6 +36,8 @@
 #include "platform.h"
 #include "main.h"  /* Para HAL_GPIO_WritePin y definiciones GPIO */
 #include <stdio.h>
+#include "dp_inc.h"  /* Para definiciones de estructuras PROFIBUS */
+#include "dp_if.h"   /* Para definiciones de estructuras SSA */
 
 
 #if VPC3_SERIAL_MODE
@@ -105,6 +107,11 @@ volatile uint8_t bResult;
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_NEW_PRM_DATA() )
          {
+            printf("🎯 [dp_isr] === PRM RECIBIDO DEL MASTER ===\r\n");
+            printf("🎯 [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
+            printf("🎯 [dp_isr] STATUS_L antes de procesar PRM: 0x%02X\r\n", VPC3_GET_STATUS_L());
+            printf("🎯 [dp_isr] STATUS_H antes de procesar PRM: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            
             uint8_t bPrmLength;
 
             #if DP_INTERRUPT_MASK_8BIT == 0
@@ -115,9 +122,31 @@ volatile uint8_t bResult;
 
             do
             {
-               bPrmLength = VPC3_GET_PRM_LEN();
+                               bPrmLength = VPC3_GET_PRM_LEN();
 
-               CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], VPC3_GET_PRM_BUF_PTR(), bPrmLength );
+                // --- VALIDACIÓN CRÍTICA: Verificar puntero PRM antes de leer ---
+                VPC3_UNSIGNED8_PTR prmBufPtr = VPC3_GET_PRM_BUF_PTR();
+                VPC3_ADR prmAddr = (VPC3_ADR)prmBufPtr;
+                
+                printf("DEBUG: [dp_isr] PRM Buffer Ptr: 0x%08X, Addr: 0x%04X\r\n", (unsigned int)prmBufPtr, prmAddr);
+                
+                // Validar que la dirección está dentro del rango válido
+                if (prmAddr >= ASIC_RAM_LENGTH) {
+                    printf("🚨 [dp_isr] ERROR: Puntero PRM corrupto! Addr=0x%04X >= ASIC_RAM_LENGTH=0x%04X\r\n", 
+                           prmAddr, ASIC_RAM_LENGTH);
+                    printf("🚨 [dp_isr] Rechazando trama PRM corrupta para evitar LECTURA ILEGAL\r\n");
+                    bResult = VPC3_SET_PRM_DATA_NOT_OK();
+                    break; // Salir del bucle do-while
+                }
+                
+                // Validar que la longitud es razonable
+                if (bPrmLength > 50) {
+                    printf("🚨 [dp_isr] ERROR: Longitud PRM sospechosa (%d bytes). Rechazando.\r\n", bPrmLength);
+                    bResult = VPC3_SET_PRM_DATA_NOT_OK();
+                    break; // Salir del bucle do-while
+                }
+
+                CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], prmBufPtr, bPrmLength );
 
                if( DpPrm_ChkNewPrmData( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bPrmLength ) == DP_OK )
                {
@@ -149,6 +178,11 @@ volatile uint8_t bResult;
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_NEW_CFG_DATA() )
          {
+            printf("🎯 [dp_isr] === CFG RECIBIDO DEL MASTER ===\r\n");
+            printf("🎯 [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
+            printf("🎯 [dp_isr] STATUS_L antes de procesar CFG: 0x%02X\r\n", VPC3_GET_STATUS_L());
+            printf("🎯 [dp_isr] STATUS_H antes de procesar CFG: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            
             uint8_t bCfgLength;
 
             #if DP_INTERRUPT_MASK_8BIT == 0
@@ -160,10 +194,44 @@ volatile uint8_t bResult;
             do
             {
                bCfgLength = VPC3_GET_CFG_LEN();
-               CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], VPC3_GET_CFG_BUF_PTR(), bCfgLength );
+               
+               // --- VALIDACIÓN CRÍTICA: Verificar puntero CFG antes de leer ---
+               VPC3_UNSIGNED8_PTR cfgBufPtr = VPC3_GET_CFG_BUF_PTR();
+               VPC3_ADR cfgAddr = (VPC3_ADR)cfgBufPtr;
+               
+               printf("DEBUG: [dp_isr] CFG Buffer Ptr: 0x%08X, Addr: 0x%04X\r\n", (unsigned int)cfgBufPtr, cfgAddr);
+               
+               // Validar que la dirección está dentro del rango válido
+               if (cfgAddr >= ASIC_RAM_LENGTH) {
+                   printf("🚨 [dp_isr] ERROR: Puntero CFG corrupto! Addr=0x%04X >= ASIC_RAM_LENGTH=0x%04X\r\n", 
+                          cfgAddr, ASIC_RAM_LENGTH);
+                   printf("🚨 [dp_isr] Rechazando trama CFG corrupta para evitar LECTURA ILEGAL\r\n");
+                   bResult = VPC3_SET_CFG_DATA_NOT_OK();
+                   break; // Salir del bucle do-while
+               }
+               
+               // Validar que la longitud es razonable
+               if (bCfgLength > 50) {
+                   printf("🚨 [dp_isr] ERROR: Longitud CFG sospechosa (%d bytes). Rechazando.\r\n", bCfgLength);
+                   bResult = VPC3_SET_CFG_DATA_NOT_OK();
+                   break; // Salir del bucle do-while
+               }
+               
+               CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], cfgBufPtr, bCfgLength );
 
                printf("DEBUG: [dp_isr] Contenido de abPrmCfgSsaHelpBuffer JUSTO ANTES de DpCfg_ChkNewCfgData (%d bytes): ", bCfgLength);
-               for(int k=0; k<bCfgLength; k++) {
+               
+                               // Protección contra tramas CFG corruptas
+                if (bCfgLength > 10) {
+                    printf("⚠️ [dp_isr] ADVERTENCIA: Trama CFG sospechosamente larga (%d bytes). Esperado: 2 bytes (1 OUT + 1 IN).\r\n", bCfgLength);
+                    printf("⚠️ [dp_isr] Posible problema en configuración del PLC o GSD.\r\n");
+                    if (bCfgLength > 50) {
+                        printf("⚠️ [dp_isr] Limitando a primeros 50 bytes para evitar corrupción.\r\n");
+                        bCfgLength = 50;
+                    }
+                }
+               
+               for(int k=0; k<bCfgLength && k<50; k++) {
                   printf("0x%02X ", pDpSystem->abPrmCfgSsaHelpBuffer[k]);
                }
                printf("\r\n");
