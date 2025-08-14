@@ -247,7 +247,7 @@ volatile uint8_t bResult;
             printf("🚨 [dp_isr] STATUS_L antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
             printf("🚨 [dp_isr] STATUS_H antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
             printf("🚨 [dp_isr] DP_STATE antes del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
-            printf("🚨 [dp_isr] MODE_REG_2 antes del evento: 0x%02X\r\n", Vpc3Read(bVpc3WoModeReg2));
+            printf("🚨 [dp_isr] MODE_REG_2 antes del evento: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
             
             // Análisis del estado de comunicación
             uint8_t status_l = VPC3_GET_STATUS_L();
@@ -458,7 +458,7 @@ void dp_isr(void)
    printf("🔍 [dp_isr] INICIO - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3\r\n");
    
    // --- CRITICAL: Check for MODE_REG_2 corruption during interrupt ---
-   uint8_t mode_reg2 = Vpc3Read(bVpc3WoModeReg2);
+  uint8_t mode_reg2 = VPC3_GetModeReg2Shadow();
    printf("🔍 [dp_isr] MODE_REG_2 actual: 0x%02X (esperado: 0x05)\r\n", mode_reg2);
    
    if (mode_reg2 != 0x05) {

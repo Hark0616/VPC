@@ -671,7 +671,7 @@ uint8_t bDpState;
             }
             
             // DEBUG: Monitoreo específico de MODE_REG_2
-            uint8_t current_mode_reg2 = Vpc3Read(0x0C);  // bVpc3WoModeReg2
+            uint8_t current_mode_reg2 = VPC3_GetModeReg2Shadow();  // write-only, use shadow
             static uint8_t last_mode_reg2 = 0xFF;
             if (current_mode_reg2 != last_mode_reg2) {
                 printf("DEBUG: [MODE_REG2_MONITOR] ⚠️ MODE_REG_2 cambió de 0x%02X a 0x%02X (esperado: 0x05)\r\n", 
@@ -711,7 +711,7 @@ uint8_t bDpState;
       // --- Continuous MODE_REG_2 monitoring ---
       static uint32_t last_mode_check = 0;
       if (HAL_GetTick() - last_mode_check > 1000) { // Check every second
-         uint8_t mode_reg2 = Vpc3Read(bVpc3WoModeReg2);
+        uint8_t mode_reg2 = VPC3_GetModeReg2Shadow();
          if (mode_reg2 != 0x05) {
             printf("WARNING: [DpAppl_ProfibusMain] MODE_REG_2 instability detected: 0x%02X (expected 0x05)\r\n", mode_reg2);
          }

@@ -142,6 +142,9 @@ extern void                   DpAppl_EnableAllInterrupts           ( void );
 extern void                   DpAppl_DisableAllInterrupts          ( void );
 extern void                   Vpc3Wait_1ms                         ( void );
 
+/* Accessor for write-only register MODE_REG_2 (shadow value maintained in SPI layer) */
+extern uint8_t VPC3_GetModeReg2Shadow(void);
+
 #if VPC3_SERIAL_MODE
 
    extern void                Vpc3Write      ( VPC3_ADR wAddress, uint8_t bData );

@@ -460,21 +460,23 @@ void assert_failed(uint8_t *file, uint32_t line)
 void print_vpc3_registers(void) {
     uint8_t status_lo = Vpc3Read(0x04);
     uint8_t status_hi = Vpc3Read(0x05);
-    uint8_t mode_reg1 = Vpc3Read(0x07);
-    uint8_t control_reg = Vpc3Read(0x08);
-    uint8_t mode_reg2 = Vpc3Read(0x09);
-    uint8_t int_reg_l = Vpc3Read(0x0A);
-    uint8_t int_reg_h = Vpc3Read(0x0B);
+    uint8_t mode_reg0_l = Vpc3Read(0x06);
+    uint8_t mode_reg0_h = Vpc3Read(0x07);
+    uint8_t mode_reg1   = Vpc3Read(0x15);
+    uint8_t mode_reg2   = VPC3_GetModeReg2Shadow();
+    uint8_t int_reg_l   = Vpc3Read(0x02);
+    uint8_t int_reg_h   = Vpc3Read(0x03);
     uint8_t cfg_ptr = Vpc3Read(0x34);
 
     printf("VPC3+S REGISTERS:\r\n");
     printf("  STATUS_L   (0x04): 0x%02X\r\n", status_lo);
     printf("  STATUS_H   (0x05): 0x%02X\r\n", status_hi);
-    printf("  MODE_REG_1 (0x07): 0x%02X\r\n", mode_reg1);
-    printf("  CONTROL_REG(0x08): 0x%02X\r\n", control_reg);
-    printf("  MODE_REG_2 (0x09): 0x%02X\r\n", mode_reg2);
-    printf("  INT_REG_L  (0x0A): 0x%02X\r\n", int_reg_l);
-    printf("  INT_REG_H  (0x0B): 0x%02X\r\n", int_reg_h);
+    printf("  MODE_REG_0_L (0x06): 0x%02X\r\n", mode_reg0_l);
+    printf("  MODE_REG_0_H (0x07): 0x%02X\r\n", mode_reg0_h);
+    printf("  MODE_REG_1   (0x15): 0x%02X\r\n", mode_reg1);
+    printf("  MODE_REG_2   (shadow 0x0C): 0x%02X\r\n", mode_reg2);
+    printf("  INT_REG_L    (0x02): 0x%02X\r\n", int_reg_l);
+    printf("  INT_REG_H    (0x03): 0x%02X\r\n", int_reg_h);
     printf("  CFG_PTR    (0x34): 0x%02X\r\n", cfg_ptr);
     printf("\r\n");
 }

@@ -1,0 +1,2 @@
+DpCfg.c:39:6:DpCfg_Init	16	static
+DpCfg.c:68:16:DpCfg_ChkNewCfgData	48	static

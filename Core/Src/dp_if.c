@@ -444,12 +444,12 @@ uint16_t       i;
 
    /* neccessary, if 4Kbyte mode enabled */
    printf("DEBUG: [VPC3_MemoryTest] INIT_VPC3_MODE_REG_2 = 0x%02X\r\n", INIT_VPC3_MODE_REG_2);
-   printf("DEBUG: [VPC3_MemoryTest] 📍 ANTES de VPC3_SET_MODE_REG_2 - Valor actual: 0x%02X\r\n", Vpc3Read(bVpc3WoModeReg2));
+   printf("DEBUG: [VPC3_MemoryTest] 📍 ANTES de VPC3_SET_MODE_REG_2 - Valor actual: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
    VPC3_SET_MODE_REG_2( INIT_VPC3_MODE_REG_2 );
-   printf("DEBUG: [VPC3_MemoryTest] 📍 DESPUÉS de VPC3_SET_MODE_REG_2 - Valor configurado: 0x%02X\r\n", Vpc3Read(bVpc3WoModeReg2));
+   printf("DEBUG: [VPC3_MemoryTest] 📍 DESPUÉS de VPC3_SET_MODE_REG_2 - Valor configurado: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
    
    // Verificar que se configuró correctamente
-   uint8_t mode_reg_2 = Vpc3Read(bVpc3WoModeReg2);
+   uint8_t mode_reg_2 = VPC3_GetModeReg2Shadow();
    printf("DEBUG: [VPC3_MemoryTest] MODE_REG_2 configurado: 0x%02X\r\n", mode_reg_2);
 
    /*-----------------------------------------------------------------------*/
@@ -660,7 +660,7 @@ DP_ERROR_CODE bError;
       
       /* neccessary, if 4Kbyte mode enabled */
       printf("DEBUG: Configurando MODE_REG_2...\r\n");
-      printf("DEBUG: [VPC3_Initialization] 📍 ANTES de VPC3_SET_MODE_REG_2 - Valor actual: 0x%02X\r\n", Vpc3Read(bVpc3WoModeReg2));
+     printf("DEBUG: [VPC3_Initialization] 📍 ANTES de VPC3_SET_MODE_REG_2 - Valor actual: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
       
       // Use the robust MODE_REG_2 configuration
       if (VPC3_ForceModeReg2() != 0) {
@@ -668,7 +668,7 @@ DP_ERROR_CODE bError;
          printf("DEBUG: Continuando con el valor actual...\r\n");
       }
       
-      printf("DEBUG: [VPC3_Initialization] 📍 DESPUÉS de VPC3_SET_MODE_REG_2 - Valor configurado: 0x%02X\r\n", Vpc3Read(bVpc3WoModeReg2));
+     printf("DEBUG: [VPC3_Initialization] 📍 DESPUÉS de VPC3_SET_MODE_REG_2 - Valor configurado: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
 
       /* clear VPC3 */
       printf("DEBUG: Limpiando memoria VPC3 (conservative range)...\r\n");
@@ -785,7 +785,7 @@ DP_ERROR_CODE bError;
 
    printf("DEBUG: VPC3_Initialization - FIN con resultado: 0x%02X\r\n", bError);
    printf("DEBUG: [VPC3_Initialization] Inicializacion completada. Estado final:\r\n");
-   printf("DEBUG: [VPC3_Initialization] MODE_REG_2 = 0x%02X\r\n", Vpc3Read(bVpc3WoModeReg2));
+   printf("DEBUG: [VPC3_Initialization] MODE_REG_2 = 0x%02X\r\n", VPC3_GetModeReg2Shadow());
    
    // --- DEFENSIVE PROGRAMMING: Validate segment pointers after initialization ---
    DP_ERROR_CODE validationStatus = VPC3_ValidateSegmentPointers();
@@ -863,7 +863,7 @@ void VPC3_Start( void )
    HAL_Delay(100); // Allow time for mode registers to be processed
    
    // Verificar que MODE_REG_2 se configuró correctamente
-   uint8_t mode_reg2_after = Vpc3Read(bVpc3WoModeReg2);
+   uint8_t mode_reg2_after = VPC3_GetModeReg2Shadow();
    printf("DEBUG: [VPC3_Start] MODE_REG_2 después de reconfiguración: 0x%02X (esperado: 0x%02X)\r\n", 
           mode_reg2_after, INIT_VPC3_MODE_REG_2);
 
@@ -884,7 +884,7 @@ void VPC3_Start( void )
       printf("DEBUG: [VPC3_Start] Verificando registros de modo después del START...\r\n");
       printf("DEBUG: [VPC3_Start] MODE_REG_0_H: 0x%02X\r\n", Vpc3Read(bVpc3RwModeReg0_H));
       printf("DEBUG: [VPC3_Start] MODE_REG_0_L: 0x%02X\r\n", Vpc3Read(bVpc3RwModeReg0_L));
-      printf("DEBUG: [VPC3_Start] MODE_REG_2: 0x%02X\r\n", Vpc3Read(bVpc3WoModeReg2));
+     printf("DEBUG: [VPC3_Start] MODE_REG_2: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
       printf("DEBUG: [VPC3_Start] MODE_REG_3: 0x%02X\r\n", Vpc3Read(bVpc3WoModeReg3));
       
       // DEBUG: Verificar otros registros importantes
@@ -1011,7 +1011,7 @@ DP_ERROR_CODE bError;
       printf("DEBUG: [VPC3_SetConstants] Verificando configuración de registros de modo...\r\n");
       printf("DEBUG: [VPC3_SetConstants] MODE_REG_0_H configurado: 0x%02X (esperado: 0x%02X)\r\n", Vpc3Read(bVpc3RwModeReg0_H), INIT_VPC3_MODE_REG_H);
       printf("DEBUG: [VPC3_SetConstants] MODE_REG_0_L configurado: 0x%02X (esperado: 0x%02X)\r\n", Vpc3Read(bVpc3RwModeReg0_L), INIT_VPC3_MODE_REG_L);
-      printf("DEBUG: [VPC3_SetConstants] MODE_REG_2 configurado: 0x%02X (esperado: 0x%02X)\r\n", Vpc3Read(bVpc3WoModeReg2), INIT_VPC3_MODE_REG_2);
+     printf("DEBUG: [VPC3_SetConstants] MODE_REG_2 configurado: 0x%02X (esperado: 0x%02X)\r\n", VPC3_GetModeReg2Shadow(), INIT_VPC3_MODE_REG_2);
       printf("DEBUG: [VPC3_SetConstants] MODE_REG_3 configurado: 0x%02X (esperado: 0x%02X)\r\n", Vpc3Read(bVpc3WoModeReg3), INIT_VPC3_MODE_REG_3);
    #endif /* #if VPC3_SERIAL_MODE */
 
@@ -2426,7 +2426,7 @@ uint8_t VPC3_ForceModeReg2(void) {
       VPC3_SET_MODE_REG_2(expected_value);
       
       // Read back to verify
-      current_value = Vpc3Read(bVpc3WoModeReg2);
+     current_value = VPC3_GetModeReg2Shadow();
       printf("[VPC3_ForceModeReg2] Escrito: 0x%02X, Leído: 0x%02X\r\n", expected_value, current_value);
       
       if (current_value == expected_value) {
@@ -2455,7 +2455,7 @@ uint8_t VPC3_ForceModeReg2(void) {
  */
 uint8_t VPC3_MonitorAndRecoverModeReg2(void) {
    static uint8_t last_known_value = 0xFF;
-   uint8_t current_value = Vpc3Read(bVpc3WoModeReg2);
+   uint8_t current_value = VPC3_GetModeReg2Shadow();
    uint8_t expected_value = INIT_VPC3_MODE_REG_2;
    
    // First time initialization
@@ -2578,7 +2578,7 @@ uint8_t VPC3_DiagnoseMemoryMode(void) {
    printf("DEBUG: [VPC3_DiagnoseMemoryMode] === DIAGNÓSTICO DE MODO DE MEMORIA ===\r\n");
    
    // Leer el MODE_REG_2 actual
-   uint8_t mode_reg2 = Vpc3Read(bVpc3WoModeReg2);
+   uint8_t mode_reg2 = VPC3_GetModeReg2Shadow();
    printf("DEBUG: [VPC3_DiagnoseMemoryMode] MODE_REG_2 leído: 0x%02X (binario: ", mode_reg2);
    
    // Mostrar en binario
@@ -2666,7 +2666,7 @@ uint8_t VPC3_AdaptiveModeReg2Monitor(void) {
     
     last_check_time = current_time;
     
-    uint8_t current_mode_reg_2 = Vpc3Read(bVpc3WoModeReg2);
+   uint8_t current_mode_reg_2 = VPC3_GetModeReg2Shadow();
     
     if (current_mode_reg_2 != last_mode_reg_2) {
         printf("DEBUG: [VPC3_AdaptiveModeReg2Monitor] 🔄 MODE_REG_2 cambió: 0x%02X -> 0x%02X\r\n", 

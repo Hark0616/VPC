@@ -12,6 +12,10 @@ static void VPC3_LogDiagnosticAccess(VPC3_ADR address, const char* operation);
 /* External SPI handle declaration */
 extern SPI_HandleTypeDef hspi1;
 
+/* Shadow copy for write-only MODE_REG_2 (0x0C) */
+static volatile uint8_t g_vpc3_mode_reg2_shadow = INIT_VPC3_MODE_REG_2;
+uint8_t VPC3_GetModeReg2Shadow(void) { return g_vpc3_mode_reg2_shadow; }
+
 /* VPC3+S SPI Instruction Set */
 #define OPC_WR_BYTE   0x12  // Write Byte
 #define OPC_RD_BYTE   0x13  // Read Byte
@@ -116,11 +120,16 @@ static uint8_t vpc3_write_with_retry(VPC3_ADR wAddress, uint8_t bData, uint8_t m
         
         // 6. Verificación con delay
         HAL_Delay(2); // Longer delay for stabilization
-        
+
         // 7. Read back and verify
-        verify_value = Vpc3Read(wAddress);
-        if (verify_value == bData) {
-            return 0; // Success
+        if (wAddress == bVpc3WoModeReg2) {
+            // MODE_REG_2 is write-only – accept write without readback
+            return 0;
+        } else {
+            verify_value = Vpc3Read(wAddress);
+            if (verify_value == bData) {
+                return 0; // Success
+            }
         }
         
         // If verification failed, try again
@@ -167,6 +176,11 @@ void Vpc3Write(VPC3_ADR wAddress, uint8_t bData) {
     
     if (wAddress == 0x0B) {  // MODE_REG_3
         printf("DEBUG: [Vpc3Write] ESCRITURA a MODE_REG_3 (0x0B): 0x%02X\r\n", bData);
+    }
+
+    // Maintain shadow for write-only MODE_REG_2
+    if (wAddress == bVpc3WoModeReg2) {
+        g_vpc3_mode_reg2_shadow = bData;
     }
 
     // Use retry mechanism for critical registers
@@ -243,7 +257,7 @@ uint8_t VPC3_DetectActualMemoryMode(void) {
             return 2; // Unknown/corrupted mode
         }
         
-        mode_reg_2 = Vpc3Read(bVpc3WoModeReg2);
+        mode_reg_2 = VPC3_GetModeReg2Shadow();
         
         // Check if we got a valid response (not 0xFF which indicates no response)
         if (mode_reg_2 != 0xFF) {
@@ -348,7 +362,7 @@ static void VPC3_LogMemoryAccess(VPC3_ADR address, const char* operation, const 
             printf("🔍 [VPC3_LogMemoryAccess] 🚨 En modo 4KB: 2046 está en el rango medio (0x7FE)\r\n");
             
             // Verificar MODE_REG_2 para determinar el modo actual
-            uint8_t mode_reg_2 = Vpc3Read(bVpc3WoModeReg2);
+            uint8_t mode_reg_2 = VPC3_GetModeReg2Shadow();
             uint8_t bit_7 = (mode_reg_2 >> 7) & 0x01;
             printf("🔍 [VPC3_LogMemoryAccess] 🚨 MODE_REG_2 actual: 0x%02X, bit7=%d\r\n", mode_reg_2, bit_7);
             printf("🔍 [VPC3_LogMemoryAccess] 🚨 Modo detectado: %s\r\n", bit_7 ? "4KB" : "2KB");
@@ -374,7 +388,7 @@ static void VPC3_LogDiagnosticAccess(VPC3_ADR address, const char* operation) {
         printf("🚨 [VPC3_LogDiagnosticAccess] Dirección: 0x%04X (%u decimal)\r\n", address, address);
         
         // Análisis del modo de memoria actual
-        uint8_t mode_reg_2 = Vpc3Read(bVpc3WoModeReg2);
+        uint8_t mode_reg_2 = VPC3_GetModeReg2Shadow();
         uint8_t bit_7 = (mode_reg_2 >> 7) & 0x01;
         
         printf("🚨 [VPC3_LogDiagnosticAccess] MODE_REG_2: 0x%02X (bit7=%d)\r\n", mode_reg_2, bit_7);

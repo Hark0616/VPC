@@ -1,0 +1,4 @@
+DpPrm.c:57:6:DpPrm_Init	4	static
+DpPrm.c:78:22:DpPrm_ChkDpv1StatusBytes	24	static
+DpPrm.c:112:15:DpPrm_ChkPrmCounterModulePrm	24	static
+DpPrm.c:155:15:DpPrm_ChkNewPrmData	24	static
