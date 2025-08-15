@@ -243,8 +243,8 @@ int main(void)
             app_state = APP_IN_DATA_EX;
         } else if (app_state == APP_IN_DATA_EX && dp_state != DATA_EX) {
             printf("\r\n[APP_STATE_CHANGE] WARNING: Left DATA_EXCHANGE unexpectedly!\r\n");
-            printf("                     STATUS_L is now 0x%02X, DP_STATE is %d.\r\n", current_status_l, dp_state);
-            printf("                     Returning to wait for new configuration.\r\n\r\n");
+            printf("STATUS_L is now 0x%02X, DP_STATE is %d.\r\n", current_status_l, dp_state);
+            printf("Returning to wait for new configuration.\r\n\r\n");
             app_state = APP_WAITING_CFG;
         }
 

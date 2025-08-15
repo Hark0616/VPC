@@ -39,6 +39,13 @@
 #include "dp_inc.h"  /* Para definiciones de estructuras PROFIBUS */
 #include "dp_if.h"   /* Para definiciones de estructuras SSA */
 
+/*---------------------------------------------------------------------------*/
+/* validation constants                                                      */
+/*---------------------------------------------------------------------------*/
+#define MAX_SAFE_CFG_LENGTH     ((uint8_t)50)      // Maximum safe CFG length before rejecting
+#define MAX_SAFE_PRM_LENGTH     ((uint8_t)50)      // Maximum safe PRM length before rejecting
+#define EXPECTED_CFG_LENGTH     ((uint8_t)2)       // Expected CFG length for this application
+#define MAX_DEBUG_PRINT_BYTES   ((uint8_t)50)      // Maximum bytes to print in debug messages
 
 #if VPC3_SERIAL_MODE
    #define MakeWord( Hi, Lo ) ( (uint16_t)( ( ( (uint8_t)( Hi ) ) << 8 ) | ( (uint8_t)( Lo ) ) ) )
@@ -116,37 +123,37 @@ volatile uint8_t bResult;
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_DIAG_BUFFER_CHANGED() )
          {
-            printf("🚨 [dp_isr] === IND_DIAG_BUFFER_CHANGED DETECTADO ===\r\n");
-            printf("🚨 [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
-            printf("🚨 [dp_isr] STATUS_L antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
-            printf("🚨 [dp_isr] STATUS_H antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
-            printf("🚨 [dp_isr] DP_STATE antes del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
-            printf("🚨 [dp_isr] MODE_REG_2 antes del evento: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
+            printf(" [dp_isr] === IND_DIAG_BUFFER_CHANGED DETECTADO ===\r\n");
+            printf(" [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
+            printf(" [dp_isr] STATUS_L antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
+            printf(" [dp_isr] STATUS_H antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            printf(" [dp_isr] DP_STATE antes del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
+            printf(" [dp_isr] MODE_REG_2 antes del evento: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
             
             // Análisis del buffer de diagnóstico
             uint8_t diag_buffer_sm = Vpc3Read(0x0E); // Diag buffer state machine
-            printf("🚨 [dp_isr] Diag Buffer State Machine: 0x%02X\r\n", diag_buffer_sm);
+            printf(" [dp_isr] Diag Buffer State Machine: 0x%02X\r\n", diag_buffer_sm);
             
-            printf("🚨 [dp_isr] Buffer de diagnóstico disponible\r\n");
+            printf(" [dp_isr] Buffer de diagnóstico disponible\r\n");
             
-            printf("🚨 [dp_isr] Llamando DpDiag_IsrDiagBufferChanged...\r\n");
+            printf(" [dp_isr] Llamando DpDiag_IsrDiagBufferChanged...\r\n");
             DpDiag_IsrDiagBufferChanged();
 
             VPC3_POLL_CON_IND_DIAG_BUFFER_CHANGED();
             
             // --- VALIDACIÓN CRÍTICA: Verificar si los punteros se corrompieron ---
-            printf("🚨 [dp_isr] Verificando integridad de punteros después del evento...\r\n");
+            printf(" [dp_isr] Verificando integridad de punteros después del evento...\r\n");
             if (VPC3_ValidateSegmentPointers() != DP_OK) {
-                printf("🚨 [dp_isr] PUNTEROS CORRUPTOS DETECTADOS! Intentando recuperación...\r\n");
+                printf(" [dp_isr] PUNTEROS CORRUPTOS DETECTADOS! Intentando recuperación...\r\n");
                 // Los punteros se corrigieron en VPC3_ValidateSegmentPointers si era posible
             } else {
-                printf("🚨 [dp_isr] Punteros de segmentos validados correctamente\r\n");
+                printf(" [dp_isr] Punteros de segmentos validados correctamente\r\n");
             }
             
-            printf("🚨 [dp_isr] STATUS_L después del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
-            printf("🚨 [dp_isr] STATUS_H después del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
-            printf("🚨 [dp_isr] DP_STATE después del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
-            printf("🚨 [dp_isr] === FIN IND_DIAG_BUFFER_CHANGED ===\r\n");
+            printf(" [dp_isr] STATUS_L después del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
+            printf(" [dp_isr] STATUS_H después del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            printf(" [dp_isr] DP_STATE después del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
+            printf(" [dp_isr] === FIN IND_DIAG_BUFFER_CHANGED ===\r\n");
          } /* if( VPC3_POLL_IND_DIAG_BUFFER_CHANGED() ) */
 
          /*------------------------------------------------------------------*/
@@ -154,10 +161,10 @@ volatile uint8_t bResult;
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_NEW_PRM_DATA() )
          {
-            printf("🎯 [dp_isr] === PRM RECIBIDO DEL MASTER ===\r\n");
-            printf("🎯 [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
-            printf("🎯 [dp_isr] STATUS_L antes de procesar PRM: 0x%02X\r\n", VPC3_GET_STATUS_L());
-            printf("🎯 [dp_isr] STATUS_H antes de procesar PRM: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            printf(" [dp_isr] === PRM RECIBIDO DEL MASTER ===\r\n");
+            printf(" [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
+            printf(" [dp_isr] STATUS_L antes de procesar PRM: 0x%02X\r\n", VPC3_GET_STATUS_L());
+            printf(" [dp_isr] STATUS_H antes de procesar PRM: 0x%02X\r\n", VPC3_GET_STATUS_H());
             
             uint8_t bPrmLength;
 
@@ -169,7 +176,7 @@ volatile uint8_t bResult;
 
             do
             {
-                uint8_t *prmBufPtr;
+                uint8_t* prmBufPtr;
                 VPC3_ADR prmAddr;
                 
                 bPrmLength = VPC3_GET_PRM_LEN();
@@ -184,19 +191,40 @@ volatile uint8_t bResult;
                 
                 // Validar que la dirección está dentro del rango válido
                 if (prmAddr >= ASIC_RAM_LENGTH) {
-                    printf("🚨 [dp_isr] ERROR: Puntero PRM corrupto! Addr=0x%04X >= ASIC_RAM_LENGTH=0x%04X\r\n", 
+                    printf(" [dp_isr] ERROR: Puntero PRM corrupto! Addr=0x%04X >= ASIC_RAM_LENGTH=0x%04X\r\n", 
                            prmAddr, ASIC_RAM_LENGTH);
-                    printf("🚨 [dp_isr] Rechazando trama PRM corrupta para evitar LECTURA ILEGAL\r\n");
+                    printf(" [dp_isr] Rechazando trama PRM corrupta para evitar LECTURA ILEGAL\r\n");
                     bResult = VPC3_SET_PRM_DATA_NOT_OK();
                     break; // Salir del bucle do-while
                 }
                 
                 // Validar que la longitud es razonable
                 if (bPrmLength > 50) {
-                    printf("🚨 [dp_isr] ERROR: Longitud PRM sospechosa (%d bytes). Rechazando.\r\n", bPrmLength);
+                    printf(" [dp_isr] ERROR: Longitud PRM sospechosa (%d bytes). Rechazando.\r\n", bPrmLength);
                     bResult = VPC3_SET_PRM_DATA_NOT_OK();
                     break; // Salir del bucle do-while
                 }
+                
+                // *** VALIDACIONES CRÍTICAS ADICIONALES ***
+                
+                // 3. Validar que la dirección final no excede el rango de memoria
+                if ((prmAddr + bPrmLength) > ASIC_RAM_LENGTH) {
+                    printf("ERROR: [dp_isr] Rango PRM excede memoria ASIC (0x%04X + %d = 0x%04X > 0x%04X)\r\n", 
+                           prmAddr, bPrmLength, (prmAddr + bPrmLength), ASIC_RAM_LENGTH);
+                    bResult = VPC3_SET_PRM_DATA_NOT_OK();
+                    break;
+                }
+                
+                // 4. Validar que la longitud no excede el buffer de destino
+                if (bPrmLength > HELP_BUFSIZE) {
+                    printf("ERROR: [dp_isr] Longitud PRM excede buffer destino (%d bytes > %d bytes)\r\n", 
+                           bPrmLength, HELP_BUFSIZE);
+                    bResult = VPC3_SET_PRM_DATA_NOT_OK();
+                    break;
+                }
+                
+                // *** TODAS LAS VALIDACIONES PASARON - PROCEDER CON COPIA SEGURA ***
+                printf("DEBUG: [dp_isr] Validaciones PRM exitosas - procediendo con copia segura\r\n");
 
                 CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], prmBufPtr, bPrmLength );
 
@@ -230,10 +258,10 @@ volatile uint8_t bResult;
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_NEW_CFG_DATA() )
          {
-            printf("🎯 [dp_isr] === CFG RECIBIDO DEL MASTER ===\r\n");
-            printf("🎯 [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
-            printf("🎯 [dp_isr] STATUS_L antes de procesar CFG: 0x%02X\r\n", VPC3_GET_STATUS_L());
-            printf("🎯 [dp_isr] STATUS_H antes de procesar CFG: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            printf(" [dp_isr] === CFG RECIBIDO DEL MASTER ===\r\n");
+            printf(" [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
+            printf(" [dp_isr] STATUS_L antes de procesar CFG: 0x%02X\r\n", VPC3_GET_STATUS_L());
+            printf(" [dp_isr] STATUS_H antes de procesar CFG: 0x%02X\r\n", VPC3_GET_STATUS_H());
             
             uint8_t bCfgLength;
 
@@ -245,7 +273,7 @@ volatile uint8_t bResult;
 
             do
             {
-               uint8_t *cfgBufPtr;
+               uint8_t* cfgBufPtr;
                VPC3_ADR cfgAddr;
                
                bCfgLength = VPC3_GET_CFG_LEN();
@@ -260,19 +288,40 @@ volatile uint8_t bResult;
                
                // Validar que la dirección está dentro del rango válido
                if (cfgAddr >= ASIC_RAM_LENGTH) {
-                   printf("🚨 [dp_isr] ERROR: Puntero CFG corrupto! Addr=0x%04X >= ASIC_RAM_LENGTH=0x%04X\r\n", 
+                   printf(" [dp_isr] ERROR: Puntero CFG corrupto! Addr=0x%04X >= ASIC_RAM_LENGTH=0x%04X\r\n", 
                           cfgAddr, ASIC_RAM_LENGTH);
-                   printf("🚨 [dp_isr] Rechazando trama CFG corrupta para evitar LECTURA ILEGAL\r\n");
+                   printf(" [dp_isr] Rechazando trama CFG corrupta para evitar LECTURA ILEGAL\r\n");
                    bResult = VPC3_SET_CFG_DATA_NOT_OK();
                    break; // Salir del bucle do-while
                }
                
                // Validar que la longitud es razonable
                if (bCfgLength > 50) {
-                   printf("🚨 [dp_isr] ERROR: Longitud CFG sospechosa (%d bytes). Rechazando.\r\n", bCfgLength);
+                   printf(" [dp_isr] ERROR: Longitud CFG sospechosa (%d bytes). Rechazando.\r\n", bCfgLength);
                    bResult = VPC3_SET_CFG_DATA_NOT_OK();
                    break; // Salir del bucle do-while
                }
+               
+               // *** VALIDACIONES CRÍTICAS ADICIONALES ***
+               
+               // 3. Validar que la dirección final no excede el rango de memoria
+               if ((cfgAddr + bCfgLength) > ASIC_RAM_LENGTH) {
+                   printf("ERROR: [dp_isr] Rango CFG excede memoria ASIC (0x%04X + %d = 0x%04X > 0x%04X)\r\n", 
+                          cfgAddr, bCfgLength, (cfgAddr + bCfgLength), ASIC_RAM_LENGTH);
+                   bResult = VPC3_SET_CFG_DATA_NOT_OK();
+                   break;
+               }
+               
+               // 4. Validar que la longitud no excede el buffer de destino
+               if (bCfgLength > HELP_BUFSIZE) {
+                   printf("ERROR: [dp_isr] Longitud CFG excede buffer destino (%d bytes > %d bytes)\r\n", 
+                          bCfgLength, HELP_BUFSIZE);
+                   bResult = VPC3_SET_CFG_DATA_NOT_OK();
+                   break;
+               }
+               
+               // *** TODAS LAS VALIDACIONES PASARON - PROCEDER CON COPIA SEGURA ***
+               printf("DEBUG: [dp_isr] Validaciones CFG exitosas - procediendo con copia segura\r\n");
                
                CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], cfgBufPtr, bCfgLength );
 
@@ -280,16 +329,22 @@ volatile uint8_t bResult;
                
                                // Protección contra tramas CFG corruptas
                 if (bCfgLength > 10) {
-                    printf("⚠️ [dp_isr] ADVERTENCIA: Trama CFG sospechosamente larga (%d bytes). Esperado: 2 bytes (1 OUT + 1 IN).\r\n", bCfgLength);
-                    printf("⚠️ [dp_isr] Posible problema en configuración del PLC o GSD.\r\n");
+                    printf(" [dp_isr] ADVERTENCIA: Trama CFG sospechosamente larga (%d bytes). Esperado: 2 bytes (1 OUT + 1 IN).\r\n", bCfgLength);
+                    printf(" [dp_isr] Posible problema en configuración del PLC o GSD.\r\n");
                     if (bCfgLength > 50) {
-                        printf("⚠️ [dp_isr] Limitando a primeros 50 bytes para evitar corrupción.\r\n");
+                        printf(" [dp_isr] Limitando a primeros 50 bytes para evitar corrupción.\r\n");
                         bCfgLength = 50;
                     }
                 }
                
-               for(int k=0; k<bCfgLength && k<50; k++) {
+               for(int k=0; k<bCfgLength && k<MAX_DEBUG_PRINT_BYTES; k++) {
                   printf("0x%02X ", pDpSystem->abPrmCfgSsaHelpBuffer[k]);
+               }
+               
+               // Información adicional para debugging
+               if (bCfgLength != EXPECTED_CFG_LENGTH) {
+                   printf("WARNING: [dp_isr] CFG length mismatch - Expected: %d bytes, Received: %d bytes\r\n", 
+                          EXPECTED_CFG_LENGTH, bCfgLength);
                }
                printf("\r\n");
 
@@ -367,26 +422,26 @@ volatile uint8_t bResult;
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_GO_LEAVE_DATA_EX() )
          {
-            printf("🚨 [dp_isr] === IND_GO_LEAVE_DATA_EX DETECTADO ===\r\n");
-            printf("🚨 [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
-            printf("🚨 [dp_isr] STATUS_L antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
-            printf("🚨 [dp_isr] STATUS_H antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
-            printf("🚨 [dp_isr] DP_STATE antes del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
-            printf("🚨 [dp_isr] MODE_REG_2 antes del evento: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
+            printf(" [dp_isr] === IND_GO_LEAVE_DATA_EX DETECTADO ===\r\n");
+            printf(" [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
+            printf(" [dp_isr] STATUS_L antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
+            printf(" [dp_isr] STATUS_H antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            printf(" [dp_isr] DP_STATE antes del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
+            printf(" [dp_isr] MODE_REG_2 antes del evento: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
             
             // Análisis del estado de comunicación
             uint8_t status_l = VPC3_GET_STATUS_L();
             uint8_t actual_dp_state = (status_l & 0x60) >> 5;
-            printf("🚨 [dp_isr] Estado real calculado de STATUS_L: 0x%02X\r\n", actual_dp_state);
+            printf(" [dp_isr] Estado real calculado de STATUS_L: 0x%02X\r\n", actual_dp_state);
             
             if (actual_dp_state == DATA_EX) {
-                printf("🚨 [dp_isr] ⚠️ Estado real es DATA_EX - posible evento falso\r\n");
+                printf(" [dp_isr]  Estado real es DATA_EX - posible evento falso\r\n");
             } else {
-                printf("🚨 [dp_isr] ✅ Estado real NO es DATA_EX - evento válido\r\n");
+                printf(" [dp_isr]  Estado real NO es DATA_EX - evento válido\r\n");
             }
             
-            printf("🚨 [dp_isr] IND_GO_LEAVE_DATA_EX detectado - llamando DpAppl_IsrGoLeaveDataExchange\r\n");
-            printf("🚨 [dp_isr] VPC3_GET_DP_STATE() = 0x%02X\r\n", VPC3_GET_DP_STATE());
+            printf(" [dp_isr] IND_GO_LEAVE_DATA_EX detectado - llamando DpAppl_IsrGoLeaveDataExchange\r\n");
+            printf(" [dp_isr] VPC3_GET_DP_STATE() = 0x%02X\r\n", VPC3_GET_DP_STATE());
             
             #if DP_MSAC_C1
                MSAC_C1_LeaveDx();
@@ -395,11 +450,11 @@ volatile uint8_t bResult;
             DpAppl_IsrGoLeaveDataExchange( VPC3_GET_DP_STATE() );
 
             VPC3_CON_IND_GO_LEAVE_DATA_EX();
-            printf("🚨 [dp_isr] STATUS_L después del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
-            printf("🚨 [dp_isr] STATUS_H después del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
-            printf("🚨 [dp_isr] DP_STATE después del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
-            printf("🚨 [dp_isr] IND_GO_LEAVE_DATA_EX procesado\r\n");
-            printf("🚨 [dp_isr] === FIN IND_GO_LEAVE_DATA_EX ===\r\n");
+            printf(" [dp_isr] STATUS_L después del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
+            printf(" [dp_isr] STATUS_H después del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            printf(" [dp_isr] DP_STATE después del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
+            printf(" [dp_isr] IND_GO_LEAVE_DATA_EX procesado\r\n");
+            printf(" [dp_isr] === FIN IND_GO_LEAVE_DATA_EX ===\r\n");
          } /* if( VPC3_POLL_IND_GO_LEAVE_DATA_EX() ) */
 
          /*------------------------------------------------------------------*/
@@ -450,7 +505,7 @@ volatile uint8_t bResult;
          if( VPC3_POLL_IND_NEW_SSA_DATA() )
          {
             CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], VPC3_GET_SSA_BUF_PTR(), 4 );
-            DpAppl_IsrNewSetSlaveAddress( (MEM_STRUC_SSA_BLOCK_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0] );
+            DpAppl_IsrNewSetSlaveAddress( (uint8_t*)&pDpSystem->abPrmCfgSsaHelpBuffer[0] );
 
             bResult = VPC3_FREE_SSA_BUF();
 
@@ -564,41 +619,41 @@ void dp_isr(void)
    static uint32_t dp_isr_call_count = 0;
    dp_isr_call_count++;
    
-   printf("🔍 [dp_isr] === LLAMADA #%lu ===\r\n", dp_isr_call_count);
-   printf("🔍 [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
-   printf("🔍 [dp_isr] STACK TRACE - Llamada desde:\r\n");
-   printf("🔍 [dp_isr] - Función: dp_isr\r\n");
-   printf("🔍 [dp_isr] - Archivo: ../Core/Src/dp_isr.c\r\n");
-   printf("🔍 [dp_isr] - Línea: %d\r\n", __LINE__);
+   printf(" [dp_isr] === LLAMADA #%lu ===\r\n", dp_isr_call_count);
+   printf(" [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
+   printf(" [dp_isr] STACK TRACE - Llamada desde:\r\n");
+   printf(" [dp_isr] - Función: dp_isr\r\n");
+   printf(" [dp_isr] - Archivo: ../Core/Src/dp_isr.c\r\n");
+   printf(" [dp_isr] - Línea: %d\r\n", __LINE__);
    
    // Verificar si es llamada por polling o interrupción
    #if (VPC3_SERIAL_MODE == 0)
-      printf("🔍 [dp_isr] MODO: INTERRUPCIÓN (VPC3_Isr)\r\n");
+      printf(" [dp_isr] MODO: INTERRUPCIÓN (VPC3_Isr)\r\n");
    #else
-      printf("🔍 [dp_isr] MODO: POLLING (VPC3_Poll)\r\n");
+      printf(" [dp_isr] MODO: POLLING (VPC3_Poll)\r\n");
    #endif
    
-   printf("🔍 [dp_isr] INICIO - STATUS_L=0x%02X, STATUS_H=0x%02X, DP_STATE=0x%02X\r\n",
+   printf(" [dp_isr] INICIO - STATUS_L=0x%02X, STATUS_H=0x%02X, DP_STATE=0x%02X\r\n",
           VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H(), VPC3_GET_DP_STATE());
-   printf("🔍 [dp_isr] INICIO - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3\r\n");
+   printf(" [dp_isr] INICIO - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3\r\n");
    
    // --- CRITICAL: Check for MODE_REG_2 corruption during interrupt ---
   uint8_t mode_reg2 = VPC3_GetModeReg2Shadow();
-   printf("🔍 [dp_isr] MODE_REG_2 actual: 0x%02X (esperado: 0x05)\r\n", mode_reg2);
+   printf(" [dp_isr] MODE_REG_2 actual: 0x%02X (esperado: 0x05)\r\n", mode_reg2);
    
    if (mode_reg2 != 0x05) {
-      printf("⚠️ [dp_isr] MODE_REG_2 corruption detected during interrupt: 0x%02X (expected 0x05)\r\n", mode_reg2);
+      printf(" [dp_isr] MODE_REG_2 corruption detected during interrupt: 0x%02X (expected 0x05)\r\n", mode_reg2);
       // Try to recover immediately
       if (VPC3_ForceModeReg2() == 0) {
-         printf("✅ [dp_isr] MODE_REG_2 recovered during interrupt\r\n");
+         printf(" [dp_isr] MODE_REG_2 recovered during interrupt\r\n");
       } else {
-         printf("❌ [dp_isr] Failed to recover MODE_REG_2 during interrupt\r\n");
+         printf(" [dp_isr] Failed to recover MODE_REG_2 during interrupt\r\n");
       }
    }
    
    // Detectar corrupción de registros
    if (VPC3_GET_STATUS_L() == 0x26 && VPC3_GET_STATUS_H() == 0xB7) {
-      printf("🔍 [dp_isr] ⚠️ CORRUPCIÓN DETECTADA AL INICIO - STATUS_L=0x26, STATUS_H=0xB7\r\n");
+      printf(" [dp_isr]  CORRUPCIÓN DETECTADA AL INICIO - STATUS_L=0x26, STATUS_H=0xB7\r\n");
    }
    
    // Detectar transición de DATA_EX a corrupción
@@ -609,14 +664,14 @@ void dp_isr(void)
    
    if (last_status_l == 0x45 && last_status_h == 0xE3 && 
        (current_status_l != 0x45 || current_status_h != 0xE3)) {
-      printf("🔍 [dp_isr] ⚠️ TRANSICIÓN DETECTADA: STATUS_L=0x45->0x%02X, STATUS_H=0xE3->0x%02X\r\n", 
+      printf(" [dp_isr]  TRANSICIÓN DETECTADA: STATUS_L=0x45->0x%02X, STATUS_H=0xE3->0x%02X\r\n", 
              current_status_l, current_status_h);
    }
    
    last_status_l = current_status_l;
    last_status_h = current_status_h;
    
-   printf("🔍 [dp_isr] ANTES de VPC3_Poll/VPC3_Isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n",
+   printf(" [dp_isr] ANTES de VPC3_Poll/VPC3_Isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n",
           VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
    
 #if (VPC3_SERIAL_MODE == 0)
@@ -625,11 +680,11 @@ void dp_isr(void)
     VPC3_Poll();
 #endif
 
-   printf("🔍 [dp_isr] DESPUÉS de VPC3_Poll/VPC3_Isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n",
+   printf(" [dp_isr] DESPUÉS de VPC3_Poll/VPC3_Isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n",
           VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
-   printf("🔍 [dp_isr] FIN - STATUS_L=0x%02X, STATUS_H=0x%02X, DP_STATE=0x%02X\r\n",
+   printf(" [dp_isr] FIN - STATUS_L=0x%02X, STATUS_H=0x%02X, DP_STATE=0x%02X\r\n",
           VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H(), VPC3_GET_DP_STATE());
-   printf("🔍 [dp_isr] FIN - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3\r\n");
-   printf("🔍 [dp_isr] === FIN LLAMADA #%lu ===\r\n", dp_isr_call_count);
+   printf(" [dp_isr] FIN - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3\r\n");
+   printf(" [dp_isr] === FIN LLAMADA #%lu ===\r\n", dp_isr_call_count);
 }
 

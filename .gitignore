@@ -1,0 +1,16 @@
+# Build artifacts
+Debug/
+*.o
+*.bin
+*.elf
+*.list
+*.map
+*.su
+*.d
+
+# IDE files
+.settings/
+.cproject
+.project
+.mxproject
+VPC.launch

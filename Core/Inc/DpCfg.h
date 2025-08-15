@@ -458,7 +458,12 @@
 #define DP_ISOCHRONOUS_MODE 0
 
 #define MAX(A, B)   ((A) > (B) ? (A) : (B))     /*!< Determine aximum.  */
-#define HELP_BUFSIZE                ((uint16_t)MAX( PRM_BUFSIZE, CFG_BUFSIZE ))
+// Ampliar HELP_BUFSIZE para debugging y prevenir overflow
+// Original: MAX(PRM_BUFSIZE=16, CFG_BUFSIZE=2) = 16 bytes
+// Nuevo: 64 bytes para manejar tramas grandes de forma segura durante debugging
+#define HELP_BUFSIZE_DEBUG          ((uint16_t)64)      // Buffer ampliado para debugging
+#define HELP_BUFSIZE_ORIGINAL       ((uint16_t)MAX( PRM_BUFSIZE, CFG_BUFSIZE ))
+#define HELP_BUFSIZE                HELP_BUFSIZE_DEBUG  // Usar versión ampliada
 
 // == Segmentation VPC3+ ===============================================================
 #if DP_VPC3_4KB_MODE

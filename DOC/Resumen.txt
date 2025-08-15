@@ -12,7 +12,7 @@ El sistema implementa un esclavo PROFIBUS DP usando un microcontrolador STM32 y 
 
 ---
 
-## 🔧 **1. INICIALIZACIÓN DEL SISTEMA**
+## **1. INICIALIZACIÓN DEL SISTEMA**
 
 ### **1.1 Archivo Principal: `main.c`**
 
@@ -333,7 +333,7 @@ E_DP_CFG_ERROR DpCfg_ChkNewCfgData(MEM_UNSIGNED8_PTR pbCfgData, uint8_t bCfgLeng
 
 ---
 
-## 🔍 **7. DIAGNÓSTICOS**
+##  **7. DIAGNÓSTICOS**
 
 ### **7.1 Función: `DpDiag_SetCfgOk()`**
 
@@ -396,7 +396,7 @@ DP_ERROR_CODE DpDiag_Alarm(uint8_t bAlarmType, uint8_t bSeqNr,
 
 ---
 
-## 🎯 **9. SECUENCIA DE ESTADOS (ACTUALIZADO Y VERIFICADO)**
+##  **9. SECUENCIA DE ESTADOS (ACTUALIZADO Y VERIFICADO)**
 
 ### **9.1 Transiciones de Estado:**
 
@@ -427,7 +427,7 @@ eDpStateCfgOkStatDiag = 8;  // Configuración OK, diagnóstico pendiente
 
 ---
 
-## 🔧 **10. CONFIGURACIÓN CLAVE**
+## **10. CONFIGURACIÓN CLAVE**
 
 (Contenido original sin cambios)
 

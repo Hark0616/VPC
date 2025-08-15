@@ -57,8 +57,11 @@ Max_Data_Len         = 244
 Max_Diag_Data_Len    = 6
 
 ;==================== PARÁMETROS USUARIO =================
-Max_User_Prm_Data_Len = 3
-Ext_User_Prm_Data_Const(0) = 0x00,0x00,0x00
+; Se deshabilita User Prm Data para asegurar compatibilidad con DP V0
+; y evitar que el maestro intente usar funciones de DPV1 no implementadas.
+; Max_User_Prm_Data_Len = 3
+; Ext_User_Prm_Data_Const(0) = 0x00,0x00,0x00
+Max_User_Prm_Data_Len = 0
 
 ;==================== DIAGNÓSTICO ========================
 Slave_Family        = 1

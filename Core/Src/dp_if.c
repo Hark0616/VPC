@@ -444,9 +444,9 @@ uint16_t       i;
 
    /* neccessary, if 4Kbyte mode enabled */
    printf("DEBUG: [VPC3_MemoryTest] INIT_VPC3_MODE_REG_2 = 0x%02X\r\n", INIT_VPC3_MODE_REG_2);
-   printf("DEBUG: [VPC3_MemoryTest] 📍 ANTES de VPC3_SET_MODE_REG_2 - Valor actual: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
+   printf("DEBUG: [VPC3_MemoryTest]  ANTES de VPC3_SET_MODE_REG_2 - Valor actual: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
    VPC3_SET_MODE_REG_2( INIT_VPC3_MODE_REG_2 );
-   printf("DEBUG: [VPC3_MemoryTest] 📍 DESPUÉS de VPC3_SET_MODE_REG_2 - Valor configurado: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
+   printf("DEBUG: [VPC3_MemoryTest]  DESPUÉS de VPC3_SET_MODE_REG_2 - Valor configurado: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
    
    // Verificar que se configuró correctamente
    uint8_t mode_reg_2 = VPC3_GetModeReg2Shadow();
@@ -632,7 +632,7 @@ DP_ERROR_CODE bError;
    /*-------------------------------------------------------------------*/
    printf("DEBUG: Realizando reset hardware del VPC3+S...\r\n");
    if (VPC3_HardwareReset() != 0) {
-      printf("DEBUG: ⚠️ ADVERTENCIA: Reset hardware falló, continuando de todas formas...\r\n");
+      printf("DEBUG:  ADVERTENCIA: Reset hardware falló, continuando de todas formas...\r\n");
    }
 
    /*-------------------------------------------------------------------*/
@@ -643,7 +643,7 @@ DP_ERROR_CODE bError;
    printf("DEBUG: STATUS_L actual: 0x%02X\r\n", status_l);
    
    if ((status_l & 0x01) != 0) {
-      printf("DEBUG: ⚠️ ADVERTENCIA: VPC3 no está en OFFLINE (bit 0 = 1)\r\n");
+      printf("DEBUG:  ADVERTENCIA: VPC3 no está en OFFLINE (bit 0 = 1)\r\n");
       printf("DEBUG: Intentando forzar OFFLINE...\r\n");
       
       // Try to force OFFLINE by writing to control register
@@ -660,15 +660,15 @@ DP_ERROR_CODE bError;
       
       /* neccessary, if 4Kbyte mode enabled */
       printf("DEBUG: Configurando MODE_REG_2...\r\n");
-     printf("DEBUG: [VPC3_Initialization] 📍 ANTES de VPC3_SET_MODE_REG_2 - Valor actual: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
+     printf("DEBUG: [VPC3_Initialization]  ANTES de VPC3_SET_MODE_REG_2 - Valor actual: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
       
       // Use the robust MODE_REG_2 configuration
       if (VPC3_ForceModeReg2() != 0) {
-         printf("DEBUG: ⚠️ ADVERTENCIA: No se pudo configurar MODE_REG_2 correctamente\r\n");
+         printf("DEBUG:  ADVERTENCIA: No se pudo configurar MODE_REG_2 correctamente\r\n");
          printf("DEBUG: Continuando con el valor actual...\r\n");
       }
       
-     printf("DEBUG: [VPC3_Initialization] 📍 DESPUÉS de VPC3_SET_MODE_REG_2 - Valor configurado: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
+     printf("DEBUG: [VPC3_Initialization]  DESPUÉS de VPC3_SET_MODE_REG_2 - Valor configurado: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
 
       /* clear VPC3 */
       printf("DEBUG: Limpiando memoria VPC3 (conservative range)...\r\n");
@@ -2467,24 +2467,24 @@ uint8_t VPC3_MonitorAndRecoverModeReg2(void) {
    
    // Check if value changed
    if (current_value != last_known_value) {
-      printf("[VPC3_MonitorModeReg2] 🚨 CAMBIO DETECTADO: MODE_REG_2 cambió de 0x%02X a 0x%02X\r\n", 
+      printf("[VPC3_MonitorModeReg2]  CAMBIO DETECTADO: MODE_REG_2 cambió de 0x%02X a 0x%02X\r\n", 
              last_known_value, current_value);
       
       // Check if current value is correct
       if (current_value == expected_value) {
-         printf("[VPC3_MonitorModeReg2] ✅ El nuevo valor es correcto\r\n");
+         printf("[VPC3_MonitorModeReg2]  El nuevo valor es correcto\r\n");
          last_known_value = current_value;
          return 0;
       }
       
       // Try to recover
-      printf("[VPC3_MonitorModeReg2] 🔧 Intentando recuperar MODE_REG_2...\r\n");
+      printf("[VPC3_MonitorModeReg2] Intentando recuperar MODE_REG_2...\r\n");
       if (VPC3_ForceModeReg2() == 0) {
-         printf("[VPC3_MonitorModeReg2] ✅ MODE_REG_2 recuperado exitosamente\r\n");
+         printf("[VPC3_MonitorModeReg2]  MODE_REG_2 recuperado exitosamente\r\n");
          last_known_value = expected_value;
          return 1; // Recovered
       } else {
-         printf("[VPC3_MonitorModeReg2] ❌ No se pudo recuperar MODE_REG_2\r\n");
+         printf("[VPC3_MonitorModeReg2]  No se pudo recuperar MODE_REG_2\r\n");
          last_known_value = current_value;
          return 2; // Could not recover
       }
@@ -2593,13 +2593,13 @@ uint8_t VPC3_DiagnoseMemoryMode(void) {
    printf("DEBUG: [VPC3_DiagnoseMemoryMode] Bit 7 (4KB_Mode): %d\r\n", bit7);
    
    if (bit7 == 0) {
-      printf("DEBUG: [VPC3_DiagnoseMemoryMode] ✅ ASIC está en MODO 2KB de RAM\r\n");
-      printf("DEBUG: [VPC3_DiagnoseMemoryMode] ✅ Configuración actual es CORRECTA\r\n");
+      printf("DEBUG: [VPC3_DiagnoseMemoryMode]  ASIC está en MODO 2KB de RAM\r\n");
+      printf("DEBUG: [VPC3_DiagnoseMemoryMode]  Configuración actual es CORRECTA\r\n");
       return 0;
    } else {
-      printf("DEBUG: [VPC3_DiagnoseMemoryMode] ⚠️ ASIC está en MODO 4KB de RAM\r\n");
-      printf("DEBUG: [VPC3_DiagnoseMemoryMode] ⚠️ Configuración actual es INCORRECTA\r\n");
-      printf("DEBUG: [VPC3_DiagnoseMemoryMode] ⚠️ Necesitamos cambiar DP_VPC3_4KB_MODE = 1\r\n");
+      printf("DEBUG: [VPC3_DiagnoseMemoryMode]  ASIC está en MODO 4KB de RAM\r\n");
+      printf("DEBUG: [VPC3_DiagnoseMemoryMode]  Configuración actual es INCORRECTA\r\n");
+      printf("DEBUG: [VPC3_DiagnoseMemoryMode]  Necesitamos cambiar DP_VPC3_4KB_MODE = 1\r\n");
       return 1;
    }
 }
@@ -2637,11 +2637,11 @@ uint8_t VPC3_HardwareReset(void) {
     
     // 5. Check if ASIC is in a known state
     if (status_l == 0xFF) {
-        printf("DEBUG: [VPC3_HardwareReset] ⚠️ ASIC no responde (STATUS_L = 0xFF)\r\n");
+        printf("DEBUG: [VPC3_HardwareReset]  ASIC no responde (STATUS_L = 0xFF)\r\n");
         return 1; // Failure
     }
     
-    printf("DEBUG: [VPC3_HardwareReset] ✅ ASIC responde correctamente\r\n");
+    printf("DEBUG: [VPC3_HardwareReset]  ASIC responde correctamente\r\n");
     
     // 6. Re-enable interrupts
     DpAppl_EnableInterruptVPC3Channel1();

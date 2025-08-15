@@ -628,7 +628,7 @@ uint8_t bDpState;
    
    // Detectar corrupción antes de CheckEvIoOut
    if (VPC3_GET_STATUS_L() == 0x26 && VPC3_GET_STATUS_H() == 0xB7) {
-      printf("DEBUG: [ProfibusMain] ⚠️ CORRUPCIÓN DETECTADA ANTES de CheckEvIoOut\n");
+      printf("DEBUG: [ProfibusMain]  CORRUPCIÓN DETECTADA ANTES de CheckEvIoOut\n");
    }
    
    // Detectar transición de DATA_EX a corrupción en main loop
@@ -639,7 +639,7 @@ uint8_t bDpState;
    
    if (main_last_status_l == 0x45 && main_last_status_h == 0xE3 && 
        (main_current_status_l != 0x45 || main_current_status_h != 0xE3)) {
-      printf("DEBUG: [ProfibusMain] ⚠️ TRANSICIÓN DETECTADA EN MAIN: STATUS_L=0x45->0x%02X, STATUS_H=0xE3->0x%02X\n", 
+      printf("DEBUG: [ProfibusMain]  TRANSICIÓN DETECTADA EN MAIN: STATUS_L=0x45->0x%02X, STATUS_H=0xE3->0x%02X\n", 
              main_current_status_l, main_current_status_h);
    }
    
@@ -652,7 +652,7 @@ uint8_t bDpState;
    
    // Detectar corrupción después de CheckEvIoOut
    if (VPC3_GET_STATUS_L() == 0x26 && VPC3_GET_STATUS_H() == 0xB7) {
-      printf("DEBUG: [ProfibusMain] ⚠️ CORRUPCIÓN DETECTADA DESPUÉS de CheckEvIoOut\n");
+      printf("DEBUG: [ProfibusMain]  CORRUPCIÓN DETECTADA DESPUÉS de CheckEvIoOut\n");
    }
 
         // Detailed log every 5 seconds
@@ -674,10 +674,10 @@ uint8_t bDpState;
             uint8_t current_mode_reg2 = VPC3_GetModeReg2Shadow();  // write-only, use shadow
             static uint8_t last_mode_reg2 = 0xFF;
             if (current_mode_reg2 != last_mode_reg2) {
-                printf("DEBUG: [MODE_REG2_MONITOR] ⚠️ MODE_REG_2 cambió de 0x%02X a 0x%02X (esperado: 0x05)\r\n", 
+                printf("DEBUG: [MODE_REG2_MONITOR]  MODE_REG_2 cambió de 0x%02X a 0x%02X (esperado: 0x05)\r\n", 
                        last_mode_reg2, current_mode_reg2);
                 if (current_mode_reg2 != 0x05) {
-                    printf("DEBUG: [MODE_REG2_MONITOR] 🚨 VALOR INCORRECTO DETECTADO - Esto causará LECTURAS ILEGALES\r\n");
+                    printf("DEBUG: [MODE_REG2_MONITOR]  VALOR INCORRECTO DETECTADO - Esto causará LECTURAS ILEGALES\r\n");
                 }
                 last_mode_reg2 = current_mode_reg2;
             }
@@ -722,12 +722,12 @@ uint8_t bDpState;
       // VPC3_AdaptiveModeReg2Monitor();
 
       // --- Polling de eventos VPC3+ ---
-      printf("🔍 [ProfibusMain] ANTES de llamar dp_isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n", 
+      printf(" [ProfibusMain] ANTES de llamar dp_isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n", 
              VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
       
       dp_isr();
       
-      printf("🔍 [ProfibusMain] DESPUÉS de llamar dp_isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n", 
+      printf(" [ProfibusMain] DESPUÉS de llamar dp_isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n", 
              VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
 
 
@@ -756,17 +756,17 @@ static uint8_t DpAppl_ValidateCommunicationStability(void) {
     
     // Check for corrupted status registers
     if (status_l == 0xFF || status_h == 0xFF) {
-        printf("DEBUG: [DpAppl_ValidateCommunicationStability] ❌ STATUS registers corrupted (0xFF)\n");
+        printf("DEBUG: [DpAppl_ValidateCommunicationStability]  STATUS registers corrupted (0xFF)\n");
         return 0;
     }
     
     // Check for known corruption patterns
     if (status_l == 0x26 && status_h == 0xB7) {
-        printf("DEBUG: [DpAppl_ValidateCommunicationStability] ❌ Known corruption pattern detected\n");
+        printf("DEBUG: [DpAppl_ValidateCommunicationStability]  Known corruption pattern detected\n");
         return 0;
     }
     
-    printf("DEBUG: [DpAppl_ValidateCommunicationStability] ⚠️ Unknown state: STATUS_L=0x%02X, STATUS_H=0x%02X, DP_STATE=0x%02X\n", 
+    printf("DEBUG: [DpAppl_ValidateCommunicationStability]  Unknown state: STATUS_L=0x%02X, STATUS_H=0x%02X, DP_STATE=0x%02X\n", 
            status_l, status_h, dp_state);
     
     // If we can't determine, assume it's stable to avoid unnecessary resets
@@ -895,7 +895,7 @@ void DpAppl_IsrGoLeaveDataExchange( uint8_t bDpState )
    // Solo resetear si hay una discrepancia real y el sistema no está funcionando
    if( bDpState != DATA_EX && actual_dp_state != DATA_EX )
    {
-      printf("DEBUG: [IsrGoLeaveDataExchange] ⚠️ Confirmado: bDpState=0x%02X != DATA_EX y actual_dp_state=0x%02X != DATA_EX\n", 
+      printf("DEBUG: [IsrGoLeaveDataExchange]  Confirmado: bDpState=0x%02X != DATA_EX y actual_dp_state=0x%02X != DATA_EX\n", 
              bDpState, actual_dp_state);
       printf("DEBUG: [IsrGoLeaveDataExchange] Reseteando estados - salida real de DATA_EX detectada\n");
       
@@ -905,27 +905,27 @@ void DpAppl_IsrGoLeaveDataExchange( uint8_t bDpState )
    } 
    else if( bDpState != DATA_EX && actual_dp_state == DATA_EX )
    {
-      printf("DEBUG: [IsrGoLeaveDataExchange] ⚠️ bDpState=0x%02X != DATA_EX pero actual_dp_state=0x%02X == DATA_EX\n", 
+      printf("DEBUG: [IsrGoLeaveDataExchange]  bDpState=0x%02X != DATA_EX pero actual_dp_state=0x%02X == DATA_EX\n", 
              bDpState, actual_dp_state);
-      printf("DEBUG: [IsrGoLeaveDataExchange] ⚠️ Posible corrupción de MODE_REG_2 - NO reseteando estados para mantener comunicación\n");
-      printf("DEBUG: [IsrGoLeaveDataExchange] ⚠️ Intentando recuperar MODE_REG_2 sin resetear estados...\n");
+      printf("DEBUG: [IsrGoLeaveDataExchange]  Posible corrupción de MODE_REG_2 - NO reseteando estados para mantener comunicación\n");
+      printf("DEBUG: [IsrGoLeaveDataExchange]  Intentando recuperar MODE_REG_2 sin resetear estados...\n");
       
       // Intentar recuperar MODE_REG_2 sin resetear estados
       if (VPC3_ForceModeReg2() == 0) {
-         printf("DEBUG: [IsrGoLeaveDataExchange] ✅ MODE_REG_2 recuperado sin resetear estados\n");
+         printf("DEBUG: [IsrGoLeaveDataExchange]  MODE_REG_2 recuperado sin resetear estados\n");
       } else {
-         printf("DEBUG: [IsrGoLeaveDataExchange] ❌ No se pudo recuperar MODE_REG_2, pero manteniendo comunicación\n");
+         printf("DEBUG: [IsrGoLeaveDataExchange]  No se pudo recuperar MODE_REG_2, pero manteniendo comunicación\n");
       }
    }
    else if( bDpState == DATA_EX && actual_dp_state == DATA_EX )
    {
-      printf("DEBUG: [IsrGoLeaveDataExchange] ✅ OK: bDpState == DATA_EX y actual_dp_state == DATA_EX - comunicación estable\n");
+      printf("DEBUG: [IsrGoLeaveDataExchange]  OK: bDpState == DATA_EX y actual_dp_state == DATA_EX - comunicación estable\n");
    }
    else
    {
-      printf("DEBUG: [IsrGoLeaveDataExchange] ⚠️ Estado inconsistente: bDpState=0x%02X, actual_dp_state=0x%02X\n", 
+      printf("DEBUG: [IsrGoLeaveDataExchange]  Estado inconsistente: bDpState=0x%02X, actual_dp_state=0x%02X\n", 
              bDpState, actual_dp_state);
-      printf("DEBUG: [IsrGoLeaveDataExchange] ⚠️ Manteniendo estados actuales para evitar interrupciones\n");
+      printf("DEBUG: [IsrGoLeaveDataExchange]  Manteniendo estados actuales para evitar interrupciones\n");
    }
    
    printf("DEBUG: [IsrGoLeaveDataExchange] FIN\n");

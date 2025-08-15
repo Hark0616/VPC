@@ -146,23 +146,23 @@ static uint8_t vpc3_write_with_retry(VPC3_ADR wAddress, uint8_t bData, uint8_t m
 void Vpc3Write(VPC3_ADR wAddress, uint8_t bData) {
     // DEBUG: Monitoreo de escrituras a registros críticos
     if (wAddress == 0x0C) {  // MODE_REG_2 (bVpc3WoModeReg2)
-        printf("DEBUG: [Vpc3Write] ⚠️ ESCRITURA a MODE_REG_2 (0x0C): 0x%02X\r\n", bData);
+        printf("DEBUG: [Vpc3Write]  ESCRITURA a MODE_REG_2 (0x0C): 0x%02X\r\n", bData);
         if (bData != 0x05) {
-            printf("DEBUG: [Vpc3Write] ⚠️ ADVERTENCIA: MODE_REG_2 se está configurando a 0x%02X en lugar de 0x05\r\n", bData);
-            printf("DEBUG: [Vpc3Write] ⚠️ VALOR INCORRECTO DETECTADO - Esto causará LECTURAS ILEGALES\r\n");
+            printf("DEBUG: [Vpc3Write]  ADVERTENCIA: MODE_REG_2 se está configurando a 0x%02X en lugar de 0x05\r\n", bData);
+            printf("DEBUG: [Vpc3Write]  VALOR INCORRECTO DETECTADO - Esto causará LECTURAS ILEGALES\r\n");
         }
         
         // Stack trace para identificar quién está escribiendo
-        printf("DEBUG: [Vpc3Write] 📍 Stack trace - Escritura a MODE_REG_2 desde:\r\n");
-        printf("DEBUG: [Vpc3Write] 📍 - Función llamadora: %s\r\n", __FUNCTION__);
-        printf("DEBUG: [Vpc3Write] 📍 - Línea: %d\r\n", __LINE__);
-        printf("DEBUG: [Vpc3Write] 📍 - Archivo: %s\r\n", __FILE__);
+        printf("DEBUG: [Vpc3Write]  Stack trace - Escritura a MODE_REG_2 desde:\r\n");
+        printf("DEBUG: [Vpc3Write]  - Función llamadora: %s\r\n", __FUNCTION__);
+        printf("DEBUG: [Vpc3Write]  - Línea: %d\r\n", __LINE__);
+        printf("DEBUG: [Vpc3Write]  - Archivo: %s\r\n", __FILE__);
         
         // SPI Protocol Debug
-        printf("DEBUG: [Vpc3Write] 🔧 SPI Protocol Debug - MODE_REG_2 write:\r\n");
-        printf("DEBUG: [Vpc3Write] 🔧 - Instruction: 0x%02X (OPC_WR_BYTE)\r\n", OPC_WR_BYTE);
-        printf("DEBUG: [Vpc3Write] 🔧 - Address: 0x%04X (High: 0x%02X, Low: 0x%02X)\r\n", wAddress, (uint8_t)(wAddress >> 8), (uint8_t)wAddress);
-        printf("DEBUG: [Vpc3Write] 🔧 - Data: 0x%02X\r\n", bData);
+        printf("DEBUG: [Vpc3Write] SPI Protocol Debug - MODE_REG_2 write:\r\n");
+        printf("DEBUG: [Vpc3Write] - Instruction: 0x%02X (OPC_WR_BYTE)\r\n", OPC_WR_BYTE);
+        printf("DEBUG: [Vpc3Write] - Address: 0x%04X (High: 0x%02X, Low: 0x%02X)\r\n", wAddress, (uint8_t)(wAddress >> 8), (uint8_t)wAddress);
+        printf("DEBUG: [Vpc3Write] - Data: 0x%02X\r\n", bData);
     }
     
     if (wAddress == 0x09) {  // MODE_REG_1_R (bVpc3WoModeReg1_R)
@@ -188,7 +188,7 @@ void Vpc3Write(VPC3_ADR wAddress, uint8_t bData) {
     uint8_t result = vpc3_write_with_retry(wAddress, bData, maxRetries);
     
     if (result != 0 && wAddress == 0x0C) {
-        printf("DEBUG: [Vpc3Write] ❌ ERROR: MODE_REG_2 write failed after %d retries!\r\n", maxRetries);
+        printf("DEBUG: [Vpc3Write]  ERROR: MODE_REG_2 write failed after %d retries!\r\n", maxRetries);
     }
 }
 
@@ -253,7 +253,7 @@ uint8_t VPC3_DetectActualMemoryMode(void) {
         
         // Check for timeout (100ms max)
         if (HAL_GetTick() - start_time > 100) {
-            printf("DEBUG: [VPC3_DetectActualMemoryMode] ⚠️ Timeout reading MODE_REG_2\r\n");
+            printf("DEBUG: [VPC3_DetectActualMemoryMode]  Timeout reading MODE_REG_2\r\n");
             return 2; // Unknown/corrupted mode
         }
         
@@ -269,7 +269,7 @@ uint8_t VPC3_DetectActualMemoryMode(void) {
     }
     
     if (attempts >= max_attempts) {
-        printf("DEBUG: [VPC3_DetectActualMemoryMode] ❌ Failed to read MODE_REG_2 after %d attempts\r\n", max_attempts);
+        printf("DEBUG: [VPC3_DetectActualMemoryMode]  Failed to read MODE_REG_2 after %d attempts\r\n", max_attempts);
         return 2; // Unknown/corrupted mode
     }
     
@@ -278,13 +278,13 @@ uint8_t VPC3_DetectActualMemoryMode(void) {
     printf("DEBUG: [VPC3_DetectActualMemoryMode] MODE_REG_2=0x%02X, bit7=%d\r\n", mode_reg_2, bit_7);
     
     if (bit_7 == 0) {
-        printf("DEBUG: [VPC3_DetectActualMemoryMode] ✅ Detected 2KB mode\r\n");
+        printf("DEBUG: [VPC3_DetectActualMemoryMode]  Detected 2KB mode\r\n");
         return 0; // 2KB mode
     } else if (bit_7 == 1) {
-        printf("DEBUG: [VPC3_DetectActualMemoryMode] ⚠️ Detected 4KB mode (unexpected)\r\n");
+        printf("DEBUG: [VPC3_DetectActualMemoryMode]  Detected 4KB mode (unexpected)\r\n");
         return 1; // 4KB mode
     } else {
-        printf("DEBUG: [VPC3_DetectActualMemoryMode] ❌ Unknown/corrupted mode\r\n");
+        printf("DEBUG: [VPC3_DetectActualMemoryMode]  Unknown/corrupted mode\r\n");
         return 2; // Unknown
     }
 }
@@ -302,7 +302,7 @@ uint16_t VPC3_GetActualRamLength(void) {
         case 1: // 4KB mode
             return 0x1000; // 4KB
         default: // Unknown/corrupted
-            printf("DEBUG: [VPC3_GetActualRamLength] ⚠️ Using conservative 2KB limit\r\n");
+            printf("DEBUG: [VPC3_GetActualRamLength]  Using conservative 2KB limit\r\n");
             return 0x0800; // Conservative fallback
     }
 }
@@ -318,7 +318,7 @@ uint8_t VPC3_IsAddressValid(VPC3_ADR address) {
     uint16_t ram_limit = ASIC_RAM_LENGTH;
     
     if (address >= ram_limit) {
-        printf("DEBUG: [VPC3_IsAddressValid] ❌ Address 0x%04X exceeds RAM limit 0x%04X\r\n", 
+        printf("DEBUG: [VPC3_IsAddressValid]  Address 0x%04X exceeds RAM limit 0x%04X\r\n", 
                address, ram_limit);
         return 0;
     }
@@ -335,44 +335,44 @@ uint8_t VPC3_IsAddressValid(VPC3_ADR address) {
 static void VPC3_LogMemoryAccess(VPC3_ADR address, const char* operation, const char* function_name) {
     // Solo mostrar logs para direcciones fuera de rango o críticas
     if (address >= ASIC_RAM_LENGTH || address == 2046) {
-        printf("🔍 [VPC3_LogMemoryAccess] === ANÁLISIS DE DIRECCIÓN DE MEMORIA ===\r\n");
-        printf("🔍 [VPC3_LogMemoryAccess] Operación: %s\r\n", operation);
-        printf("🔍 [VPC3_LogMemoryAccess] Función llamadora: %s\r\n", function_name);
-        printf("🔍 [VPC3_LogMemoryAccess] Dirección: 0x%04X (%u decimal)\r\n", address, address);
+        printf(" [VPC3_LogMemoryAccess] === ANÁLISIS DE DIRECCIÓN DE MEMORIA ===\r\n");
+        printf(" [VPC3_LogMemoryAccess] Operación: %s\r\n", operation);
+        printf(" [VPC3_LogMemoryAccess] Función llamadora: %s\r\n", function_name);
+        printf(" [VPC3_LogMemoryAccess] Dirección: 0x%04X (%u decimal)\r\n", address, address);
         
         // Análisis de rangos de memoria
-        printf("🔍 [VPC3_LogMemoryAccess] Rangos de memoria:\r\n");
-        printf("🔍 [VPC3_LogMemoryAccess] - 2KB: 0x0000-0x07FF (0-2047)\r\n");
-        printf("🔍 [VPC3_LogMemoryAccess] - 4KB: 0x0000-0x0FFF (0-4095)\r\n");
-        printf("🔍 [VPC3_LogMemoryAccess] - ASIC_RAM_LENGTH: 0x%04X (%u)\r\n", ASIC_RAM_LENGTH, ASIC_RAM_LENGTH);
+        printf(" [VPC3_LogMemoryAccess] Rangos de memoria:\r\n");
+        printf(" [VPC3_LogMemoryAccess] - 2KB: 0x0000-0x07FF (0-2047)\r\n");
+        printf(" [VPC3_LogMemoryAccess] - 4KB: 0x0000-0x0FFF (0-4095)\r\n");
+        printf(" [VPC3_LogMemoryAccess] - ASIC_RAM_LENGTH: 0x%04X (%u)\r\n", ASIC_RAM_LENGTH, ASIC_RAM_LENGTH);
         
         // Verificar si la dirección está en rango
         if (address < ASIC_RAM_LENGTH) {
-            printf("🔍 [VPC3_LogMemoryAccess] ✅ Dirección VÁLIDA dentro del rango\r\n");
+            printf(" [VPC3_LogMemoryAccess]  Dirección VÁLIDA dentro del rango\r\n");
         } else {
-            printf("🔍 [VPC3_LogMemoryAccess] ❌ Dirección FUERA DE RANGO!\r\n");
-            printf("🔍 [VPC3_LogMemoryAccess] ❌ Excede ASIC_RAM_LENGTH en %u bytes\r\n", address - ASIC_RAM_LENGTH);
+            printf(" [VPC3_LogMemoryAccess]  Dirección FUERA DE RANGO!\r\n");
+            printf(" [VPC3_LogMemoryAccess]  Excede ASIC_RAM_LENGTH en %u bytes\r\n", address - ASIC_RAM_LENGTH);
         }
         
         // Análisis especial para dirección 2046
         if (address == 2046) {
-            printf("🔍 [VPC3_LogMemoryAccess] 🚨 DIRECCIÓN CRÍTICA 2046 DETECTADA!\r\n");
-            printf("🔍 [VPC3_LogMemoryAccess] 🚨 Esta es la dirección del registro de diagnóstico\r\n");
-            printf("🔍 [VPC3_LogMemoryAccess] 🚨 En modo 2KB: 2046 está en el ÚLTIMO byte (0x7FE)\r\n");
-            printf("🔍 [VPC3_LogMemoryAccess] 🚨 En modo 4KB: 2046 está en el rango medio (0x7FE)\r\n");
+            printf(" [VPC3_LogMemoryAccess]  DIRECCIÓN CRÍTICA 2046 DETECTADA!\r\n");
+            printf(" [VPC3_LogMemoryAccess]  Esta es la dirección del registro de diagnóstico\r\n");
+            printf(" [VPC3_LogMemoryAccess]  En modo 2KB: 2046 está en el ÚLTIMO byte (0x7FE)\r\n");
+            printf(" [VPC3_LogMemoryAccess]  En modo 4KB: 2046 está en el rango medio (0x7FE)\r\n");
             
             // Verificar MODE_REG_2 para determinar el modo actual
             uint8_t mode_reg_2 = VPC3_GetModeReg2Shadow();
             uint8_t bit_7 = (mode_reg_2 >> 7) & 0x01;
-            printf("🔍 [VPC3_LogMemoryAccess] 🚨 MODE_REG_2 actual: 0x%02X, bit7=%d\r\n", mode_reg_2, bit_7);
-            printf("🔍 [VPC3_LogMemoryAccess] 🚨 Modo detectado: %s\r\n", bit_7 ? "4KB" : "2KB");
+            printf(" [VPC3_LogMemoryAccess]  MODE_REG_2 actual: 0x%02X, bit7=%d\r\n", mode_reg_2, bit_7);
+            printf(" [VPC3_LogMemoryAccess]  Modo detectado: %s\r\n", bit_7 ? "4KB" : "2KB");
             
             if (bit_7 == 0 && address >= 2048) {
-                printf("🔍 [VPC3_LogMemoryAccess] 🚨 CONFLICTO: Modo 2KB pero dirección >= 2048\r\n");
+                printf(" [VPC3_LogMemoryAccess]  CONFLICTO: Modo 2KB pero dirección >= 2048\r\n");
             }
         }
         
-        printf("🔍 [VPC3_LogMemoryAccess] === FIN ANÁLISIS ===\r\n");
+        printf(" [VPC3_LogMemoryAccess] === FIN ANÁLISIS ===\r\n");
     }
 }
 
@@ -383,30 +383,30 @@ static void VPC3_LogMemoryAccess(VPC3_ADR address, const char* operation, const 
  */
 static void VPC3_LogDiagnosticAccess(VPC3_ADR address, const char* operation) {
     if (address == 2046 || address == 0x7FE) {
-        printf("🚨 [VPC3_LogDiagnosticAccess] === ACCESO AL REGISTRO DE DIAGNÓSTICO ===\r\n");
-        printf("🚨 [VPC3_LogDiagnosticAccess] Operación: %s\r\n", operation);
-        printf("🚨 [VPC3_LogDiagnosticAccess] Dirección: 0x%04X (%u decimal)\r\n", address, address);
+        printf(" [VPC3_LogDiagnosticAccess] === ACCESO AL REGISTRO DE DIAGNÓSTICO ===\r\n");
+        printf(" [VPC3_LogDiagnosticAccess] Operación: %s\r\n", operation);
+        printf(" [VPC3_LogDiagnosticAccess] Dirección: 0x%04X (%u decimal)\r\n", address, address);
         
         // Análisis del modo de memoria actual
         uint8_t mode_reg_2 = VPC3_GetModeReg2Shadow();
         uint8_t bit_7 = (mode_reg_2 >> 7) & 0x01;
         
-        printf("🚨 [VPC3_LogDiagnosticAccess] MODE_REG_2: 0x%02X (bit7=%d)\r\n", mode_reg_2, bit_7);
-        printf("🚨 [VPC3_LogDiagnosticAccess] Modo actual: %s\r\n", bit_7 ? "4KB" : "2KB");
-        printf("🚨 [VPC3_LogDiagnosticAccess] ASIC_RAM_LENGTH: 0x%04X (%u)\r\n", ASIC_RAM_LENGTH, ASIC_RAM_LENGTH);
+        printf(" [VPC3_LogDiagnosticAccess] MODE_REG_2: 0x%02X (bit7=%d)\r\n", mode_reg_2, bit_7);
+        printf(" [VPC3_LogDiagnosticAccess] Modo actual: %s\r\n", bit_7 ? "4KB" : "2KB");
+        printf(" [VPC3_LogDiagnosticAccess] ASIC_RAM_LENGTH: 0x%04X (%u)\r\n", ASIC_RAM_LENGTH, ASIC_RAM_LENGTH);
         
         // Verificar si hay conflicto
         if (bit_7 == 0 && address >= 2048) {
-            printf("🚨 [VPC3_LogDiagnosticAccess] ❌ CONFLICTO DETECTADO!\r\n");
-            printf("🚨 [VPC3_LogDiagnosticAccess] ❌ Modo 2KB pero dirección >= 2048\r\n");
-            printf("🚨 [VPC3_LogDiagnosticAccess] ❌ Esto puede causar desbordamiento de memoria\r\n");
+            printf(" [VPC3_LogDiagnosticAccess]  CONFLICTO DETECTADO!\r\n");
+            printf(" [VPC3_LogDiagnosticAccess]  Modo 2KB pero dirección >= 2048\r\n");
+            printf(" [VPC3_LogDiagnosticAccess]  Esto puede causar desbordamiento de memoria\r\n");
         } else if (bit_7 == 1 && address < 2048) {
-            printf("🚨 [VPC3_LogDiagnosticAccess] ⚠️ Posible subutilización de memoria 4KB\r\n");
+            printf(" [VPC3_LogDiagnosticAccess]  Posible subutilización de memoria 4KB\r\n");
         } else {
-            printf("🚨 [VPC3_LogDiagnosticAccess] ✅ Configuración coherente\r\n");
+            printf(" [VPC3_LogDiagnosticAccess]  Configuración coherente\r\n");
         }
         
-        printf("🚨 [VPC3_LogDiagnosticAccess] === FIN ANÁLISIS DIAGNÓSTICO ===\r\n");
+        printf(" [VPC3_LogDiagnosticAccess] === FIN ANÁLISIS DIAGNÓSTICO ===\r\n");
     }
 }
 
