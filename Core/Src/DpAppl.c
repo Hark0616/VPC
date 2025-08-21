@@ -581,15 +581,35 @@ uint8_t bDpState;
             // Este buffer se actualiza en DpAppl_CheckEvIoOut() y se copia a sSystem.sOutput.
             uint8_t byte_from_plc = sSystem.sOutput.abDo8[0];
 
-            // Modificar el valor (ej. sumarle 100 para que el cambio sea evidente)
-            uint8_t byte_to_plc = byte_from_plc + 100;
+            // LÓGICA DE PRUEBA: Diferentes transformaciones según el valor recibido
+            uint8_t byte_to_plc;
+            static uint8_t last_plc_value = 0xFF; // Para detectar cambios
+            
+            if (byte_from_plc != last_plc_value) {
+                printf("*** CAMBIO DETECTADO EN PLC: 0x%02X -> 0x%02X (decimal: %d -> %d) ***\n", 
+                       last_plc_value, byte_from_plc, last_plc_value, byte_from_plc);
+                last_plc_value = byte_from_plc;
+            }
+            
+            // Transformación simple pero evidente para pruebas
+            if (byte_from_plc == 0x00) {
+                byte_to_plc = 0x64;  // 100 decimal
+            } else if (byte_from_plc == 0xAA) {
+                byte_to_plc = 0xBB;  // Respuesta específica para 0xAA
+            } else if (byte_from_plc == 0x55) {
+                byte_to_plc = 0x33;  // Respuesta específica para 0x55
+            } else if (byte_from_plc == 0xFF) {
+                byte_to_plc = 0x11;  // Respuesta específica para 0xFF
+            } else {
+                byte_to_plc = ~byte_from_plc;  // Complemento (NOT bit a bit)
+            }
 
             // Log detallado de la trama de datos en cada ciclo
             static uint32_t data_exchange_count = 0;
-            printf("[DATA_EXCHANGE_TRAMA #%lu] PLC->STM32: 0x%02X | STM32->PLC: 0x%02X\n",
+            printf("[DATA_EXCHANGE_TRAMA #%lu] PLC->STM32: 0x%02X (%3d) | STM32->PLC: 0x%02X (%3d)\n",
                    ++data_exchange_count,
-                   byte_from_plc,
-                   byte_to_plc);
+                   byte_from_plc, byte_from_plc,
+                   byte_to_plc, byte_to_plc);
 
             // Escribir el nuevo valor en el buffer de entrada hacia el PLC.
             // Este buffer (sSystem.sInput.abDi8) será leído por el master en el siguiente ciclo.
