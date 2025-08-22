@@ -44,7 +44,7 @@
    Use following values:
    - 0 to 244
 */
-#define DIN_BUFSIZE                 ((uint8_t)0x02)     // Length of the DIn Buffer (Data Slave to Master)                0..244
+#define DIN_BUFSIZE                 ((uint8_t)0x01)     // Length of the DIn Buffer (Data Slave to Master) //originalmente 0x02               0..244
 
 /*!
    \def DOUT_BUFSIZE
@@ -53,7 +53,7 @@
    Use following values:
    - 0 to 244
 */
-#define DOUT_BUFSIZE                ((uint8_t)0x02)     // Length of the DOut Buffer     (Data Master to Slave)           0..244
+#define DOUT_BUFSIZE                ((uint8_t)0x01)     // Length of the DOut Buffer     (Data Master to Slave) //originalmente 0x02          0..244
 
 /*!
    \def PRM_BUFSIZE
@@ -100,6 +100,21 @@
 /*---------------------------------------------------------------------------*/
 /* set hardware modes                                                        */
 /*---------------------------------------------------------------------------*/
+
+/*!
+ * \def VPC3_SERIAL_MODE
+ * \brief Activate / Deactivate serial mode (SPI).
+ *
+ * Use following values:
+ * - 0 - VPC3+ works in parallel mode.
+ * - 1 - VPC3+ works in serial mode (SPI).
+ */
+#define VPC3_SERIAL_MODE 1
+
+#if !VPC3_SERIAL_MODE
+   #define VPC3_EXTENSION
+#endif
+
 /*!
    \def DP_VPC3_4KB_MODE
    \brief Activate / Deactivate VPC3+ 4kByte-mode.
