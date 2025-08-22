@@ -414,9 +414,9 @@
       - 0 - The VPC3+ doesn't generates an interrupt.
       - 1 - The VPC3+ generates an interrupt.
 */
-#define INIT_VPC3_IND_H  0x1D
+#define INIT_VPC3_IND_H  0x3D
 
-#if VPC3_SERIAL_MODE
+//#if VPC3_SERIAL_MODE
 
    /*-----------------------------------------------------------------------*/
    /* Interrupt Mask Register (15..0) ( page 23 )                           */
@@ -429,9 +429,9 @@
    //       0          0        1          1            1        1        0        1        0       0          0           0             0             0          1         0      = 0x3D02 // Default
    //       0          0        1          1            1        1        0        1        0       0          0           0             0             0          1         0      = 0x3D02 // Default
    //
-   #define SM_INTERRUPT_MASK ((uint16_t)0x1D02)
+#define SM_INTERRUPT_MASK ((uint16_t)0x3D02)
 
-#endif//#if VPC3_SERIAL_MODE
+//#endif//#if VPC3_SERIAL_MODE
 
 /*---------------------------------------------------------------------------*/
 /* end of user defines                                                       */
@@ -604,7 +604,7 @@
 #define ISR_ENABLE_VPC3_INT_NEW_CFG_DATA            0
 #define ISR_ENABLE_VPC3_INT_NEW_PRM_DATA            0
 #define ISR_ENABLE_VPC3_INT_DIAG_BUF_CHANGED        0
-#define ISR_ENABLE_VPC3_INT_DX_OUT                  0
+#define ISR_ENABLE_VPC3_INT_DX_OUT                  1
 #define ISR_ENABLE_VPC3_INT_RESERVED                0
 #define ISR_ENABLE_VPC3_INT_SERVICE_ERROR           0
 #define ISR_ENABLE_VPC3_INT_POLL_END_IND            0

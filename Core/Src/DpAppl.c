@@ -120,17 +120,67 @@ static void DpAppl_SetApplEvent( eDpApplEv_Flags eDpApplEv )
 */
 static void DpAppl_CheckEvIoOut( void )
 {
-VPC3_UNSIGNED8_PTR  pToOutputBuffer;   /**< Pointer to output buffer. */
-uint8_t             bOutputState;      /**< State of output data. */
+   VPC3_UNSIGNED8_PTR  pToOutputBuffer;   /**< Pointer to output buffer. */
+   uint8_t             bOutputState;      /**< State of output data. */
 
    if( DpAppl_TestApplEvent( eDpApplEv_IoOut ) )
    {
       printf("DEBUG: [DpAppl_CheckEvIoOut] Evento IoOut detectado y procesado por el bucle principal (sincrono).\n");
+      
+      // Debug del estado del buffer antes de obtener el puntero
+      printf("DEBUG: [BUFFER_STATE] === ANÁLISIS DEL BUFFER DE SALIDA ===\n");
+      
       pToOutputBuffer = VPC3_GetDoutBufPtr( &bOutputState );
+      
+      printf("DEBUG: [BUFFER_STATE] bOutputState = 0x%02X\n", bOutputState);
+      printf("DEBUG: [BUFFER_STATE] pToOutputBuffer = 0x%08X\n", (unsigned int)pToOutputBuffer);
+      
+      // Mostrar información de los buffers disponibles
+      printf("DEBUG: [BUFFER_STATE] pDoutBuffer1 = 0x%08X\n", (unsigned int)pDpSystem->pDoutBuffer1);
+      printf("DEBUG: [BUFFER_STATE] pDoutBuffer2 = 0x%08X\n", (unsigned int)pDpSystem->pDoutBuffer2);
+      printf("DEBUG: [BUFFER_STATE] pDoutBuffer3 = 0x%08X\n", (unsigned int)pDpSystem->pDoutBuffer3);
       if( pToOutputBuffer )
       {
+         printf("DEBUG: [DpAppl_CheckEvIoOut] pToOutputBuffer[0]=0x%02X, pToOutputBuffer[1]=0x%02X\n", pToOutputBuffer[0], pToOutputBuffer[1]);
+         
+         // *** DEBUG EXHAUSTIVO: TODA LA TRAMA PROFIBUS ***
+         printf("DEBUG: [FULL_PROFIBUS_FRAME] === ANÁLISIS COMPLETO DE DATOS ===\n");
+         printf("DEBUG: [FULL_PROFIBUS_FRAME] pDpSystem->bOutputDataLength = %d bytes\n", pDpSystem->bOutputDataLength);
+         printf("DEBUG: [FULL_PROFIBUS_FRAME] pToOutputBuffer address = 0x%08X\n", (unsigned int)pToOutputBuffer);
+         
+         // Leer directamente desde VPC3 con diferentes métodos
+         printf("DEBUG: [BUFFER_VPC3] Método 1 - Lectura directa por offset:\n");
+         for(uint8_t i = 0; i < 8; i++) {  // Leer más bytes para análisis
+             uint8_t direct_read = Vpc3Read((VPC3_ADR)(uintptr_t)(pToOutputBuffer + i));
+             printf("DEBUG: [BUFFER_VPC3] Offset %d: pToOutputBuffer[%d]=0x%02X, Vpc3Read=0x%02X\n", i, i, (i < pDpSystem->bOutputDataLength) ? pToOutputBuffer[i] : 0x00, direct_read);
+         }
+         
+         // Leer desde la dirección base del buffer de salida
+         printf("DEBUG: [BUFFER_VPC3] Método 2 - Lectura desde dirección base:\n");
+         VPC3_ADR base_addr = (VPC3_ADR)(uintptr_t)pToOutputBuffer;
+         for(uint8_t i = 0; i < 8; i++) {
+             uint8_t base_read = Vpc3Read(base_addr + i);
+             printf("DEBUG: [BUFFER_VPC3] Base+%d (0x%04X): 0x%02X\n", i, base_addr + i, base_read);
+         }
+         
+         // Mostrar el contenido del buffer después de CopyFromVpc3
+         printf("DEBUG: [AFTER_COPY] Buffer después de CopyFromVpc3:\n");
+         
          // Copy output data from PROFIBUS buffer
          CopyFromVpc3( &sSystem.sOutput.abDo8[0], pToOutputBuffer, pDpSystem->bOutputDataLength );
+         
+         // Debug después de la copia
+         printf("DEBUG: [AFTER_COPY] sOutput.abDo8 después de CopyFromVpc3:\n");
+         for(uint8_t i = 0; i < 8; i++) {
+             printf("DEBUG: [AFTER_COPY] sOutput.abDo8[%d] = 0x%02X (%d decimal)\n", i, sSystem.sOutput.abDo8[i], sSystem.sOutput.abDo8[i]);
+         }
+         printf("DEBUG: [DpAppl_CheckEvIoOut] sOutput.abDo8[0]=0x%02X, sOutput.abDo8[1]=0x%02X\n", sSystem.sOutput.abDo8[0], sSystem.sOutput.abDo8[1]);
+
+         // Print each received output byte for debugging
+         for( uint8_t i = 0; i < pDpSystem->bOutputDataLength; ++i )
+         {
+            printf( "DEBUG: [DpAppl_CheckEvIoOut] sOutput.abDo8[%u] = 0x%02X\n", i, sSystem.sOutput.abDo8[i] );
+         }
 
          /*/ Handle Set Point (0-100) and Relay Control
          uint8_t setpoint = sSystem.sOutput.abDo8[0] & 0x7F;  // Bits 0-6 for setpoint (0-100)

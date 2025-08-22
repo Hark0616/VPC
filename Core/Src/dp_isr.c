@@ -179,7 +179,7 @@ volatile uint8_t bResult;
                 uint8_t* prmBufPtr;
                 VPC3_ADR prmAddr;
                 
-                bPrmLength = VPC3_GET_PRM_LEN();
+               bPrmLength = VPC3_GET_PRM_LEN();
 
                 printf("DEBUG: [dp_isr] PRM Length: %d bytes\r\n", bPrmLength);
                 

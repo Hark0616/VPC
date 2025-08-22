@@ -837,7 +837,27 @@ void VPC3_Start( void )
    }
 
    printf("DEBUG: Enviando comando START (0x01) al registro de control (0x08)...\r\n");
+   printf("DEBUG: [CRITICAL_DEBUG] Antes del START - MODE_REG_0_L: 0x%02X\r\n", Vpc3Read(bVpc3RwModeReg0_L));
+   
+   // *** VERIFICACIÓN DE DIRECCIONES ***
+   printf("DEBUG: [CRITICAL_DEBUG] Verificación de direcciones:\r\n");
+   printf("DEBUG: [CRITICAL_DEBUG] - Vpc3AsicAddress: 0x%08X\r\n", (unsigned int)Vpc3AsicAddress);
+   printf("DEBUG: [CRITICAL_DEBUG] - bVpc3WoModeReg1_S: 0x%04X\r\n", (unsigned int)bVpc3WoModeReg1_S);
+   printf("DEBUG: [CRITICAL_DEBUG] - bVpc3RwModeReg0_L: 0x%04X\r\n", (unsigned int)bVpc3RwModeReg0_L);
+   printf("DEBUG: [CRITICAL_DEBUG] - VPC3_START value: 0x%02X\r\n", VPC3_START);
+   
    VPC3_Start__();
+   
+   printf("DEBUG: [CRITICAL_DEBUG] Inmediatamente después del START - MODE_REG_0_L: 0x%02X\r\n", Vpc3Read(bVpc3RwModeReg0_L));
+   printf("DEBUG: [CRITICAL_DEBUG] Comando START enviado correctamente\r\n");
+   
+   // *** VERIFICACIÓN ADICIONAL: Leer STATUS_L inmediatamente después del comando ***
+   uint8_t status_immediate = VPC3_GET_STATUS_L();
+   printf("DEBUG: [CRITICAL_DEBUG] STATUS_L inmediatamente después del START: 0x%02X\r\n", status_immediate);
+   
+   // *** VERIFICACIÓN: Intentar leer el registro de comando directamente ***
+   uint8_t cmd_reg_direct = Vpc3Read(0x08);
+   printf("DEBUG: [CRITICAL_DEBUG] Lectura directa de registro 0x08: 0x%02X\r\n", cmd_reg_direct);
 
    printf("DEBUG: Esperando que el chip procese el comando START...\r\n");
    HAL_Delay(50); // Allow time for the chip to process
@@ -845,11 +865,20 @@ void VPC3_Start( void )
    // DEBUG: Agregar delay adicional para estabilización
    printf("DEBUG: Esperando estabilización adicional del chip...\r\n");
    HAL_Delay(500); // Increased stabilization time to 500ms
+   
+   printf("DEBUG: [CRITICAL_DEBUG] Después del delay de estabilización - STATUS_L: 0x%02X\r\n", VPC3_GET_STATUS_L());
+   printf("DEBUG: [CRITICAL_DEBUG] Después del delay de estabilización - MODE_REG_0_L: 0x%02X\r\n", Vpc3Read(bVpc3RwModeReg0_L));
 
    // DEBUG: Reconfigurar registros de modo después del START (ya que se resetean)
    printf("DEBUG: Reconfigurando registros de modo después del START...\r\n");
+   
+   // *** CORRECCIÓN CRÍTICA: NO reconfigurar MODE_REG_0_L después del START ***
+   // MODE_REG_0_L (0x08) es el CONTROL REGISTER que contiene el comando START
+   // Reescribirlo borra el comando START y causa que no entre en PASSIVE_IDLE
+   printf("DEBUG: [CRITICAL_FIX] NO reconfigurando MODE_REG_0_L para preservar comando START\r\n");
+   
    Vpc3Write( bVpc3RwModeReg0_H, INIT_VPC3_MODE_REG_H );
-   Vpc3Write( bVpc3RwModeReg0_L, INIT_VPC3_MODE_REG_L );
+   // NO escribir: Vpc3Write( bVpc3RwModeReg0_L, INIT_VPC3_MODE_REG_L );
    
    // Forzar MODE_REG_2 al valor correcto
    if (!VPC3_ForceModeReg2()) {

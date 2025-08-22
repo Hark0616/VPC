@@ -489,9 +489,11 @@ void CopyFromVpc3(MEM_UNSIGNED8_PTR pLocalMemory, VPC3_UNSIGNED8_PTR pToVpc3Memo
     uint16_t remaining = wLength;
     uint16_t offset = 0;
     
-    // --- NUEVAS LÍNEAS DE DEBUG ---
-    //printf("DEBUG: [CopyFromVpc3] Lectura de 0x%04X, longitud %d\r\n", (unsigned int)addr, wLength);
-    // -----------------------------
+    // --- DEBUG EXHAUSTIVO DE CopyFromVpc3 ---
+    printf("DEBUG: [CopyFromVpc3] === INICIO COPIA DESDE VPC3 ===\n");
+    printf("DEBUG: [CopyFromVpc3] Dirección fuente: 0x%04X\n", (unsigned int)addr);
+    printf("DEBUG: [CopyFromVpc3] Longitud: %d bytes\n", wLength);
+    printf("DEBUG: [CopyFromVpc3] Buffer destino: 0x%08X\n", (unsigned int)pLocalMemory);
 
     while (remaining > 0) {
         uint16_t transferSize = (remaining > MAX_TRANSFER_SIZE) ? MAX_TRANSFER_SIZE : remaining;
@@ -504,16 +506,20 @@ void CopyFromVpc3(MEM_UNSIGNED8_PTR pLocalMemory, VPC3_UNSIGNED8_PTR pToVpc3Memo
         VPC3_CS_HIGH();
         DpAppl_EnableInterruptVPC3Channel1();
         
+        printf("DEBUG: [CopyFromVpc3] Transfer %d: addr=0x%04X, size=%d\n", (offset/transferSize)+1, (unsigned int)(addr + offset), transferSize);
+        
         offset += transferSize;
         remaining -= transferSize;
     }
-    // --- NUEVAS LÍNEAS DE DEBUG ---
-    //printf("DEBUG: [CopyFromVpc3] Datos leídos: ");
-    //for(int k=0; k<wLength; k++) {
-    //    printf("0x%02X ", ((uint8_t*)pLocalMemory)[k]);
-    //}
-    //printf("\r\n");
-    // -----------------------------
+    
+    // --- DEBUG EXHAUSTIVO DE DATOS LEÍDOS ---
+    printf("DEBUG: [CopyFromVpc3] === DATOS LEÍDOS COMPLETOS ===\n");
+    printf("DEBUG: [CopyFromVpc3] Total bytes leídos: %d\n", wLength);
+    printf("DEBUG: [CopyFromVpc3] Contenido del buffer local:\n");
+    for(int k=0; k<wLength && k<16; k++) {  // Mostrar hasta 16 bytes
+        printf("DEBUG: [CopyFromVpc3] [%d] = 0x%02X (%d decimal)\n", k, ((uint8_t*)pLocalMemory)[k], ((uint8_t*)pLocalMemory)[k]);
+    }
+    printf("DEBUG: [CopyFromVpc3] === FIN COPIA DESDE VPC3 ===\n");
 }
 
 /**
