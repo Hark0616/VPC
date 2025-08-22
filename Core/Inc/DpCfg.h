@@ -365,7 +365,7 @@
       - 0 - The VPC3+ doesn't generates an interrupt.
       - 1 - The VPC3+ generates an interrupt.
 */
-#define INIT_VPC3_IND_L  0x02
+#define INIT_VPC3_IND_L  0x06  // 0x02 (GO_LEAVE_DATA_EX) + 0x04 (BAUDRATE_DETECT)
 
 /*-----------------------------------------------------------------------*/
 /* Interrupt Mask Register (15..8) ( page 23 )                           */

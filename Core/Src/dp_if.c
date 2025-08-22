@@ -784,8 +784,29 @@ DP_ERROR_CODE bError;
    } /* else of if( !VPC3_GET_OFF_PASS() ) */
 
    printf("DEBUG: VPC3_Initialization - FIN con resultado: 0x%02X\r\n", bError);
-   printf("DEBUG: [VPC3_Initialization] Inicializacion completada. Estado final:\r\n");
+   
+   // DEBUG: DIAGNÓSTICO COMPLETO DESPUÉS DE LA INICIALIZACIÓN
+   printf("DEBUG: [VPC3_Initialization] === DIAGNÓSTICO COMPLETO POST-INICIALIZACIÓN ===\r\n");
+   printf("DEBUG: [VPC3_Initialization] STATUS_L (0x04): 0x%02X\r\n", Vpc3Read(0x04));
+   printf("DEBUG: [VPC3_Initialization] STATUS_H (0x05): 0x%02X\r\n", Vpc3Read(0x05));
+   printf("DEBUG: [VPC3_Initialization] MODE_REG_0_L (0x06): 0x%02X\r\n", Vpc3Read(0x06));
+   printf("DEBUG: [VPC3_Initialization] MODE_REG_0_H (0x07): 0x%02X\r\n", Vpc3Read(0x07));
+   printf("DEBUG: [VPC3_Initialization] Control Reg (0x08): 0x%02X\r\n", Vpc3Read(0x08));
    printf("DEBUG: [VPC3_Initialization] MODE_REG_2 = 0x%02X\r\n", VPC3_GetModeReg2Shadow());
+   printf("DEBUG: [VPC3_Initialization] MODE_REG_3 (0x12): 0x%02X\r\n", Vpc3Read(bVpc3WoModeReg3));
+   printf("DEBUG: [VPC3_Initialization] MODE_REG_1 (0x15): 0x%02X\r\n", Vpc3Read(0x15));
+   
+   // Verificar si el chip está en el estado esperado para recibir START
+   uint8_t pre_start_status = Vpc3Read(0x04);
+   if ((pre_start_status & VPC3_PASS_IDLE) == 0) {
+       printf("DEBUG: [VPC3_Initialization] CORRECTO - Chip en OFFLINE, listo para START\r\n");
+   } else {
+       printf("DEBUG: [VPC3_Initialization] ADVERTENCIA - Chip NO está en OFFLINE antes del START\r\n");
+   }
+   
+   // Verificar ASIC type
+   uint8_t asic_type = Vpc3Read(0x05) & 0xE0;  // AT_MASK = 0xE0
+   printf("DEBUG: [VPC3_Initialization] ASIC Type: 0x%02X (esperado VPC3+S: 0xE0)\r\n", asic_type);
    
    // --- DEFENSIVE PROGRAMMING: Validate segment pointers after initialization ---
    DP_ERROR_CODE validationStatus = VPC3_ValidateSegmentPointers();
@@ -846,28 +867,418 @@ void VPC3_Start( void )
    printf("DEBUG: [CRITICAL_DEBUG] - bVpc3RwModeReg0_L: 0x%04X\r\n", (unsigned int)bVpc3RwModeReg0_L);
    printf("DEBUG: [CRITICAL_DEBUG] - VPC3_START value: 0x%02X\r\n", VPC3_START);
    
+   // *** DIAGNÓSTICO CRÍTICO: POSIBLE PROBLEMA DE RESET ***
+   printf("DEBUG: [RESET_DIAG] === VERIFICACIÓN DE ESTADO DE RESET ===\r\n");
+   
+   // Verificar si necesitamos un reset adicional
+   uint8_t status_before_reset_check = VPC3_GET_STATUS_L();
+   uint8_t status_h_before_reset = VPC3_GET_STATUS_H();
+   printf("DEBUG: [RESET_DIAG] STATUS antes de verificación: L=0x%02X, H=0x%02X\r\n", 
+          status_before_reset_check, status_h_before_reset);
+   
+   // Verificar si el ASIC está realmente en estado OFFLINE limpio
+   if (status_before_reset_check != 0x00) {
+       printf("DEBUG: [RESET_DIAG] ADVERTENCIA - STATUS_L no es 0x00, realizando reset adicional\r\n");
+       VPC3_HardwareReset();
+       HAL_Delay(100);
+       uint8_t status_after_additional_reset = VPC3_GET_STATUS_L();
+       printf("DEBUG: [RESET_DIAG] STATUS_L después del reset adicional: 0x%02X\r\n", status_after_additional_reset);
+   }
+   
+   // *** CORRECCIÓN CRÍTICA: SECUENCIA DE START CORRECTA ***
+   printf("DEBUG: [CRITICAL_FIX] === SECUENCIA DE START CORREGIDA ===\r\n");
+   
+   // Variables para la secuencia de START corregida
+   uint8_t mode_reg_before;
+   uint8_t mode_reg_after_config;
+   uint8_t status_immediate;
+   uint8_t cmd_reg_direct;
+   uint8_t mode_reg_after_start;
+   
+   // 1. Verificar que MODE_REG_0_L esté configurado correctamente ANTES del START
+   mode_reg_before = Vpc3Read(bVpc3RwModeReg0_L);
+   printf("DEBUG: [CRITICAL_FIX] MODE_REG_0_L antes del START: 0x%02X\r\n", mode_reg_before);
+   
+   // 2. CRÍTICO: Configurar MODE_REG_0_L con el valor correcto ANTES del comando START
+   printf("DEBUG: [CRITICAL_FIX] Configurando MODE_REG_0_L con valor correcto...\r\n");
+   Vpc3Write(bVpc3RwModeReg0_L, INIT_VPC3_MODE_REG_L);
+   
+   // 3. Verificar que se escribió correctamente
+   mode_reg_after_config = Vpc3Read(bVpc3RwModeReg0_L);
+   printf("DEBUG: [CRITICAL_FIX] MODE_REG_0_L después de configurar: 0x%02X (esperado: 0x%02X)\r\n", 
+          mode_reg_after_config, INIT_VPC3_MODE_REG_L);
+   
+   // 4. DIAGNÓSTICO DETALLADO ANTES DEL START
+   printf("DEBUG: [DETAILED_DIAG] === DIAGNÓSTICO COMPLETO ANTES DEL START ===\r\n");
+   printf("DEBUG: [DETAILED_DIAG] STATUS_L (0x04): 0x%02X\r\n", Vpc3Read(0x04));
+   printf("DEBUG: [DETAILED_DIAG] STATUS_H (0x05): 0x%02X\r\n", Vpc3Read(0x05));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_0_L (0x06): 0x%02X\r\n", Vpc3Read(0x06));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_0_H (0x07): 0x%02X\r\n", Vpc3Read(0x07));
+   printf("DEBUG: [DETAILED_DIAG] Control Reg (0x08): 0x%02X\r\n", Vpc3Read(0x08));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_1_R (0x09): 0x%02X\r\n", Vpc3Read(0x09));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_2 (0x0C): 0x%02X\r\n", Vpc3Read(0x0C));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_1 (0x15): 0x%02X\r\n", Vpc3Read(0x15));
+   
+   // 5. Ahora enviar el comando START
+   printf("DEBUG: [CRITICAL_FIX] Enviando comando START a registro de control 0x08...\r\n");
+   printf("DEBUG: [CRITICAL_FIX] Comando: Vpc3Write(0x%04X, 0x%02X)\r\n", (unsigned int)bVpc3WoModeReg1_S, VPC3_START);
    VPC3_Start__();
    
-   printf("DEBUG: [CRITICAL_DEBUG] Inmediatamente después del START - MODE_REG_0_L: 0x%02X\r\n", Vpc3Read(bVpc3RwModeReg0_L));
-   printf("DEBUG: [CRITICAL_DEBUG] Comando START enviado correctamente\r\n");
+   // 6. Verificaciones inmediatas (sin delay)
+   status_immediate = VPC3_GET_STATUS_L();
+   cmd_reg_direct = Vpc3Read(0x08);
+   mode_reg_after_start = Vpc3Read(bVpc3RwModeReg0_L);
    
-   // *** VERIFICACIÓN ADICIONAL: Leer STATUS_L inmediatamente después del comando ***
-   uint8_t status_immediate = VPC3_GET_STATUS_L();
-   printf("DEBUG: [CRITICAL_DEBUG] STATUS_L inmediatamente después del START: 0x%02X\r\n", status_immediate);
+   printf("DEBUG: [CRITICAL_FIX] Inmediatamente después del START (0ms):\r\n");
+   printf("DEBUG: [CRITICAL_FIX] - STATUS_L: 0x%02X\r\n", status_immediate);
+   printf("DEBUG: [CRITICAL_FIX] - Control Reg (0x08): 0x%02X\r\n", cmd_reg_direct);
+   printf("DEBUG: [CRITICAL_FIX] - MODE_REG_0_L (0x06): 0x%02X\r\n", mode_reg_after_start);
    
-   // *** VERIFICACIÓN: Intentar leer el registro de comando directamente ***
-   uint8_t cmd_reg_direct = Vpc3Read(0x08);
-   printf("DEBUG: [CRITICAL_DEBUG] Lectura directa de registro 0x08: 0x%02X\r\n", cmd_reg_direct);
+   // 7. DIAGNÓSTICO COMPLETO DESPUÉS DEL START
+   printf("DEBUG: [DETAILED_DIAG] === DIAGNÓSTICO COMPLETO DESPUÉS DEL START ===\r\n");
+   printf("DEBUG: [DETAILED_DIAG] STATUS_L (0x04): 0x%02X\r\n", Vpc3Read(0x04));
+   printf("DEBUG: [DETAILED_DIAG] STATUS_H (0x05): 0x%02X\r\n", Vpc3Read(0x05));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_0_L (0x06): 0x%02X\r\n", Vpc3Read(0x06));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_0_H (0x07): 0x%02X\r\n", Vpc3Read(0x07));
+   printf("DEBUG: [DETAILED_DIAG] Control Reg (0x08): 0x%02X\r\n", Vpc3Read(0x08));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_1_R (0x09): 0x%02X\r\n", Vpc3Read(0x09));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_2 (0x0C): 0x%02X\r\n", Vpc3Read(0x0C));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_1 (0x15): 0x%02X\r\n", Vpc3Read(0x15));
 
    printf("DEBUG: Esperando que el chip procese el comando START...\r\n");
    HAL_Delay(50); // Allow time for the chip to process
-
-   // DEBUG: Agregar delay adicional para estabilización
-   printf("DEBUG: Esperando estabilización adicional del chip...\r\n");
-   HAL_Delay(500); // Increased stabilization time to 500ms
    
-   printf("DEBUG: [CRITICAL_DEBUG] Después del delay de estabilización - STATUS_L: 0x%02X\r\n", VPC3_GET_STATUS_L());
-   printf("DEBUG: [CRITICAL_DEBUG] Después del delay de estabilización - MODE_REG_0_L: 0x%02X\r\n", Vpc3Read(bVpc3RwModeReg0_L));
+   // *** VERIFICACIÓN INMEDIATA DESPUÉS DEL DELAY CORTO ***
+   uint8_t status_after_short_delay;
+   uint8_t status_after_long_delay;
+   int i;
+   
+   status_after_short_delay = VPC3_GET_STATUS_L();
+   printf("DEBUG: [CRITICAL_FIX] STATUS_L después de 50ms: 0x%02X\r\n", status_after_short_delay);
+   
+   // DIAGNÓSTICO ADICIONAL DESPUÉS DE 50ms
+   printf("DEBUG: [TIMING_DIAG] === ESTADO DESPUÉS DE 50ms ===\r\n");
+   printf("DEBUG: [TIMING_DIAG] STATUS_L: 0x%02X (binario: ", status_after_short_delay);
+   for(int j = 7; j >= 0; j--) {
+       printf("%d", (status_after_short_delay >> j) & 1);
+   }
+   printf(")\r\n");
+   printf("DEBUG: [TIMING_DIAG] STATUS_H: 0x%02X\r\n", Vpc3Read(0x05));
+   printf("DEBUG: [TIMING_DIAG] Control Reg (0x08): 0x%02X\r\n", Vpc3Read(0x08));
+   printf("DEBUG: [TIMING_DIAG] MODE_REG_1 (0x15): 0x%02X\r\n", Vpc3Read(0x15));
+   printf("DEBUG: [TIMING_DIAG] VPC3_PASS_IDLE mask: 0x%02X\r\n", VPC3_PASS_IDLE);
+   printf("DEBUG: [TIMING_DIAG] Bit test: (0x%02X & 0x%02X) = 0x%02X\r\n", 
+          status_after_short_delay, VPC3_PASS_IDLE, (status_after_short_delay & VPC3_PASS_IDLE));
+   
+   if ((status_after_short_delay & VPC3_PASS_IDLE) != 0) {
+       printf("DEBUG: [CRITICAL_FIX] ¡ÉXITO! VPC3+ entró en PASSIVE_IDLE después de 50ms\r\n");
+   } else {
+       printf("DEBUG: [CRITICAL_FIX] VPC3+ aún no en PASSIVE_IDLE, esperando más...\r\n");
+       
+       // DEBUG: Agregar delay adicional para estabilización
+       printf("DEBUG: Esperando estabilización adicional del chip...\r\n");
+       HAL_Delay(500); // Increased stabilization time to 500ms
+       
+       status_after_long_delay = VPC3_GET_STATUS_L();
+       printf("DEBUG: [CRITICAL_FIX] STATUS_L después de 550ms total: 0x%02X\r\n", status_after_long_delay);
+       
+       if ((status_after_long_delay & VPC3_PASS_IDLE) != 0) {
+           printf("DEBUG: [CRITICAL_FIX] ¡ÉXITO! VPC3+ entró en PASSIVE_IDLE después de 550ms\r\n");
+       } else {
+           printf("DEBUG: [CRITICAL_FIX] ¡ERROR! VPC3+ NO entró en PASSIVE_IDLE después de 550ms\r\n");
+           
+           // DIAGNÓSTICO CRÍTICO: Verificar si el VPC3+ responde correctamente
+           printf("DEBUG: [CRITICAL_FIX] === DIAGNÓSTICO DE COMUNICACIÓN SPI ===\r\n");
+           
+           // Test 1: Verificar que podemos leer/escribir registros
+           uint8_t test_write_val = 0xA5;
+           uint8_t original_mode_reg = Vpc3Read(bVpc3RwModeReg0_L);
+           printf("DEBUG: [SPI_TEST] Original MODE_REG_0_L: 0x%02X\r\n", original_mode_reg);
+           
+           Vpc3Write(bVpc3RwModeReg0_L, test_write_val);
+           uint8_t read_back = Vpc3Read(bVpc3RwModeReg0_L);
+           printf("DEBUG: [SPI_TEST] Escribí 0x%02X, leí 0x%02X - SPI %s\r\n", 
+                  test_write_val, read_back, (read_back == test_write_val) ? "OK" : "FALLA");
+           
+           // Restaurar valor original
+           Vpc3Write(bVpc3RwModeReg0_L, original_mode_reg);
+           
+           // Test 2: Verificar múltiples lecturas del STATUS_L
+           printf("DEBUG: [SPI_TEST] Múltiples lecturas de STATUS_L:\r\n");
+           for(int test_i = 0; test_i < 5; test_i++) {
+               uint8_t status_test = Vpc3Read(0x04);
+               printf("DEBUG: [SPI_TEST] Lectura %d: 0x%02X\r\n", test_i+1, status_test);
+               HAL_Delay(10);
+           }
+           
+              // Test 3: CORRECCIÓN CRÍTICA - Verificar y corregir MODE_REG_3
+   printf("DEBUG: [MODE_REG3_FIX] === CORRECCIÓN DE MODE_REG_3 ===\r\n");
+   uint8_t current_mode_reg3 = Vpc3Read(bVpc3WoModeReg3);
+   printf("DEBUG: [MODE_REG3_FIX] MODE_REG_3 actual: 0x%02X (esperado: 0x00)\r\n", current_mode_reg3);
+   
+   if (current_mode_reg3 != 0x00) {
+       printf("DEBUG: [MODE_REG3_FIX] CORRIGIENDO MODE_REG_3 a 0x00...\r\n");
+       Vpc3Write(bVpc3WoModeReg3, 0x00);
+       HAL_Delay(10);
+       uint8_t corrected_mode_reg3 = Vpc3Read(bVpc3WoModeReg3);
+       printf("DEBUG: [MODE_REG3_FIX] MODE_REG_3 corregido: 0x%02X\r\n", corrected_mode_reg3);
+   }
+   
+   // Test 4: Verificar el comando START múltiples veces DESPUÉS de corregir MODE_REG_3
+   printf("DEBUG: [START_TEST] Reintentando comando START después de corrección...\r\n");
+   for(int start_i = 0; start_i < 3; start_i++) {
+       printf("DEBUG: [START_TEST] Intento %d/3\r\n", start_i+1);
+       
+       // Verificar que MODE_REG_3 sigue correcto
+       uint8_t check_mode_reg3 = Vpc3Read(bVpc3WoModeReg3);
+       printf("DEBUG: [START_TEST] MODE_REG_3 antes del START: 0x%02X\r\n", check_mode_reg3);
+       
+       Vpc3Write(bVpc3WoModeReg1_S, VPC3_START);
+       HAL_Delay(100);
+       uint8_t status_retry = VPC3_GET_STATUS_L();
+       printf("DEBUG: [START_TEST] STATUS_L después del intento %d: 0x%02X\r\n", start_i+1, status_retry);
+       
+       if ((status_retry & VPC3_PASS_IDLE) != 0) {
+           printf("DEBUG: [START_TEST] ¡ÉXITO en intento %d!\r\n", start_i+1);
+           break;
+       }
+   }
+           
+              // DIAGNÓSTICO SEGÚN MANUAL VPC3+
+   printf("DEBUG: [MANUAL_DIAG] === DIAGNÓSTICO SEGÚN MANUAL VPC3+ ===\r\n");
+   printf("DEBUG: [MANUAL_DIAG] STATUS_L: 0x%02X (binario: ", status_after_long_delay);
+           for(i = 7; i >= 0; i--) {
+               printf("%d", (status_after_long_delay >> i) & 1);
+           }
+           printf(")\r\n");
+   
+   // Verificar registros críticos según manual
+   uint8_t int_reg_l = Vpc3Read(0x02);
+   uint8_t int_reg_h = Vpc3Read(0x03);
+   uint8_t final_mode_reg3 = Vpc3Read(bVpc3WoModeReg3);
+   
+   printf("DEBUG: [MANUAL_DIAG] INT_REG_L (0x02): 0x%02X\r\n", int_reg_l);
+   printf("DEBUG: [MANUAL_DIAG] INT_REG_H (0x03): 0x%02X\r\n", int_reg_h);
+   printf("DEBUG: [MANUAL_DIAG] MODE_REG_3 final: 0x%02X\r\n", final_mode_reg3);
+   printf("DEBUG: [MANUAL_DIAG] VPC3_PASS_IDLE mask: 0x%02X\r\n", VPC3_PASS_IDLE);
+   printf("DEBUG: [MANUAL_DIAG] Control Reg (0x08): 0x%02X\r\n", Vpc3Read(0x08));
+   printf("DEBUG: [MANUAL_DIAG] MODE_REG_0_L (0x06): 0x%02X\r\n", Vpc3Read(bVpc3RwModeReg0_L));
+   
+   // Verificar si hay eventos pendientes que impidan PASSIVE_IDLE
+   if (int_reg_l != 0x00 || int_reg_h != 0x00) {
+       printf("DEBUG: [MANUAL_DIAG] ¡ADVERTENCIA! Hay interrupciones pendientes que pueden impedir PASSIVE_IDLE\r\n");
+       printf("DEBUG: [MANUAL_DIAG] Según manual: El VPC3+ debe procesar eventos antes de entrar en PASSIVE_IDLE\r\n");
+   }
+   
+   // DIAGNÓSTICO CRÍTICO: BAUDRATE DETECTION según manual
+   printf("DEBUG: [BAUDRATE_DIAG] === DIAGNÓSTICO DE BAUDRATE DETECTION ===\r\n");
+   printf("DEBUG: [BAUDRATE_DIAG] INT_REG_L bits: ");
+   for(int bit = 7; bit >= 0; bit--) {
+       printf("%d", (int_reg_l >> bit) & 1);
+   }
+   printf(" (0x%02X)\r\n", int_reg_l);
+   
+   // DIAGNÓSTICO ESPECÍFICO: Verificar baudrate detectado en STATUS_H
+   uint8_t status_h = Vpc3Read(0x05);
+   uint8_t detected_baudrate = status_h & 0x0F;  // BAUDRATE_MASK = 0x0F
+   printf("DEBUG: [BAUDRATE_DIAG] STATUS_H: 0x%02X\r\n", status_h);
+   printf("DEBUG: [BAUDRATE_DIAG] Baudrate detectado: 0x%02X ", detected_baudrate);
+   
+   switch(detected_baudrate) {
+       case 0x00: printf("(12 Mbaud)\r\n"); break;
+       case 0x01: printf("(6 Mbaud)\r\n"); break;
+       case 0x02: printf("(3 Mbaud)\r\n"); break;
+       case 0x03: printf("(1.5 Mbaud) ✓ CORRECTO\r\n"); break;
+       case 0x04: printf("(500 Kbaud)\r\n"); break;
+       case 0x05: printf("(187.5 Kbaud)\r\n"); break;
+       case 0x06: printf("(93.75 Kbaud)\r\n"); break;
+       case 0x07: printf("(45.45 Kbaud)\r\n"); break;
+       case 0x08: printf("(19.2 Kbaud)\r\n"); break;
+       case 0x09: printf("(9.6 Kbaud)\r\n"); break;
+       case 0xFF: printf("(AFTER_RESET - NO DETECTADO)\r\n"); break;
+       default: printf("(DESCONOCIDO)\r\n"); break;
+   }
+   
+   // Verificar si el baudrate coincide con el esperado (1.5 Mbaud)
+   if (detected_baudrate == 0x03) {
+       printf("DEBUG: [BAUDRATE_DIAG] ¡BAUDRATE CORRECTO! 1.5 Mbaud detectado\r\n");
+   } else if (detected_baudrate == 0xFF || (status_h & 0x0F) == 0x0F) {
+       printf("DEBUG: [BAUDRATE_DIAG] ¡PROBLEMA! Baudrate NO detectado (estado reset)\r\n");
+   } else {
+       printf("DEBUG: [BAUDRATE_DIAG] ¡ADVERTENCIA! Baudrate detectado (%s) no coincide con esperado (1.5 Mbaud)\r\n",
+              detected_baudrate == 0x03 ? "correcto" : "incorrecto");
+   }
+   
+   // Verificar baudrate detection según manual
+   if ((int_reg_l & 0x04) == 0) {  // Bit 2 = BAUDRATE_DETECT
+       printf("DEBUG: [BAUDRATE_DIAG] ¡PROBLEMA CRÍTICO! No se detectó BAUDRATE_DETECT event\r\n");
+       printf("DEBUG: [BAUDRATE_DIAG] Según manual sección 4.9: VPC3+ necesita detectar baudrate antes de PASSIVE_IDLE\r\n");
+       printf("DEBUG: [BAUDRATE_DIAG] SOLUCIÓN: Conectar cable PROFIBUS o simular baudrate\r\n");
+   } else {
+       printf("DEBUG: [BAUDRATE_DIAG] BAUDRATE_DETECT event OK\r\n");
+   }
+   
+   // DIAGNÓSTICO ADICIONAL: Verificar otros eventos críticos
+   if ((int_reg_l & 0x01) != 0) printf("DEBUG: [BAUDRATE_DIAG] MAC_RESET event detectado\r\n");
+   if ((int_reg_l & 0x02) != 0) printf("DEBUG: [BAUDRATE_DIAG] GO_LEAVE_DATA_EX event detectado\r\n");
+   if ((int_reg_l & 0x08) != 0) printf("DEBUG: [BAUDRATE_DIAG] CLOCK_SYNC event detectado\r\n");
+   
+   // TEORÍA: El VPC3+ puede estar esperando una conexión PROFIBUS física
+   printf("DEBUG: [BAUDRATE_DIAG] TEORÍA: VPC3+ no entra en PASSIVE_IDLE sin conexión PROFIBUS física\r\n");
+   printf("DEBUG: [BAUDRATE_DIAG] Según manual: 'VPC3+ generates BAUDRATE_DETECT event if master connected'\r\n");
+   
+   // DIAGNÓSTICO AVANZADO: Verificar configuración de hardware
+   printf("DEBUG: [HARDWARE_DIAG] === DIAGNÓSTICO DE CONFIGURACIÓN DE HARDWARE ===\r\n");
+   
+   // Verificar MODE_REG_0 para configuración de baudrate
+   uint8_t mode_reg_0_l = Vpc3Read(bVpc3RwModeReg0_L);
+   uint8_t mode_reg_0_h = Vpc3Read(bVpc3RwModeReg0_H);
+   printf("DEBUG: [HARDWARE_DIAG] MODE_REG_0_L: 0x%02X\r\n", mode_reg_0_l);
+   printf("DEBUG: [HARDWARE_DIAG] MODE_REG_0_H: 0x%02X\r\n", mode_reg_0_h);
+   
+   // Verificar bits críticos para detección de baudrate
+   printf("DEBUG: [HARDWARE_DIAG] Bits críticos en MODE_REG_0_L:\r\n");
+   printf("DEBUG: [HARDWARE_DIAG] - DIS_START_CTRL (bit 0): %s\r\n", (mode_reg_0_l & 0x01) ? "DESHABILITADO" : "HABILITADO");
+   printf("DEBUG: [HARDWARE_DIAG] - DIS_STOP_CTRL (bit 1): %s\r\n", (mode_reg_0_l & 0x02) ? "DESHABILITADO" : "HABILITADO");
+   printf("DEBUG: [HARDWARE_DIAG] - FDL_DBB (bit 2): %s\r\n", (mode_reg_0_l & 0x04) ? "HABILITADO" : "DESHABILITADO");
+   printf("DEBUG: [HARDWARE_DIAG] - MINTSDR (bit 3): %s\r\n", (mode_reg_0_l & 0x08) ? "HABILITADO" : "DESHABILITADO");
+   
+   printf("DEBUG: [HARDWARE_DIAG] Bits críticos en MODE_REG_0_H:\r\n");
+   printf("DEBUG: [HARDWARE_DIAG] - DP_MODE (bit 0): %s\r\n", (mode_reg_0_h & 0x01) ? "HABILITADO" : "DESHABILITADO");
+   
+   // POSIBLE PROBLEMA: Verificar si DIS_START_CTRL está habilitado incorrectamente
+   if (mode_reg_0_l & 0x01) {
+       printf("DEBUG: [HARDWARE_DIAG] ¡PROBLEMA CRÍTICO! DIS_START_CTRL está habilitado\r\n");
+       printf("DEBUG: [HARDWARE_DIAG] Esto impide que el VPC3+ procese comandos START correctamente\r\n");
+       printf("DEBUG: [HARDWARE_DIAG] SOLUCIÓN: Deshabilitar DIS_START_CTRL\r\n");
+       
+       // Corregir MODE_REG_0_L
+       uint8_t corrected_mode_reg_0_l = mode_reg_0_l & ~0x01;  // Clear bit 0
+       printf("DEBUG: [HARDWARE_DIAG] Corrigiendo MODE_REG_0_L de 0x%02X a 0x%02X\r\n", 
+              mode_reg_0_l, corrected_mode_reg_0_l);
+       Vpc3Write(bVpc3RwModeReg0_L, corrected_mode_reg_0_l);
+       HAL_Delay(10);
+       
+       // Verificar corrección
+       uint8_t verified_mode_reg_0_l = Vpc3Read(bVpc3RwModeReg0_L);
+       printf("DEBUG: [HARDWARE_DIAG] MODE_REG_0_L después de corrección: 0x%02X\r\n", verified_mode_reg_0_l);
+   }
+   
+   // SOLUCIÓN EXPERIMENTAL: Intentar forzar BAUDRATE_DETECT después de corrección
+   printf("DEBUG: [EXPERIMENTAL_FIX] === INTENTANDO SOLUCIÓN EXPERIMENTAL ===\r\n");
+   printf("DEBUG: [EXPERIMENTAL_FIX] Configurando baudrate manualmente según manual...\r\n");
+   
+   // Según manual sección 4.9, configurar baudrate control
+   printf("DEBUG: [EXPERIMENTAL_FIX] Configurando BAUD_CTRL register...\r\n");
+   Vpc3Write(bVpc3WoWdBaudControlVal, 0x4F);  // Valor típico para 1.5Mbaud según manual
+   HAL_Delay(10);
+   
+   // Intentar generar evento BAUDRATE_DETECT artificialmente
+   printf("DEBUG: [EXPERIMENTAL_FIX] Intentando generar BAUDRATE_DETECT...\r\n");
+   uint8_t baud_ctrl_val = Vpc3Read(bVpc3WoWdBaudControlVal);
+   printf("DEBUG: [EXPERIMENTAL_FIX] BAUD_CTRL configurado: 0x%02X\r\n", baud_ctrl_val);
+   
+   // Reintentar START después de configurar baudrate
+   printf("DEBUG: [EXPERIMENTAL_FIX] Reintentando START después de configurar baudrate...\r\n");
+   Vpc3Write(bVpc3WoModeReg1_S, VPC3_START);
+   HAL_Delay(200);  // Dar más tiempo para procesar
+   
+   uint8_t status_after_baud_fix = VPC3_GET_STATUS_L();
+   printf("DEBUG: [EXPERIMENTAL_FIX] STATUS_L después de configurar baudrate: 0x%02X\r\n", status_after_baud_fix);
+   
+   if ((status_after_baud_fix & VPC3_PASS_IDLE) != 0) {
+       printf("DEBUG: [EXPERIMENTAL_FIX] ¡ÉXITO! VPC3+ entró en PASSIVE_IDLE después de configurar baudrate\r\n");
+   } else {
+       printf("DEBUG: [EXPERIMENTAL_FIX] FALLO - VPC3+ aún no entra en PASSIVE_IDLE\r\n");
+       
+       // Verificar nuevamente el baudrate después del intento
+       uint8_t final_status_h = Vpc3Read(0x05);
+       uint8_t final_baudrate = final_status_h & 0x0F;
+       printf("DEBUG: [EXPERIMENTAL_FIX] Baudrate final detectado: 0x%02X\r\n", final_baudrate);
+       
+       if (final_baudrate == 0x03) {
+                  printf("DEBUG: [EXPERIMENTAL_FIX] Baudrate detectado correctamente, pero VPC3+ no entra en PASSIVE_IDLE\r\n");
+       printf("DEBUG: [EXPERIMENTAL_FIX] POSIBLE CAUSA: Problema de configuración de interrupciones o eventos\r\n");
+       
+       // SOLUCIÓN CRÍTICA: Habilitar interrupciones BAUDRATE_DETECT
+       printf("DEBUG: [INTERRUPT_FIX] === HABILITANDO INTERRUPCIONES BAUDRATE_DETECT ===\r\n");
+       
+       // Verificar configuración actual de interrupciones
+       uint8_t int_mask_l = Vpc3Read(0x00);  // INT_MASK_L
+       uint8_t int_mask_h = Vpc3Read(0x01);  // INT_MASK_H
+       printf("DEBUG: [INTERRUPT_FIX] INT_MASK_L actual: 0x%02X\r\n", int_mask_l);
+       printf("DEBUG: [INTERRUPT_FIX] INT_MASK_H actual: 0x%02X\r\n", int_mask_h);
+       
+       // Habilitar BAUDRATE_DETECT interrupt (bit 2 en INT_MASK_L)
+       uint8_t new_int_mask_l = int_mask_l | 0x04;  // Set bit 2
+       printf("DEBUG: [INTERRUPT_FIX] Habilitando BAUDRATE_DETECT interrupt: 0x%02X -> 0x%02X\r\n", 
+              int_mask_l, new_int_mask_l);
+       Vpc3Write(0x00, new_int_mask_l);
+       HAL_Delay(10);
+       
+       // Verificar que se habilitó
+       uint8_t verified_int_mask_l = Vpc3Read(0x00);
+       printf("DEBUG: [INTERRUPT_FIX] INT_MASK_L después: 0x%02X\r\n", verified_int_mask_l);
+       
+       // Limpiar cualquier interrupción pendiente
+       printf("DEBUG: [INTERRUPT_FIX] Limpiando interrupciones pendientes...\r\n");
+       Vpc3Write(0x0E, 0x04);  // ACK BAUDRATE_DETECT interrupt
+       HAL_Delay(10);
+       
+       // Reintentar START después de habilitar interrupciones
+       printf("DEBUG: [INTERRUPT_FIX] Reintentando START después de habilitar interrupciones...\r\n");
+       Vpc3Write(bVpc3WoModeReg1_S, VPC3_START);
+       HAL_Delay(200);
+       
+       uint8_t status_after_int_fix = VPC3_GET_STATUS_L();
+       uint8_t int_reg_after_fix = Vpc3Read(0x02);
+       printf("DEBUG: [INTERRUPT_FIX] STATUS_L después de habilitar interrupciones: 0x%02X\r\n", status_after_int_fix);
+       printf("DEBUG: [INTERRUPT_FIX] INT_REG_L después de habilitar interrupciones: 0x%02X\r\n", int_reg_after_fix);
+       
+       if ((status_after_int_fix & VPC3_PASS_IDLE) != 0) {
+           printf("DEBUG: [INTERRUPT_FIX] ¡ÉXITO! VPC3+ entró en PASSIVE_IDLE después de habilitar interrupciones\r\n");
+       } else if ((int_reg_after_fix & 0x04) != 0) {
+           printf("DEBUG: [INTERRUPT_FIX] ¡PROGRESO! BAUDRATE_DETECT event ahora detectado\r\n");
+           printf("DEBUG: [INTERRUPT_FIX] Procesando evento BAUDRATE_DETECT...\r\n");
+           
+           // Procesar el evento BAUDRATE_DETECT
+           Vpc3Write(0x0E, 0x04);  // ACK the interrupt
+           HAL_Delay(50);
+           
+           uint8_t final_status = VPC3_GET_STATUS_L();
+           printf("DEBUG: [INTERRUPT_FIX] STATUS_L final después de procesar evento: 0x%02X\r\n", final_status);
+           
+           if ((final_status & VPC3_PASS_IDLE) != 0) {
+               printf("DEBUG: [INTERRUPT_FIX] ¡ÉXITO TOTAL! VPC3+ en PASSIVE_IDLE\r\n");
+           }
+       } else {
+           printf("DEBUG: [INTERRUPT_FIX] FALLO - Interrupciones habilitadas pero aún sin evento\r\n");
+       }
+       } else {
+           printf("DEBUG: [EXPERIMENTAL_FIX] CONCLUSIÓN: Problema de detección de baudrate físico\r\n");
+       }
+   }
+   
+   // DIAGNÓSTICO FINAL: Posibles problemas del lado del master PLC
+   printf("DEBUG: [MASTER_DIAG] === DIAGNÓSTICO DE CONFIGURACIÓN DEL MASTER PLC ===\r\n");
+   printf("DEBUG: [MASTER_DIAG] Verificar en el PLC master:\r\n");
+   printf("DEBUG: [MASTER_DIAG] 1. Cable PROFIBUS conectado correctamente (A, B, GND)\r\n");
+   printf("DEBUG: [MASTER_DIAG] 2. Terminadores de 120Ω en ambos extremos del bus\r\n");
+   printf("DEBUG: [MASTER_DIAG] 3. Baudrate configurado a 1.5 Mbps en el master\r\n");
+   printf("DEBUG: [MASTER_DIAG] 4. Slave address 7 configurado en el master\r\n");
+   printf("DEBUG: [MASTER_DIAG] 5. GSD file 'Profibus.gsd' cargado en el master\r\n");
+   printf("DEBUG: [MASTER_DIAG] 6. Master PLC en modo RUN (no STOP)\r\n");
+   printf("DEBUG: [MASTER_DIAG] 7. Configuración DP activada en el master\r\n");
+   
+   // Diagnóstico de la señal física
+   printf("DEBUG: [PHYSICAL_DIAG] === DIAGNÓSTICO DE SEÑAL FÍSICA ===\r\n");
+   printf("DEBUG: [PHYSICAL_DIAG] Si el cable está conectado pero no hay detección:\r\n");
+   printf("DEBUG: [PHYSICAL_DIAG] - Verificar voltaje en líneas A y B (debe oscilar)\r\n");
+   printf("DEBUG: [PHYSICAL_DIAG] - Verificar que el master está transmitiendo\r\n");
+   printf("DEBUG: [PHYSICAL_DIAG] - Verificar impedancia del cable (120Ω característico)\r\n");
+   printf("DEBUG: [PHYSICAL_DIAG] - Verificar longitud del cable (max 1200m a 1.5Mbps)\r\n");
+       }
+   }
 
    // DEBUG: Reconfigurar registros de modo después del START (ya que se resetean)
    printf("DEBUG: Reconfigurando registros de modo después del START...\r\n");
@@ -1035,6 +1446,11 @@ DP_ERROR_CODE bError;
       Vpc3Write( bVpc3WoModeReg2, INIT_VPC3_MODE_REG_2 );
       printf("DEBUG: [VPC3_SetConstants] Escribiendo MODE_REG_3: 0x%02X\r\n", INIT_VPC3_MODE_REG_3);
       Vpc3Write( bVpc3WoModeReg3, INIT_VPC3_MODE_REG_3 );
+      
+      // CORRECCIÓN CRÍTICA: Forzar MODE_REG_3 a 0x00 según manual
+      printf("DEBUG: [VPC3_SetConstants] FORZANDO MODE_REG_3 a 0x00 (según manual VPC3+)...\r\n");
+      Vpc3Write( bVpc3WoModeReg3, 0x00 );
+      HAL_Delay(10);  // Dar tiempo para que se procese
       
       // DEBUG: Verificar que los registros se configuraron correctamente
       printf("DEBUG: [VPC3_SetConstants] Verificando configuración de registros de modo...\r\n");
