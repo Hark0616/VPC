@@ -124,11 +124,13 @@ volatile uint8_t bResult;
          if( VPC3_POLL_IND_DIAG_BUFFER_CHANGED() )
          {
             printf(" [dp_isr] === IND_DIAG_BUFFER_CHANGED DETECTADO ===\r\n");
+            printf(" [dp_isr] === ETAPA 0: Solicitud de Diagnostico (Slave_Diag) recibida del maestro ===\r\n");
             printf(" [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
             printf(" [dp_isr] STATUS_L antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
             printf(" [dp_isr] STATUS_H antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
             printf(" [dp_isr] DP_STATE antes del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
             printf(" [dp_isr] MODE_REG_2 antes del evento: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
+            printf(" [dp_isr] ESTADO ACTUAL: 0x%02X\r\n", VPC3_GET_DP_STATE());
             
             // Análisis del buffer de diagnóstico
             uint8_t diag_buffer_sm = Vpc3Read(0x0E); // Diag buffer state machine
@@ -161,10 +163,11 @@ volatile uint8_t bResult;
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_NEW_PRM_DATA() )
          {
-            printf(" [dp_isr] === PRM RECIBIDO DEL MASTER ===\r\n");
+            printf(" [dp_isr] === ETAPA 1: Trama de Parametrizacion (Set_Param) recibida ===\r\n");
             printf(" [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
             printf(" [dp_isr] STATUS_L antes de procesar PRM: 0x%02X\r\n", VPC3_GET_STATUS_L());
             printf(" [dp_isr] STATUS_H antes de procesar PRM: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            printf(" [dp_isr] ESTADO ACTUAL: 0x%02X (Deberia ser WAIT_PRM)\r\n", VPC3_GET_DP_STATE());
             
             uint8_t bPrmLength;
 
@@ -228,6 +231,7 @@ volatile uint8_t bResult;
 
                 CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], prmBufPtr, bPrmLength );
 
+               printf(" [dp_isr] -> Validando %d bytes de parametros...\r\n", bPrmLength);
                if( DpPrm_ChkNewPrmData( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bPrmLength ) == DP_OK )
                {
                   #if REDUNDANCY
@@ -244,10 +248,12 @@ volatile uint8_t bResult;
                   #endif /* #if REDUNDANCY */
 
                   bResult = VPC3_SET_PRM_DATA_OK();
+                  printf(" [dp_isr] -> RESULTADO: Parametros ACEPTADOS.\r\n");
                } /* if( DpPrm_ChkNewPrmData( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bPrmLength ) == DP_OK ) */
                else
                {
                   bResult = VPC3_SET_PRM_DATA_NOT_OK();
+                  printf(" [dp_isr] -> RESULTADO: Parametros RECHAZADOS.\r\n");
                } /* else of if( DpPrm_ChkNewPrmData( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bPrmLength ) == DP_OK ) */
             }
             while( bResult == VPC3_PRM_CONFLICT );
@@ -258,10 +264,11 @@ volatile uint8_t bResult;
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_NEW_CFG_DATA() )
          {
-            printf(" [dp_isr] === CFG RECIBIDO DEL MASTER ===\r\n");
+            printf(" [dp_isr] === ETAPA 2: Trama de Configuracion (Check_Cfg) recibida ===\r\n");
             printf(" [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
             printf(" [dp_isr] STATUS_L antes de procesar CFG: 0x%02X\r\n", VPC3_GET_STATUS_L());
             printf(" [dp_isr] STATUS_H antes de procesar CFG: 0x%02X\r\n", VPC3_GET_STATUS_H());
+            printf(" [dp_isr] ESTADO ACTUAL: 0x%02X (Deberia ser WAIT_CFG)\r\n", VPC3_GET_DP_STATE());
             
             uint8_t bCfgLength;
 
@@ -324,7 +331,6 @@ volatile uint8_t bResult;
                printf("DEBUG: [dp_isr] Validaciones CFG exitosas - procediendo con copia segura\r\n");
                
                CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], cfgBufPtr, bCfgLength );
-
                printf("DEBUG: [dp_isr] Contenido de abPrmCfgSsaHelpBuffer JUSTO ANTES de DpCfg_ChkNewCfgData (%d bytes): ", bCfgLength);
                
                                // Protección contra tramas CFG corruptas
@@ -346,8 +352,12 @@ volatile uint8_t bResult;
                    printf("WARNING: [dp_isr] CFG length mismatch - Expected: %d bytes, Received: %d bytes\r\n", 
                           EXPECTED_CFG_LENGTH, bCfgLength);
                }
+
+               printf(" [dp_isr] -> Contenido de la configuracion recibida (%d bytes): ", bCfgLength);
+               for(int k=0; k<bCfgLength; k++) { printf("0x%02X ", pDpSystem->abPrmCfgSsaHelpBuffer[k]); }
                printf("\r\n");
 
+               printf(" [dp_isr] -> Validando configuracion...\r\n");
                switch( DpCfg_ChkNewCfgData( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bCfgLength ) )
                {
                   case DP_CFG_OK:
@@ -357,6 +367,7 @@ volatile uint8_t bResult;
                      #endif /* #if DP_MSAC_C1 */
 
                      bResult = VPC3_SET_CFG_DATA_OK();
+                     printf(" [dp_isr] -> RESULTADO: Configuracion ACEPTADA (sin cambios).\r\n");
                      break;
                   } /* case DP_CFG_OK: */
 
@@ -367,6 +378,7 @@ volatile uint8_t bResult;
                      #endif /* #if DP_MSAC_C1 */
 
                      bResult = VPC3_SET_CFG_DATA_NOT_OK();
+                     printf(" [dp_isr] -> RESULTADO: Configuracion RECHAZADA.\r\n");
                      break;
                   } /* case DP_CFG_FAULT: */
 
@@ -394,6 +406,7 @@ volatile uint8_t bResult;
                         VPC3_UPDATE_CFG_BUFFER();
 
                         bResult = VPC3_SET_CFG_DATA_OK();
+                        printf(" [dp_isr] -> RESULTADO: Configuracion ACEPTADA (con actualizacion de I/O).\r\n");
                      } /* else of if( DP_OK != VPC3_CalculateInpOutpLength( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bCfgLength ) ) */
                      break;
                   } /* case DP_CFG_UPDATE: */
@@ -423,11 +436,15 @@ volatile uint8_t bResult;
          if( VPC3_POLL_IND_GO_LEAVE_DATA_EX() )
          {
             printf(" [dp_isr] === IND_GO_LEAVE_DATA_EX DETECTADO ===\r\n");
+            uint8_t state_before = VPC3_GET_DP_STATE();
+            printf(" [dp_isr] === ETAPA 3: Orden de Cambio de Estado recibida ===\r\n");
             printf(" [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
             printf(" [dp_isr] STATUS_L antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
             printf(" [dp_isr] STATUS_H antes del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
             printf(" [dp_isr] DP_STATE antes del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
             printf(" [dp_isr] MODE_REG_2 antes del evento: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
+            printf(" [dp_isr] ESTADO ANTES del cambio: 0x%02X\r\n", state_before);
+
             
             // Análisis del estado de comunicación
             uint8_t status_l = VPC3_GET_STATUS_L();
@@ -449,12 +466,25 @@ volatile uint8_t bResult;
 
             DpAppl_IsrGoLeaveDataExchange( VPC3_GET_DP_STATE() );
 
+            uint8_t state_after = VPC3_GET_DP_STATE();
+            printf(" [dp_isr] ESTADO DESPUES del cambio: 0x%02X\r\n", state_after);
+
+            if (state_before != DATA_EX && state_after == DATA_EX)
+            {
+                printf(" [dp_isr] -> RESULTADO: Transicion a DataExchange EXITOSA.\r\n");
+            }
+            else if (state_before == DATA_EX && state_after != DATA_EX)
+            {
+                 printf(" [dp_isr] -> RESULTADO: Se ha salido de DataExchange.\r\n");
+            }
+
             VPC3_CON_IND_GO_LEAVE_DATA_EX();
             printf(" [dp_isr] STATUS_L después del evento: 0x%02X\r\n", VPC3_GET_STATUS_L());
             printf(" [dp_isr] STATUS_H después del evento: 0x%02X\r\n", VPC3_GET_STATUS_H());
             printf(" [dp_isr] DP_STATE después del evento: 0x%02X\r\n", VPC3_GET_DP_STATE());
             printf(" [dp_isr] IND_GO_LEAVE_DATA_EX procesado\r\n");
             printf(" [dp_isr] === FIN IND_GO_LEAVE_DATA_EX ===\r\n");
+            printf(" [dp_isr] === FIN ETAPA 3 ===\r\n");
          } /* if( VPC3_POLL_IND_GO_LEAVE_DATA_EX() ) */
 
          /*------------------------------------------------------------------*/
@@ -618,14 +648,13 @@ void dp_isr(void)
    // --- LOGGING COMPLETO DE ACTIVACIÓN ---
    static uint32_t dp_isr_call_count = 0;
    dp_isr_call_count++;
-   
    printf(" [dp_isr] === LLAMADA #%lu ===\r\n", dp_isr_call_count);
+   printf(" [dp_isr] === LLAMADA #%lu / INTERRUPCION DEL PLC ===\r\n", dp_isr_call_count);
    printf(" [dp_isr] TIMESTAMP: %lu ms\r\n", HAL_GetTick());
    printf(" [dp_isr] STACK TRACE - Llamada desde:\r\n");
    printf(" [dp_isr] - Función: dp_isr\r\n");
    printf(" [dp_isr] - Archivo: ../Core/Src/dp_isr.c\r\n");
    printf(" [dp_isr] - Línea: %d\r\n", __LINE__);
-   
    // Verificar si es llamada por polling o interrupción
    #if (VPC3_SERIAL_MODE == 0)
       printf(" [dp_isr] MODO: INTERRUPCIÓN (VPC3_Isr)\r\n");
@@ -634,8 +663,9 @@ void dp_isr(void)
    #endif
    
    printf(" [dp_isr] INICIO - STATUS_L=0x%02X, STATUS_H=0x%02X, DP_STATE=0x%02X\r\n",
-          VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H(), VPC3_GET_DP_STATE());
+      VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H(), VPC3_GET_DP_STATE());
    printf(" [dp_isr] INICIO - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3\r\n");
+   printf(" [dp_isr] ESTADO ACTUAL DEL ESCLAVO: 0x%02X\r\n", VPC3_GET_DP_STATE());
    
    // --- CRITICAL: Check for MODE_REG_2 corruption during interrupt ---
   uint8_t mode_reg2 = VPC3_GetModeReg2Shadow();
@@ -671,7 +701,7 @@ void dp_isr(void)
    last_status_l = current_status_l;
    last_status_h = current_status_h;
    
-   printf(" [dp_isr] ANTES de VPC3_Poll/VPC3_Isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n",
+   printf(" [dp_isr] ANTES de procesar eventos - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n",
           VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
    
 #if (VPC3_SERIAL_MODE == 0)
@@ -680,11 +710,10 @@ void dp_isr(void)
     VPC3_Poll();
 #endif
 
-   printf(" [dp_isr] DESPUÉS de VPC3_Poll/VPC3_Isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n",
-          VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
-   printf(" [dp_isr] FIN - STATUS_L=0x%02X, STATUS_H=0x%02X, DP_STATE=0x%02X\r\n",
-          VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H(), VPC3_GET_DP_STATE());
-   printf(" [dp_isr] FIN - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3\r\n");
+   printf(" [dp_isr] DESPUÉS de procesar eventos - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n", VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
+   printf(" [dp_isr] FIN - STATUS_L=0x%02X, STATUS_H=0x%02X, DP_STATE=0x%02X\r\n", VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H(), VPC3_GET_DP_STATE());
+    printf(" [dp_isr] FIN - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3\r\n");
    printf(" [dp_isr] === FIN LLAMADA #%lu ===\r\n", dp_isr_call_count);
+   printf(" [dp_isr] === FIN INTERRUPCION #%lu ===\r\n", dp_isr_call_count);
 }
 

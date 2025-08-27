@@ -3,7 +3,7 @@
 /*                                                                           */
 /* 0000  000   000  00000 0  000  0   0 0 0000                               */
 /* 0   0 0  0 0   0 0     0 0   0 0   0 0 0   0                              */
-/* 0   0 0  0 0   0 0     0 0     0   0 0 0   0      Einsteinstra�e 6        */
+/* 0   0 0  0 0   0 0     0 0     0   0 0 0   0      Einsteinstra�e 6        */
 /* 0000  000  0   0 000   0 0     00000 0 0000       91074 Herzogenaurach    */
 /* 0     00   0   0 0     0 0     0   0 0 0                                  */
 /* 0     0 0  0   0 0     0 0   0 0   0 0 0          Phone: ++499132744200   */
@@ -157,11 +157,16 @@ DP_ERROR_CODE DpPrm_ChkNewPrmData( MEM_UNSIGNED8_PTR pbPrmData, uint8_t bPrmLeng
 MEM_STRUC_PRM_PTR psToPrmData;
 DP_ERROR_CODE     eRetValue;
 
+   /* Imprimir la trama recibida ANTES de cualquier validación para depuración */
+   printf(" [DpPrm] -> Recibida trama de parametros. Longitud: %d bytes. Contenido: ", bPrmLength);
+   for(int i=0; i<bPrmLength; i++) { printf("0x%02X ", pbPrmData[i]); }
+   printf("\r\n");
+
    DpPrm_Init();
 
    eRetValue = DP_OK;
 
-   if( bPrmLength == 0x13 )
+   if( ( bPrmLength == 0x13 ) || ( bPrmLength == 7 ) )
    {
       psToPrmData = ( MEM_STRUC_PRM_PTR )pbPrmData;
 
@@ -170,7 +175,7 @@ DP_ERROR_CODE     eRetValue;
 
       eRetValue = DpPrm_ChkDpv1StatusBytes( psToPrmData->bDpv1Status1, psToPrmData->bDpv1Status2, psToPrmData->bDpv1Status3 );
 
-      if( eRetValue == DP_OK )
+      if( ( eRetValue == DP_OK ) && ( bPrmLength == 0x13 ) )
       {
          //user parameter data
          eRetValue = DpPrm_ChkPrmCounterModulePrm( (MEM_STRUC_MODULE_PRM_BLOCK_PTR)&psToPrmData->bUserPrmData );
