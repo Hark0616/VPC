@@ -76,6 +76,13 @@ volatile uint8_t bResult;
 
       #endif /* #if VPC3_SERIAL_MODE */
 
+      // Snapshot de enmascarado/pendientes (manual 4.1)
+      uint8_t maskL = Vpc3Read(bVpc3WoIntMask_L);
+      uint8_t maskH = Vpc3Read(bVpc3WoIntMask_H);
+      uint8_t reqL  = Vpc3Read(bVpc3RwIntReqReg_L);
+      uint8_t reqH  = Vpc3Read(bVpc3RwIntReqReg_H);
+      printf("SNAPSHOT: INT_MASK L=0x%02X H=0x%02X | INT_REQ L=0x%02X H=0x%02X\r\n", maskL, maskH, reqL, reqH);
+
       // Log para verificar la máscara de software
       printf("DEBUG: [VPC3_Poll] Eventos hardware leidos: 0x%04X, Mascara de software aplicada: 0x%04X\n",
              pDpSystem->wPollInterruptEvent, pDpSystem->wPollInterruptMask);
@@ -132,11 +139,20 @@ volatile uint8_t bResult;
             printf(" [dp_isr] MODE_REG_2 antes del evento: 0x%02X\r\n", VPC3_GetModeReg2Shadow());
             printf(" [dp_isr] ESTADO ACTUAL: 0x%02X\r\n", VPC3_GET_DP_STATE());
             
-            // Análisis del buffer de diagnóstico
-            uint8_t diag_buffer_sm = Vpc3Read(0x0E); // Diag buffer state machine
+            // Análisis del buffer de diagnóstico (manual 4.6)
+            uint8_t diag_buffer_sm = Vpc3Read(0x0E); // Diag buffer state machine (si aplica)
             printf(" [dp_isr] Diag Buffer State Machine: 0x%02X\r\n", diag_buffer_sm);
-            
-            printf(" [dp_isr] Buffer de diagnóstico disponible\r\n");
+
+            // Imprimir cabecera de diagnóstico (primeros 6 bytes) si hay buffer
+            VPC3_UNSIGNED8_PTR pDiag = VPC3_GetDiagBufPtr();
+            if (pDiag != VPC3_NULL_PTR) {
+               uint8_t hdr[6] = {0};
+               CopyFromVpc3_(hdr, pDiag, 6);
+               printf(" [dp_isr] DIAG HEADER: Stat1=0x%02X Stat2=0x%02X Stat3=0x%02X Master=0x%02X IdentH=0x%02X IdentL=0x%02X\r\n",
+                      hdr[0], hdr[1], hdr[2], hdr[3], hdr[4], hdr[5]);
+            } else {
+               printf(" [dp_isr] AVISO: VPC3_GetDiagBufPtr() devolvió VPC3_NULL_PTR\r\n");
+            }
             
             printf(" [dp_isr] Llamando DpDiag_IsrDiagBufferChanged...\r\n");
             DpDiag_IsrDiagBufferChanged();
@@ -232,6 +248,18 @@ volatile uint8_t bResult;
                 CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], prmBufPtr, bPrmLength );
 
                printf(" [dp_isr] -> Validando %d bytes de parametros...\r\n", bPrmLength);
+               // Desglose de los 7 bytes estándar PRM (manual 4.2.2)
+               if (bPrmLength >= 7) {
+                   uint8_t *d = &pDpSystem->abPrmCfgSsaHelpBuffer[0];
+                   uint8_t ss1=d[0], wdf1=d[1], wdf2=d[2], minTSDR=d[3], idH=d[4], idL=d[5], grp=d[6];
+                   printf("INFO: [PRM_HEADER] Stat1=0x%02X WD1=0x%02X WD2=0x%02X minTSDR=0x%02X IdentH=0x%02X IdentL=0x%02X Group=0x%02X\r\n",
+                          ss1, wdf1, wdf2, minTSDR, idH, idL, grp);
+                   // Comparación Ident vs IDENT_NR
+                   uint8_t expH = (uint8_t)((IDENT_NR>>8) & 0xFF);
+                   uint8_t expL = (uint8_t)(IDENT_NR & 0xFF);
+                   printf("CHECK: [PRM_IDENT] Esperado=0x%02X%02X, Recibido=0x%02X%02X %s\r\n",
+                          expH, expL, idH, idL, ((expH==idH && expL==idL)?"[OK]":"[MISMATCH]") );
+               }
                if( DpPrm_ChkNewPrmData( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bPrmLength ) == DP_OK )
                {
                   #if REDUNDANCY
@@ -249,6 +277,13 @@ volatile uint8_t bResult;
 
                   bResult = VPC3_SET_PRM_DATA_OK();
                   printf(" [dp_isr] -> RESULTADO: Parametros ACEPTADOS.\r\n");
+                  // Estado DP tras PRM OK
+                  {
+                      uint8_t sl = VPC3_GET_STATUS_L();
+                      uint8_t dp = (sl>>5)&0x03;
+                      const char* dp_text = (dp==0)?"WAIT_PRM":(dp==1)?"WAIT_CFG":(dp==2)?"DATA_EX":"DP_ERROR";
+                      printf("STATE: [PRM_OK] STATUS_L=0x%02X -> DP_STATE=%u (%s)\r\n", sl, dp, dp_text);
+                  }
                } /* if( DpPrm_ChkNewPrmData( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bPrmLength ) == DP_OK ) */
                else
                {
@@ -368,6 +403,18 @@ volatile uint8_t bResult;
 
                      bResult = VPC3_SET_CFG_DATA_OK();
                      printf(" [dp_isr] -> RESULTADO: Configuracion ACEPTADA (sin cambios).\r\n");
+                     // Confirmar transición a DATA_EX dentro de 200ms
+                     {
+                         uint32_t t0 = HAL_GetTick();
+                         uint8_t dp;
+                         do {
+                             uint8_t sl = VPC3_GET_STATUS_L();
+                             dp = (sl>>5)&0x03;
+                             if (dp==2) break;
+                             HAL_Delay(5);
+                         } while ((HAL_GetTick()-t0) < 200);
+                         printf("STATE: [CFG_OK] DP_STATE=%u (%s)\r\n", dp, (dp==2)?"DATA_EX":(dp==1)?"WAIT_CFG":(dp==0)?"WAIT_PRM":"DP_ERROR");
+                     }
                      break;
                   } /* case DP_CFG_OK: */
 
@@ -407,6 +454,18 @@ volatile uint8_t bResult;
 
                         bResult = VPC3_SET_CFG_DATA_OK();
                         printf(" [dp_isr] -> RESULTADO: Configuracion ACEPTADA (con actualizacion de I/O).\r\n");
+                        // Confirmar transición a DATA_EX dentro de 200ms
+                        {
+                            uint32_t t0 = HAL_GetTick();
+                            uint8_t dp;
+                            do {
+                                uint8_t sl = VPC3_GET_STATUS_L();
+                                dp = (sl>>5)&0x03;
+                                if (dp==2) break;
+                                HAL_Delay(5);
+                            } while ((HAL_GetTick()-t0) < 200);
+                            printf("STATE: [CFG_UPDATE] DP_STATE=%u (%s)\r\n", dp, (dp==2)?"DATA_EX":(dp==1)?"WAIT_CFG":(dp==0)?"WAIT_PRM":"DP_ERROR");
+                        }
                      } /* else of if( DP_OK != VPC3_CalculateInpOutpLength( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bCfgLength ) ) */
                      break;
                   } /* case DP_CFG_UPDATE: */
@@ -500,6 +559,11 @@ volatile uint8_t bResult;
                    VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
             printf("DEBUG: [dp_isr] STATUS_L antes: 0x%02X (esperado DATA_EX=0x45)\n", VPC3_GET_STATUS_L());
             printf("DEBUG: [dp_isr] STATUS_H antes: 0x%02X (esperado 0xE3)\n", VPC3_GET_STATUS_H());
+
+            // Obtener puntero y estado del buffer de salida (manual 4.4)
+            uint8_t dout_state = 0;
+            VPC3_UNSIGNED8_PTR pDout = VPC3_GetDoutBufPtr(&dout_state);
+            printf("DEBUG: [dp_isr] DOUT Buffer Ptr=%p, State=%u (NEW/CLEARED)\r\n", pDout, dout_state);
             
             #if DP_MSAC_C1
                MSAC_C1_CheckIndDxOut();
@@ -535,7 +599,7 @@ volatile uint8_t bResult;
          if( VPC3_POLL_IND_NEW_SSA_DATA() )
          {
             CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], VPC3_GET_SSA_BUF_PTR(), 4 );
-            DpAppl_IsrNewSetSlaveAddress( (uint8_t*)&pDpSystem->abPrmCfgSsaHelpBuffer[0] );
+            DpAppl_IsrNewSetSlaveAddress( (MEM_STRUC_SSA_BLOCK_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0] );
 
             bResult = VPC3_FREE_SSA_BUF();
 
@@ -552,6 +616,20 @@ volatile uint8_t bResult;
             #endif /* #if DP_MSAC_C2 */
 
             DpAppl_IsrBaudrateDetect();
+
+            // Decodificación humana del baudrate (manual 4.1)
+            {
+               uint8_t sh = VPC3_GET_STATUS_H();
+               uint8_t br = (sh >> 4) & 0x0F;
+               uint32_t kbps = 0;
+               switch (br) {
+                  case 0x00: kbps = 12000; break; case 0x01: kbps = 6000; break; case 0x02: kbps = 3000; break;
+                  case 0x03: kbps = 1500; break; case 0x04: kbps = 500; break; case 0x05: kbps = 187; break;
+                  case 0x06: kbps = 93; break; case 0x07: kbps = 45; break; case 0x08: kbps = 19; break; case 0x09: kbps = 9; break;
+                  default: kbps = 0; break;
+               }
+               printf("EVENT: [BAUDRATE_DETECT] STATUS_H=0x%02X -> code=0x%X => %lu kbps\r\n", sh, br, (unsigned long)kbps);
+            }
 
             VPC3_CON_IND_BAUDRATE_DETECT();
          } /* if( VPC3_POLL_IND_BAUDRATE_DETECT() ) */

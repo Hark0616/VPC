@@ -27,8 +27,8 @@ uint8_t VPC3_GetModeReg2Shadow(void) { return g_vpc3_mode_reg2_shadow; }
 #define VPC3_MAX_ARRAY_LEN  256   // Maximum array transfer length
 
 /* VPC3+S timing requirements (cycles @100MHz) */
-#define VPC3_CSS_CYCLES     200   // tCSS: CS setup (2μs) - increased for reliability
-#define VPC3_CSH_CYCLES     200   // tCSH: CS hold (2μs) - increased for reliability
+#define VPC3_CSS_CYCLES     400   // tCSS: CS setup (~4μs) - extra margin
+#define VPC3_CSH_CYCLES     400   // tCSH: CS hold  (~4μs) - extra margin
 
 /* Status codes */
 typedef enum {
@@ -46,6 +46,8 @@ void Vpc3MemSet(VPC3_ADR wAddress, uint8_t bValue, uint16_t wLength);
 uint8_t Vpc3MemCmp(VPC3_UNSIGNED8_PTR pToVpc3Memory1, VPC3_UNSIGNED8_PTR pToVpc3Memory2, uint16_t wLength);
 void CopyToVpc3(VPC3_UNSIGNED8_PTR pToVpc3Memory, MEM_UNSIGNED8_PTR pLocalMemory, uint16_t wLength);
 void CopyFromVpc3(MEM_UNSIGNED8_PTR pLocalMemory, VPC3_UNSIGNED8_PTR pToVpc3Memory, uint16_t wLength);
+VPC3_Status Vpc3ReadArray(uint8_t *dst_local, VPC3_UNSIGNED8_PTR src_vpc, uint16_t len);
+VPC3_Status Vpc3WriteArray(VPC3_UNSIGNED8_PTR dst_vpc, const uint8_t *src_local, uint16_t len);
 
 /* External Profibus interrupt control */
 extern void DpAppl_DisableInterruptVPC3Channel1(void);
@@ -144,98 +146,187 @@ static uint8_t vpc3_write_with_retry(VPC3_ADR wAddress, uint8_t bData, uint8_t m
  * @note La firma (void, dos parámetros) coincide con la declaración 'extern' en dp_inc.h.
  */
 void Vpc3Write(VPC3_ADR wAddress, uint8_t bData) {
-    // DEBUG: Monitoreo de escrituras a registros críticos
-    if (wAddress == 0x0C) {  // MODE_REG_2 (bVpc3WoModeReg2)
-        printf("DEBUG: [Vpc3Write]  ESCRITURA a MODE_REG_2 (0x0C): 0x%02X\r\n", bData);
-        if (bData != 0x05) {
-            printf("DEBUG: [Vpc3Write]  ADVERTENCIA: MODE_REG_2 se está configurando a 0x%02X en lugar de 0x05\r\n", bData);
-            printf("DEBUG: [Vpc3Write]  VALOR INCORRECTO DETECTADO - Esto causará LECTURAS ILEGALES\r\n");
-        }
-        
-        // Stack trace para identificar quién está escribiendo
-        printf("DEBUG: [Vpc3Write]  Stack trace - Escritura a MODE_REG_2 desde:\r\n");
-        printf("DEBUG: [Vpc3Write]  - Función llamadora: %s\r\n", __FUNCTION__);
-        printf("DEBUG: [Vpc3Write]  - Línea: %d\r\n", __LINE__);
-        printf("DEBUG: [Vpc3Write]  - Archivo: %s\r\n", __FILE__);
-        
-        // SPI Protocol Debug
-        printf("DEBUG: [Vpc3Write] SPI Protocol Debug - MODE_REG_2 write:\r\n");
-        printf("DEBUG: [Vpc3Write] - Instruction: 0x%02X (OPC_WR_BYTE)\r\n", OPC_WR_BYTE);
-        printf("DEBUG: [Vpc3Write] - Address: 0x%04X (High: 0x%02X, Low: 0x%02X)\r\n", wAddress, (uint8_t)(wAddress >> 8), (uint8_t)wAddress);
-        printf("DEBUG: [Vpc3Write] - Data: 0x%02X\r\n", bData);
-    }
-    
-    if (wAddress == 0x09) {  // MODE_REG_1_R (bVpc3WoModeReg1_R)
-        printf("DEBUG: [Vpc3Write] ESCRITURA a MODE_REG_1_R (0x09): 0x%02X\r\n", bData);
-    }
-    
-    if (wAddress == 0x07 || wAddress == 0x08) {  // MODE_REG_0_H, MODE_REG_0_L
-        printf("DEBUG: [Vpc3Write] ESCRITURA a MODE_REG_0_%c (0x%02X): 0x%02X\r\n", 
-               (wAddress == 0x07) ? 'H' : 'L', wAddress, bData);
-    }
-    
-    if (wAddress == 0x12) {  // MODE_REG_3 - Dirección correcta según manual
-        printf("DEBUG: [Vpc3Write] ESCRITURA a MODE_REG_3 (0x12): 0x%02X\r\n", bData);
+    // --- VERIFICACIÓN DE LÍMITES ---
+    if (!VPC3_IsAddressValid(wAddress)) {
+        printf("\r\n--- ESCRITURA ILEGAL DETECTADA EN Vpc3Write ---\r\n");
+        printf("ERROR: Intento de escribir un byte (0x%02X) a una dirección (0x%04X) fuera de límites.\r\n", 
+               bData, (unsigned int)wAddress);
+        printf("--- FIN ESCRITURA ILEGAL ---\r\n");
+        return;
     }
 
-    // Maintain shadow for write-only MODE_REG_2
-    if (wAddress == bVpc3WoModeReg2) {
-        g_vpc3_mode_reg2_shadow = bData;
-    }
-
-    // Use retry mechanism for critical registers
-    uint8_t maxRetries = (wAddress == 0x0C) ? 5 : 1; // More retries for MODE_REG_2
-    uint8_t result = vpc3_write_with_retry(wAddress, bData, maxRetries);
+    // --- PROTOCOLO ULTRA-BÁSICO: OPC_WR_BYTE (0x12) ---
     
-    if (result != 0 && wAddress == 0x0C) {
-        printf("DEBUG: [Vpc3Write]  ERROR: MODE_REG_2 write failed after %d retries!\r\n", maxRetries);
-    }
+    // 1. Deshabilitar IRQ durante toda la operación
+    DpAppl_DisableInterruptVPC3Channel1();
+    
+    // 2. CS bajo con delay extra
+    HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_RESET);
+    for (volatile int d = 0; d < 2000; d++); // 20μs tCSS
+    
+    // 3. Enviar comando WRITE BYTE (0x12)
+    uint8_t cmd = OPC_WR_BYTE;
+    HAL_SPI_Transmit(&hspi1, &cmd, 1, VPC3_TIMEOUT_MS);
+    
+    // 4. Enviar dirección MSB primero
+    uint8_t addr_high = (uint8_t)(wAddress >> 8);
+    HAL_SPI_Transmit(&hspi1, &addr_high, 1, VPC3_TIMEOUT_MS);
+    
+    // 5. Enviar dirección LSB
+    uint8_t addr_low = (uint8_t)(wAddress & 0xFF);
+    HAL_SPI_Transmit(&hspi1, &addr_low, 1, VPC3_TIMEOUT_MS);
+    
+    // 6. Enviar dato
+    HAL_SPI_Transmit(&hspi1, &bData, 1, VPC3_TIMEOUT_MS);
+    
+    // 7. CS alto con delay
+    for (volatile int d = 0; d < 1000; d++); // 10μs tCSH
+    HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_SET);
+    
+    // 8. Rehabilitar IRQ
+    DpAppl_EnableInterruptVPC3Channel1();
 }
 
 /**
  * @brief Lee un byte del VPC3+.
  * @note La firma (retorna uint8_t, un parámetro) coincide con la declaración 'extern' en dp_inc.h.
  */
-uint8_t Vpc3Read(VPC3_ADR wAddress) {
-    // --- Logging detallado de acceso a memoria ---
-    VPC3_LogMemoryAccess(wAddress, "READ", "Vpc3Read");
-    VPC3_LogDiagnosticAccess(wAddress, "READ");
-    
-    // --- Programación Defensiva: Verificación de Límites Adaptativa ---
-    if (!VPC3_IsAddressValid(wAddress)) {
-        printf("\r\n--- LECTURA ILEGAL DETECTADA EN Vpc3Read ---\r\n");
-        printf("ERROR: Intento de leer un byte desde una dirección (0x%04X) que está fuera de los límites de la RAM.\r\n",
-               (unsigned int)wAddress);
-        printf("Esta es una condición FATAL. Se retornará 0x00 para indicar el error.\r\n");
-        printf("--- FIN LECTURA ILEGAL ---\r\n");
-        return 0x00; // Retornar un valor de error claro
+// Helper: lectura con dirección normal o con bytes de dirección invertidos
+static uint8_t vpc3_read_impl(uint16_t addr, uint8_t swapped, uint8_t *out_data) {
+    uint8_t a_hi = (uint8_t)(addr >> 8);
+    uint8_t a_lo = (uint8_t)addr;
+    uint8_t tx_hdr[3];
+    if (swapped) {
+        tx_hdr[0] = OPC_RD_BYTE;
+        tx_hdr[1] = a_lo;
+        tx_hdr[2] = a_hi;
+    } else {
+        tx_hdr[0] = OPC_RD_BYTE;
+        tx_hdr[1] = a_hi;
+        tx_hdr[2] = a_lo;
     }
-    // --- Fin de la Verificación ---
 
-    // 1. Iniciar transacción - CS bajo
     HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_RESET);
-    vpc3_cs_delay(); // Delay para tCSS
-    
+    vpc3_cs_delay();
     DpAppl_DisableInterruptVPC3Channel1();
     
-    // 2. Enviar byte de instrucción (0x13 para READ BYTE)
-    vpc3_spi_transfer(OPC_RD_BYTE);
+    // Enviar instrucción y dirección
+    (void)vpc3_spi_transfer(tx_hdr[0]);
+    (void)vpc3_spi_transfer(tx_hdr[1]);
+    (void)vpc3_spi_transfer(tx_hdr[2]);
+    // Leer dos dummies para estabilizar; usar el segundo
+    (void)vpc3_spi_transfer(0x00);
+    uint8_t data = vpc3_spi_transfer(0x00);
+
+    vpc3_cs_delay();
+    HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_SET);
+    DpAppl_EnableInterruptVPC3Channel1();
+    // Pequeño espaciamiento entre transacciones
+    for (volatile int i = 0; i < 600; i++);
+
+    if (out_data) *out_data = data;
+    return data;
+}
+
+uint8_t Vpc3Read(VPC3_ADR wAddress) {
+    // --- VERIFICACIÓN DE LÍMITES ---
+    if (!VPC3_IsAddressValid(wAddress)) {
+        printf("\r\n--- LECTURA ILEGAL DETECTADA EN Vpc3Read ---\r\n");
+        printf("ERROR: Intento de leer un byte desde una dirección (0x%04X) fuera de límites.\r\n", (unsigned int)wAddress);
+        printf("--- FIN LECTURA ILEGAL ---\r\n");
+        return 0x00;
+    }
+
+    // --- PROTOCOLO ULTRA-BÁSICO: OPC_RD_BYTE (0x13) ---
+    uint8_t value = 0;
     
-    // 3. Enviar dirección de 16 bits (MSB primero)
-    vpc3_spi_transfer((uint8_t)(wAddress >> 8)); // Byte alto de la dirección
-    vpc3_spi_transfer((uint8_t)wAddress);        // Byte bajo de la dirección
+    // 1. Deshabilitar IRQ durante toda la operación
+    DpAppl_DisableInterruptVPC3Channel1();
     
-    // 4. Continuar generando 8 pulsos de reloj para leer el byte de datos
-    uint8_t bData = vpc3_spi_transfer(0x00); // Enviar dummy byte, recibir datos
+    // 2. CS bajo con delay extra
+    HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_RESET);
+    for (volatile int d = 0; d < 2000; d++); // 20μs tCSS
     
-    // 5. Finalizar transacción - CS alto
-    vpc3_cs_delay(); // Delay para tCSH
+    // 3. Enviar comando READ BYTE (0x13)
+    uint8_t cmd = OPC_RD_BYTE;
+    HAL_SPI_Transmit(&hspi1, &cmd, 1, VPC3_TIMEOUT_MS);
+    
+    // 4. Enviar dirección MSB primero (como especifica el manual)
+    uint8_t addr_high = (uint8_t)(wAddress >> 8);
+    HAL_SPI_Transmit(&hspi1, &addr_high, 1, VPC3_TIMEOUT_MS);
+    
+    // 5. Enviar dirección LSB
+    uint8_t addr_low = (uint8_t)(wAddress & 0xFF);
+    HAL_SPI_Transmit(&hspi1, &addr_low, 1, VPC3_TIMEOUT_MS);
+    
+    // 6. Leer byte de datos (el VPC3+S envía el byte después de la dirección)
+    HAL_SPI_Receive(&hspi1, &value, 1, VPC3_TIMEOUT_MS);
+    
+    // 7. CS alto con delay
+    for (volatile int d = 0; d < 1000; d++); // 10μs tCSH
     HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_SET);
     
+    // 8. Rehabilitar IRQ
     DpAppl_EnableInterruptVPC3Channel1();
     
-    return bData;
+    return value;
 }
+
+// Dump de registros 0x00..0x1F con prueba normal vs swapped
+void VPC3_DebugDumpRegs_00_1F(void) {
+    printf("\r\n[DUMP] === VPC3 Regs 0x00..0x1F (normal vs swapped) ===\r\n");
+    printf("[DUMP] SPI Mode: CPOL=%d CPHA=%d Prescaler=%lu\r\n",
+           hspi1.Init.CLKPolarity, hspi1.Init.CLKPhase, (unsigned long)hspi1.Init.BaudRatePrescaler);
+    for (uint16_t a=0x0000; a<=0x001F; a++) {
+        uint8_t n = vpc3_read_impl(a, 0, NULL);
+        uint8_t s = vpc3_read_impl(a, 1, NULL);
+        printf("[DUMP] 0x%02X: normal=0x%02X swapped=0x%02X\r\n", (unsigned int)a, n, s);
+    }
+    printf("[DUMP] === END ===\r\n\r\n");
+}
+
+// Probe SPI CPOL/CPHA and alternative 1-byte read path using array opcode
+#ifndef VPC3_SPI_PROBE
+void VPC3_SpiModeProbe(void) {
+    // Probe desactivado por defecto en producción
+}
+#else
+void VPC3_SpiModeProbe(void) {
+    SPI_HandleTypeDef backup = hspi1; // backup current config
+    struct { uint32_t pol; uint32_t pha; const char* name; } modes[] = {
+        {SPI_POLARITY_LOW,  SPI_PHASE_1EDGE, "Mode0"},
+        {SPI_POLARITY_LOW,  SPI_PHASE_2EDGE, "Mode1"},
+        {SPI_POLARITY_HIGH, SPI_PHASE_1EDGE, "Mode2"},
+        {SPI_POLARITY_HIGH, SPI_PHASE_2EDGE, "Mode3"},
+    };
+
+    printf("\r\n[SPI_PROBE] === Probing CPOL/CPHA and opcode variants ===\r\n");
+    for (unsigned i=0;i<4;i++) {
+        HAL_SPI_DeInit(&hspi1);
+        hspi1.Init.CLKPolarity = modes[i].pol;
+        hspi1.Init.CLKPhase    = modes[i].pha;
+        HAL_SPI_Init(&hspi1);
+
+        uint8_t sl = vpc3_read_impl(0x0004, 0, NULL);
+        uint8_t sh = vpc3_read_impl(0x0005, 0, NULL);
+        uint8_t cr = vpc3_read_impl(0x0008, 0, NULL);
+
+        // Alternative: use array read (OPC_RD_ARRAY) len=1 for each address
+        uint8_t alt_sl=0, alt_sh=0, alt_cr=0;
+        (void)Vpc3ReadArray(&alt_sl, (VPC3_UNSIGNED8_PTR)(uintptr_t)0x0004, 1);
+        (void)Vpc3ReadArray(&alt_sh, (VPC3_UNSIGNED8_PTR)(uintptr_t)0x0005, 1);
+        (void)Vpc3ReadArray(&alt_cr, (VPC3_UNSIGNED8_PTR)(uintptr_t)0x0008, 1);
+
+        printf("[SPI_PROBE] %s: STATUS_L=0x%02X STATUS_H=0x%02X CTRL=0x%02X | ALT: SL=0x%02X SH=0x%02X CTRL=0x%02X\r\n",
+               modes[i].name, sl, sh, cr, alt_sl, alt_sh, alt_cr);
+    }
+    // restore
+    HAL_SPI_DeInit(&hspi1);
+    hspi1 = backup;
+    HAL_SPI_Init(&hspi1);
+    printf("[SPI_PROBE] === End probe, SPI restored ===\r\n\r\n");
+}
+#endif
 
 /**
  * @brief Detects the actual memory mode from MODE_REG_2 and adjusts calculations accordingly
@@ -443,26 +534,50 @@ VPC3_Status Vpc3ReadArray(uint8_t *dst_local, VPC3_UNSIGNED8_PTR src_vpc, uint16
  * @brief Escribe un array de bytes en el VPC3+. Esta función es llamada por el macro CopyToVpc3.
  */
 void CopyToVpc3(VPC3_UNSIGNED8_PTR pToVpc3Memory, MEM_UNSIGNED8_PTR pLocalMemory, uint16_t wLength) {
-    const uint16_t MAX_TRANSFER_SIZE = 240; // Tamaño máximo seguro para transferencias SPI
-    VPC3_ADR addr = (VPC3_ADR)(uintptr_t)pToVpc3Memory;
+    // --- PROTOCOLO ULTRA-BÁSICO: Escritura byte a byte ---
+    VPC3_ADR base = (VPC3_ADR)(uintptr_t)pToVpc3Memory;
     
-    uint16_t remaining = wLength;
-    uint16_t offset = 0;
+    // Deshabilitar IRQ durante toda la operación
+    DpAppl_DisableInterruptVPC3Channel1();
     
-    while (remaining > 0) {
-        uint16_t transferSize = (remaining > MAX_TRANSFER_SIZE) ? MAX_TRANSFER_SIZE : remaining;
-        uint8_t cmd[3] = {OPC_WR_ARRAY, (uint8_t)((addr + offset) >> 8), (uint8_t)(addr + offset)};
-
-        DpAppl_DisableInterruptVPC3Channel1();
-        VPC3_CS_LOW();
-        HAL_SPI_Transmit(&hspi1, cmd, 3, VPC3_TIMEOUT_MS);
-        HAL_SPI_Transmit(&hspi1, (uint8_t*)pLocalMemory + offset, transferSize, VPC3_TIMEOUT_MS);
-        VPC3_CS_HIGH();
-        DpAppl_EnableInterruptVPC3Channel1();
+    for (uint16_t i = 0; i < wLength; i++) {
+        VPC3_ADR addr = base + i;
+        uint8_t data = pLocalMemory[i];
         
-        offset += transferSize;
-        remaining -= transferSize;
+        // 1. CS bajo con delay extra
+        HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_RESET);
+        for (volatile int d = 0; d < 2000; d++); // 20μs tCSS
+        
+        // 2. Enviar comando WRITE BYTE (0x12)
+        uint8_t cmd = OPC_WR_BYTE;
+        HAL_SPI_Transmit(&hspi1, &cmd, 1, VPC3_TIMEOUT_MS);
+        
+        // 3. Enviar dirección MSB primero
+        uint8_t addr_high = (uint8_t)(addr >> 8);
+        HAL_SPI_Transmit(&hspi1, &addr_high, 1, VPC3_TIMEOUT_MS);
+        
+        // 4. Enviar dirección LSB
+        uint8_t addr_low = (uint8_t)(addr & 0xFF);
+        HAL_SPI_Transmit(&hspi1, &addr_low, 1, VPC3_TIMEOUT_MS);
+        
+        // 5. Enviar dato
+        HAL_SPI_Transmit(&hspi1, &data, 1, VPC3_TIMEOUT_MS);
+        
+        // 6. CS alto con delay
+        for (volatile int d = 0; d < 1000; d++); // 10μs tCSH
+        HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_SET);
+        
+        // 7. Pausa entre bytes para estabilidad
+        for (volatile int d = 0; d < 500; d++); // 5μs entre bytes
+        
+        // 8. Pausa mayor cada 16 bytes
+        if (((i + 1) % 16) == 0) {
+            HAL_Delay(1);
+        }
     }
+    
+    // Rehabilitar IRQ
+    DpAppl_EnableInterruptVPC3Channel1();
 }
 
 /**
@@ -485,41 +600,52 @@ void CopyFromVpc3(MEM_UNSIGNED8_PTR pLocalMemory, VPC3_UNSIGNED8_PTR pToVpc3Memo
     }
     // --- Fin de la Verificación ---
 
-    const uint16_t MAX_TRANSFER_SIZE = 240; // Tamaño máximo seguro para transferencias SPI
-    uint16_t remaining = wLength;
-    uint16_t offset = 0;
+    // --- PROTOCOLO ULTRA-BÁSICO: Lectura byte a byte ---
     
-    // --- DEBUG EXHAUSTIVO DE CopyFromVpc3 ---
-    printf("DEBUG: [CopyFromVpc3] === INICIO COPIA DESDE VPC3 ===\n");
-    printf("DEBUG: [CopyFromVpc3] Dirección fuente: 0x%04X\n", (unsigned int)addr);
-    printf("DEBUG: [CopyFromVpc3] Longitud: %d bytes\n", wLength);
-    printf("DEBUG: [CopyFromVpc3] Buffer destino: 0x%08X\n", (unsigned int)pLocalMemory);
-
-    while (remaining > 0) {
-        uint16_t transferSize = (remaining > MAX_TRANSFER_SIZE) ? MAX_TRANSFER_SIZE : remaining;
-        uint8_t cmd[3] = {OPC_RD_ARRAY, (uint8_t)((addr + offset) >> 8), (uint8_t)(addr + offset)};
-
-        DpAppl_DisableInterruptVPC3Channel1();
-        VPC3_CS_LOW();
-        HAL_SPI_Transmit(&hspi1, cmd, 3, VPC3_TIMEOUT_MS);
-        HAL_SPI_Receive(&hspi1, (uint8_t*)pLocalMemory + offset, transferSize, VPC3_TIMEOUT_MS);
-        VPC3_CS_HIGH();
-        DpAppl_EnableInterruptVPC3Channel1();
+    // Deshabilitar IRQ durante toda la operación
+    DpAppl_DisableInterruptVPC3Channel1();
+    
+    for (uint16_t i = 0; i < wLength; i++) {
+        VPC3_ADR current_addr = addr + i;
         
-        printf("DEBUG: [CopyFromVpc3] Transfer %d: addr=0x%04X, size=%d\n", (offset/transferSize)+1, (unsigned int)(addr + offset), transferSize);
+        // 1. CS bajo con delay extra
+        HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_RESET);
+        for (volatile int d = 0; d < 2000; d++); // 20μs tCSS
         
-        offset += transferSize;
-        remaining -= transferSize;
+        // 2. Enviar comando READ BYTE (0x13)
+        uint8_t cmd = OPC_RD_BYTE;
+        HAL_SPI_Transmit(&hspi1, &cmd, 1, VPC3_TIMEOUT_MS);
+        
+        // 3. Enviar dirección MSB primero
+        uint8_t addr_high = (uint8_t)(current_addr >> 8);
+        HAL_SPI_Transmit(&hspi1, &addr_high, 1, VPC3_TIMEOUT_MS);
+        
+        // 4. Enviar dirección LSB
+        uint8_t addr_low = (uint8_t)(current_addr & 0xFF);
+        HAL_SPI_Transmit(&hspi1, &addr_low, 1, VPC3_TIMEOUT_MS);
+        
+        // 5. Leer byte de datos
+        uint8_t data;
+        HAL_SPI_Receive(&hspi1, &data, 1, VPC3_TIMEOUT_MS);
+        
+        // 6. Guardar en memoria local
+        pLocalMemory[i] = data;
+        
+        // 7. CS alto con delay
+        for (volatile int d = 0; d < 1000; d++); // 10μs tCSH
+        HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_SET);
+        
+        // 8. Pausa entre bytes para estabilidad
+        for (volatile int d = 0; d < 500; d++); // 5μs entre bytes
+        
+        // 9. Pausa mayor cada 16 bytes
+        if (((i + 1) % 16) == 0) {
+            HAL_Delay(1);
+        }
     }
     
-    // --- DEBUG EXHAUSTIVO DE DATOS LEÍDOS ---
-    printf("DEBUG: [CopyFromVpc3] === DATOS LEÍDOS COMPLETOS ===\n");
-    printf("DEBUG: [CopyFromVpc3] Total bytes leídos: %d\n", wLength);
-    printf("DEBUG: [CopyFromVpc3] Contenido del buffer local:\n");
-    for(int k=0; k<wLength && k<16; k++) {  // Mostrar hasta 16 bytes
-        printf("DEBUG: [CopyFromVpc3] [%d] = 0x%02X (%d decimal)\n", k, ((uint8_t*)pLocalMemory)[k], ((uint8_t*)pLocalMemory)[k]);
-    }
-    printf("DEBUG: [CopyFromVpc3] === FIN COPIA DESDE VPC3 ===\n");
+    // Rehabilitar IRQ
+    DpAppl_EnableInterruptVPC3Channel1();
 }
 
 /**

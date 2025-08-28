@@ -612,6 +612,19 @@ DP_ERROR_CODE bError;
    printf("DEBUG: pVpc3 = 0x%08X\r\n", (unsigned int)pVpc3);
    printf("DEBUG: Estructura pVpc3 inicializada con ceros? bReadCfgBufPtr=0x%02X\r\n", pVpc3->bReadCfgBufPtr VPC3_EXTENSION);
 
+   // --- INICIO DEBUG INTERNO ---
+   uint8_t status_l_entry = Vpc3Read(0x04);
+   printf("[VPC3_Initialization] DEBUG: Estado al entrar a la funcion -> STATUS_L: 0x%02X\r\n", status_l_entry);
+
+   if (status_l_entry != 0x00) {
+       printf("[VPC3_Initialization] ERROR: El chip NO ESTA OFFLINE al iniciar la funcion.\r\n");
+       printf("[VPC3_Initialization] ERROR: STATUS_L = 0x%02X, esperado = 0x00\r\n", status_l_entry);
+       // La función debería retornar DP_NOT_OFFLINE_ERROR aquí.
+   } else {
+       printf("[VPC3_Initialization] DEBUG: Estado OFFLINE confirmado al entrar a la funcion.\r\n");
+   }
+   // --- FIN DEBUG INTERNO ---
+
    /*-----------------------------------------------------------------------*/
    /* initialize global system structure                                    */
    /*-----------------------------------------------------------------------*/
@@ -634,6 +647,29 @@ DP_ERROR_CODE bError;
    if (VPC3_HardwareReset() != 0) {
       printf("DEBUG:  ADVERTENCIA: Reset hardware falló, continuando de todas formas...\r\n");
    }
+
+   // --- INICIO BLOQUE DE DEBUG ---
+   printf("DEBUG: Verificacion de escritura de registros\r\n");
+   
+   // Intento de escritura en MODE_REG_3
+   Vpc3Write(0x12, 0x00);
+   uint8_t mode_reg_3_read = Vpc3Read(0x12);
+   printf("DEBUG: MODE_REG_3 (0x12) -> Escrito: 0x00, Leido: 0x%02X\r\n", mode_reg_3_read);
+   
+   // Intento de escritura en MODE_REG_0_L
+   Vpc3Write(0x06, 0xC0);
+   uint8_t mode_reg_0_l_read = Vpc3Read(0x06);
+   printf("DEBUG: MODE_REG_0_L (0x06) -> Escrito: 0xC0, Leido: 0x%02X\r\n", mode_reg_0_l_read);
+   
+   if (mode_reg_3_read != 0x00 || mode_reg_0_l_read != 0xC0) {
+       printf("ERROR CRITICO: La escritura/lectura de registros base esta fallando.\r\n");
+       printf("ERROR CRITICO: MODE_REG_3: escrito=0x00, leido=0x%02X\r\n", mode_reg_3_read);
+       printf("ERROR CRITICO: MODE_REG_0_L: escrito=0xC0, leido=0x%02X\r\n", mode_reg_0_l_read);
+       // No detener ejecución aquí, solo reportar el error
+   } else {
+       printf("DEBUG: Verificacion de registros base EXITOSA\r\n");
+   }
+   // --- FIN BLOQUE DE DEBUG ---
 
    /*-------------------------------------------------------------------*/
    /* check VPC3 is in OFFLINE                                          */
@@ -2886,6 +2922,46 @@ uint8_t VPC3_ForceModeReg2(void) {
    printf("[VPC3_ForceModeReg2] FALLO - No se pudo configurar MODE_REG_2 después de %d intentos\r\n", max_attempts);
    printf("[VPC3_ForceModeReg2] Último valor leído: 0x%02X (esperado: 0x%02X)\r\n", current_value, expected_value);
    return 1; // Failure
+   // Comando START
+   Vpc3Write(0x08, 0x01);
+   HAL_Delay(10);
+
+   // Verificación post-START: esperamos PASSIVE_IDLE (manual 3.7)
+   uint8_t status_after_start = VPC3_GET_STATUS_L();
+   printf("CHECK: Post-START STATUS_L=0x%02X (esperado 0x91=PASSIVE_IDLE)\r\n", status_after_start);
+   if (status_after_start != 0x91) {
+      printf("ERROR: No se alcanzó PASSIVE_IDLE tras START. Revise VPC3_Initialization y registros de modo.\r\n");
+   }
+
+   // Esperar primer DX_OUT (clear outputs) y BAUDRATE_DETECT con timeout (manual 3.7, 4.1)
+   uint32_t t0 = HAL_GetTick();
+   uint8_t saw_dx_out = 0, saw_baud = 0;
+   while ((HAL_GetTick() - t0) < 500) {
+      uint16_t int_req = (uint16_t)MakeWord(Vpc3Read(bVpc3RwIntReqReg_H), Vpc3Read(bVpc3RwIntReqReg_L));
+      if ((int_req & 0x2000) && !saw_dx_out) {
+         printf("EVENT: DX_OUT indicado tras START (outputs limpiados) [INT_REQ=0x%04X]\r\n", int_req);
+         saw_dx_out = 1;
+      }
+      if ((int_req & 0x0004) && !saw_baud) {
+         uint8_t sh = Vpc3Read(0x05);
+         uint8_t br = (sh >> 4) & 0x0F;
+         uint32_t kbps = 0;
+         switch (br) {
+            case 0x00: kbps = 12000; break; case 0x01: kbps = 6000; break; case 0x02: kbps = 3000; break;
+            case 0x03: kbps = 1500; break; case 0x04: kbps = 500; break; case 0x05: kbps = 187; break;
+            case 0x06: kbps = 93; break; case 0x07: kbps = 45; break; case 0x08: kbps = 19; break; case 0x09: kbps = 9; break;
+            default: kbps = 0; break;
+         }
+         printf("EVENT: BAUDRATE_DETECT -> STATUS_H=0x%02X (baud code=0x%X => %lu kbps)\r\n", sh, br, (unsigned long)kbps);
+         saw_baud = 1;
+      }
+      if (saw_dx_out && saw_baud) break;
+      HAL_Delay(5);
+   }
+   if (!saw_dx_out) printf("WARN: No se observó DX_OUT tras START dentro de 500 ms\r\n");
+   if (!saw_baud)   printf("WARN: No se observó BAUDRATE_DETECT tras START dentro de 500 ms\r\n");
+
+   printf("DEBUG: VPC3_Start - FIN (DX_OUT=%d, BAUD=%d)\r\n", saw_dx_out, saw_baud);
 }
 
 /**

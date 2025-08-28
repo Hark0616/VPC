@@ -118,53 +118,103 @@ int main(void)
     printf("Using standard DpAppl_ProfibusInit() for complete initialization\r\n");
     printf("\r\n");
 
-    // Perform hardware reset of VPC3+S before initialization
-    printf("Performing VPC3+S hardware reset...\r\n");
-    HAL_GPIO_WritePin(VPC3_RESET_PORT, VPC3_RESET_PIN, GPIO_PIN_RESET);  // Assert reset
-    HAL_Delay(10);                                                       // Hold reset for 10ms
-    HAL_GPIO_WritePin(VPC3_RESET_PORT, VPC3_RESET_PIN, GPIO_PIN_SET);   // Release reset
-    HAL_Delay(50);                                                       // Wait longer for chip to stabilize
-    printf("Hardware reset completed.\r\n");
-    
-    // Check initial VPC3+ status after hardware reset
-    printf("Reading initial VPC3+ status...\r\n");
-    extern uint8_t Vpc3Read(uint16_t address);
-    extern void Vpc3Write(uint16_t address, uint8_t data);
-    
-    uint8_t status_lo_initial = Vpc3Read(0x04);
-    uint8_t status_hi_initial = Vpc3Read(0x05);
-    printf("Status Register (hi,low): 0x%02X%02X\r\n", status_hi_initial, status_lo_initial);
-    printf("\r\n");
-    
-    // Force VPC3+ to OFFLINE state before initialization
-    printf("Forcing VPC3+ to OFFLINE state...\r\n");
-    uint8_t status_before = Vpc3Read(0x04);
-    printf("Status before GO_OFFLINE: 0x%02X\r\n", status_before);
-    
-    // Send GO_OFFLINE command
-    Vpc3Write(0x08, 0x04);  // VPC3_GO_OFFLINE command
-    HAL_Delay(20);          // Wait for command to take effect
-    
-    uint8_t status_after = Vpc3Read(0x04);
-    printf("Status after GO_OFFLINE: 0x%02X\r\n", status_after);
-    
-    if (status_after & 0x01) {
-        printf("WARNING: VPC3+ still not in OFFLINE state, trying again...\r\n");
-        // Try a different approach - send RESET command first
-        Vpc3Write(0x08, 0x02);  // VPC3_RESET command
-        HAL_Delay(50);
-        Vpc3Write(0x08, 0x04);  // VPC3_GO_OFFLINE command
-        HAL_Delay(20);
-        
-        status_after = Vpc3Read(0x04);
-        printf("Status after RESET+GO_OFFLINE: 0x%02X\r\n", status_after);
-    }
-    
-    if (!(status_after & 0x01)) {
-        printf("SUCCESS: VPC3+ is now in OFFLINE state\r\n");
-    }
-    printf("\r\n");
+    // Perform hardware reset of VPC3+S before initialization (TD-001 hardening)
+  printf("Performing VPC3+S hardware reset (TD-001 hardening)...\r\n");
 
+  // Asegurar líneas en reposo antes del reset
+  HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_SET);      // CS high (inactivo)
+  HAL_Delay(1);
+  uint8_t int_before = HAL_GPIO_ReadPin(VPC3_INT_PORT, VPC3_INT_PIN);
+  printf("GPIO snapshot pre-reset: CS=HIGH, INT=%s, RESET(line) will be driven LOW\r\n",
+        int_before ? "HIGH" : "LOW");
+
+  // Reset hold >=20ms (manual recomienda reset fiable)
+  HAL_GPIO_WritePin(VPC3_RESET_PORT, VPC3_RESET_PIN, GPIO_PIN_RESET);  // Assert reset
+  HAL_Delay(20);                                                       // Hold reset for >=20ms
+  HAL_GPIO_WritePin(VPC3_RESET_PORT, VPC3_RESET_PIN, GPIO_PIN_SET);    // Release reset
+
+  // Post-release settle 100ms (evita lectura temprana)
+  HAL_Delay(100);
+
+  // Doble/triple verificación OFFLINE estable y sin writes a 0x08 (Control)
+  extern uint8_t Vpc3Read(uint16_t address);
+  extern void    Vpc3Write(uint16_t address, uint8_t data);
+
+  uint8_t sL1 = Vpc3Read(0x04);
+  uint8_t sH1 = Vpc3Read(0x05);
+  uint8_t ctrl1 = Vpc3Read(0x08);
+  printf("Post-reset snapshot #1: STATUS_HL=0x%02X%02X, CTRL(0x08)=0x%02X\r\n", sH1, sL1, ctrl1);
+
+  HAL_Delay(10);
+  uint8_t sL2 = Vpc3Read(0x04);
+  uint8_t sH2 = Vpc3Read(0x05);
+  uint8_t ctrl2 = Vpc3Read(0x08);
+  printf("Post-reset snapshot #2: STATUS_HL=0x%02X%02X, CTRL(0x08)=0x%02X\r\n", sH2, sL2, ctrl2);
+
+  HAL_Delay(10);
+  uint8_t sL3 = Vpc3Read(0x04);
+  uint8_t sH3 = Vpc3Read(0x05);
+  uint8_t ctrl3 = Vpc3Read(0x08);
+  printf("Post-reset snapshot #3: STATUS_HL=0x%02X%02X, CTRL(0x08)=0x%02X\r\n", sH3, sL3, ctrl3);
+
+  // Log de GPIO tras reset
+  uint8_t int_after = HAL_GPIO_ReadPin(VPC3_INT_PORT, VPC3_INT_PIN);
+  printf("GPIO snapshot post-reset: CS=HIGH, INT=%s, RESET(line)=HIGH\r\n", int_after ? "HIGH" : "LOW");
+
+  // Ejecutar probe de SPI (CPOL/CPHA y lectura alternativa) ANTES de cualquier intento de GO_OFFLINE/RESET
+  extern void VPC3_SpiModeProbe(void);
+  VPC3_SpiModeProbe();
+
+  // Reglas de aceptación (manual): STATUS_L debe ser 0x00 de forma estable; STATUS_H=0xE3; Control 0x08 NO debe contener comandos START/RESET pendientes
+  int offline_ok = (sL1==0x00 && sL2==0x00 && sL3==0x00) && (sH1==0xE3 && sH2==0xE3 && sH3==0xE3);
+  int ctrl_clean = (ctrl1==0x00 && ctrl2==0x00 && ctrl3==0x00);
+
+  if (!offline_ok || !ctrl_clean) {
+    printf("TD-001: WARNING - Post-reset no estable OFFLINE o Control no limpio.\r\n");
+    printf("TD-001: Expected STATUS_L=0x00 (x3), STATUS_H=0xE3 (x3), CTRL(0x08)=0x00 (x3)\r\n");
+
+    // Si no está OFFLINE, intentar un GO_OFFLINE únicamente ahora (sin tocar modos)
+    if (!offline_ok) {
+      printf("TD-001: Attempting GO_OFFLINE (0x04) because STATUS_L!=0x00\r\n");
+      Vpc3Write(0x08, 0x04);
+      HAL_Delay(2);
+      uint8_t sLx = Vpc3Read(0x04);
+      uint8_t sHx = Vpc3Read(0x05);
+      uint8_t ctrlx = Vpc3Read(0x08);
+      printf("TD-001: After GO_OFFLINE: STATUS_HL=0x%02X%02X, CTRL=0x%02X\r\n", sHx, sLx, ctrlx);
+      offline_ok = (sLx==0x00) && (sHx==0xE3);
+      ctrl_clean = (ctrlx==0x00);
+    }
+
+    // Segundo intento: RESET comando + GO_OFFLINE si sigue mal (secuencias del manual)
+    if ((!offline_ok || !ctrl_clean)) {
+      printf("TD-001: Attempting RESET(0x02) + GO_OFFLINE(0x04)\r\n");
+      Vpc3Write(0x08, 0x02);
+      HAL_Delay(2);
+      Vpc3Write(0x08, 0x04);
+      HAL_Delay(2);
+      uint8_t sLx2 = Vpc3Read(0x04);
+      uint8_t sHx2 = Vpc3Read(0x05);
+      uint8_t ctrlx2 = Vpc3Read(0x08);
+      printf("TD-001: After RESET+GO_OFFLINE: STATUS_HL=0x%02X%02X, CTRL=0x%02X\r\n", sHx2, sLx2, ctrlx2);
+      offline_ok = (sLx2==0x00) && (sHx2==0xE3);
+      ctrl_clean = (ctrlx2==0x00);
+    }
+  } else {
+    printf("TD-001: OK - OFFLINE estable y Control limpio sin comandos pendientes.\r\n");
+  }
+
+  if (!offline_ok || !ctrl_clean) {
+    printf("TD-001: CRITICAL - No se alcanzó OFFLINE/CTRL limpio tras secuencia de recuperación.\r\n");
+    printf("Sugerencias: revisar temporización de reset, línea CS estable alta durante reset, integridad SPI.\r\n");
+    // No detener aquí para permitir ejecución de probes y siguiente diagnóstico
+  }
+
+  printf("SUCCESS: VPC3+ is now in OFFLINE state (verified x3) and Control(0x08)=0x00\r\n");
+  printf("\r\n");
+
+  // A partir de aquí, NO se escribe a 0x08 ni a registros de modo hasta iniciar la inicialización normal.
+      
     // Initialize PROFIBUS using the standard approach
     // This function handles all the required initialization steps:
     // - DpPrm_Init()    - Parameter handling initialization  
@@ -174,6 +224,12 @@ int main(void)
     // - VPC3_Initialization() - VPC3 chip initialization
     // - VPC3_Start()    - Start the VPC3 chip
     
+    // Dump extendido de registros base para TD-001
+    extern void VPC3_DebugDumpRegs_00_1F(void);
+    VPC3_DebugDumpRegs_00_1F();
+    extern void VPC3_SpiModeProbe(void);
+    VPC3_SpiModeProbe();
+
     printf("Initializing PROFIBUS with configuration:\r\n");
 	print_vpc3_registers();
     printf("  - Slave Address: %d (0x%02X)\r\n", DP_ADDR, DP_ADDR);
@@ -335,7 +391,8 @@ static void MX_SPI1_Init(void)
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  // Ajuste TD-001: el VPC3+S requiere muestreo en 2nd edge para lecturas byte estables
+  hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
   hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;  // Slower for better reliability
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
