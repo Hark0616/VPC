@@ -95,9 +95,15 @@ if (status_l == 0x00 && status_h == 0xE3) {
 - 0xE3 confirma que es un VPC3+S (identificador del chip)
 - 0x00 confirma que está en estado OFFLINE
 
+**Verificación para el Siguiente Paso:** El siguiente paso (Configuración de Registros de Modo) requiere que el chip esté en estado `OFFLINE`. Esta condición se cumple si `status_l` es `0x00`.
+
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 3.6 (página 844-860)
-- `vpc3pluss_user-manual.txt` - Sección de Hardware Reset
+- `VPC_Software_description.txt` - Sección 3.6 "Initializing of VPC3+" (página 30, Figura 3-24)
+- `vpc3pluss_user-manual.txt` - Sección 3.5 "Memorytest of VPC3+" (describe el valor de reset de STATUS_H como 0xE3 para VPC3+S)
+
+**Documentación en el Manual (`VPC_Software_description.txt`):**
+- Sección 3.6 "Initializing of VPC3+": Menciona que el chip debe estar en estado `OFFLINE`.
+- Sección 3.5 "Memorytest of VPC3+": Describe el valor de reset de `STATUS_H` (0xE3 para VPC3+S).
 
 ### 1.2 Inicialización del Firmware VPC3+ (PASO CRÍTICO)
 
@@ -174,8 +180,10 @@ if (result != DP_OK) {
 
 Si el resultado no es `DP_OK` (cuyo valor es 0), consulte la sección 3.6 del manual `VPC_Software_description.txt` para interpretar el código de error. Un fallo aquí significa que el firmware del chip no se cargó.
 
+**Verificación para el Siguiente Paso:** El siguiente paso (Secuencia de START) requiere que el firmware esté completamente inicializado. Esta condición se cumple si `VPC3_Initialization()` devuelve `DP_OK`.
+
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 3.6 (página 844-860)
+- `VPC_Software_description.txt` - Sección 3.6 "Initializing of VPC3+" (página 30, Figura 3-24)
 - `vpc3pluss_user-manual.txt` - Sección de Firmware Initialization
 
 **Verificación post-inicialización:**
@@ -239,13 +247,15 @@ if (mode_reg_0_l == 0xC0) {
 - Configura watchdog base de 10ms
 - Habilita operación DP pura
 
+**Verificación para el Siguiente Paso:** El siguiente paso (Configuración de MODE_REG_0_H) requiere que este registro esté configurado correctamente para establecer la base del modo de operación.
+
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 3.2.10 (página 597-604)
+- `VPC_Software_description.txt` - Sección 3.2.10 "Set Hardware Mode" (página 597-604)
 - `vpc3pluss_user-manual.txt` - Sección de Mode Registers
 
 ### 2.2 Configuración de MODE_REG_0_H (0x07)
 
-**Prerrequisito:** El chip ha sido reseteado y se encuentra en estado `OFFLINE` (`STATUS_L == 0x00`).
+**Prerrequisito:** El chip ha sido reseteado y se encuentra en estado `OFFLINE` (`STATUS_L == 0x00`), y MODE_REG_0_L ha sido configurado correctamente.
 
 **Acción General:** Pre-configurar el comportamiento del hardware del VPC3+ antes de activar su firmware interno.
 
@@ -283,12 +293,14 @@ if (mode_reg_0_h == 0x25) {
 - Habilita EOI (End of Interrupt) timing
 - Configura formato de interrupción
 
+**Verificación para el Siguiente Paso:** El siguiente paso (Configuración de MODE_REG_2) requiere que ambos registros de modo base estén configurados para establecer la configuración completa del hardware.
+
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 3.2.10 (página 641-664)
+- `VPC_Software_description.txt` - Sección 3.2.10 "Set Hardware Mode" (página 641-664)
 
 ### 2.3 Configuración de MODE_REG_2 (0x0C)
 
-**Prerrequisito:** El chip ha sido reseteado y se encuentra en estado `OFFLINE` (`STATUS_L == 0x00`).
+**Prerrequisito:** El chip ha sido reseteado y se encuentra en estado `OFFLINE` (`STATUS_L == 0x00`), y los registros MODE_REG_0_L y MODE_REG_0_H han sido configurados correctamente.
 
 **Acción General:** Pre-configurar el comportamiento del hardware del VPC3+ antes de activar su firmware interno.
 
@@ -326,12 +338,14 @@ if (mode_reg_2 == 0x05) {
 - Configura polaridad SYNC negativa
 - Habilita verificación de bits reservados
 
+**Verificación para el Siguiente Paso:** El siguiente paso (Configuración de MODE_REG_3) requiere que este registro esté configurado para completar la configuración del modo de operación.
+
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 3.2.10 (página 673-698)
+- `VPC_Software_description.txt` - Sección 3.2.10 "Set Hardware Mode" (página 673-698)
 
 ### 2.4 Configuración de MODE_REG_3 (0x12)
 
-**Prerrequisito:** El chip ha sido reseteado y se encuentra en estado `OFFLINE` (`STATUS_L == 0x00`).
+**Prerrequisito:** El chip ha sido reseteado y se encuentra en estado `OFFLINE` (`STATUS_L == 0x00`), y todos los registros de modo anteriores han sido configurados correctamente.
 
 **Acción General:** Pre-configurar el comportamiento del hardware del VPC3+ antes de activar su firmware interno.
 
@@ -372,7 +386,7 @@ if (mode_reg_3 == 0x00) {
 **Verificación para el Siguiente Paso:** La función de inicialización del firmware (`VPC3_Initialization`) espera que estos registros de modo ya estén configurados para poder establecer correctamente el entorno de operación del protocolo.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 3.2.10 (página 704-723)
+- `VPC_Software_description.txt` - Sección 3.2.10 "Set Hardware Mode" (página 704-723)
 - Sección 3.2.10 "Set Hardware Mode": Detalla cada bit de estos registros. El manual enfatiza que solo deben modificarse mientras el chip está `offline`
 
 ---
@@ -743,6 +757,8 @@ if (result == 0) {
 - Los parámetros deben ser compatibles con la configuración
 - El maestro espera confirmación de aceptación
 
+**Verificación para el Siguiente Paso:** El siguiente paso (Procesamiento de Configuración) requiere que la parametrización haya sido aceptada exitosamente por el maestro.
+
 **Manual de referencia:**
 - `VPC_Software_description.txt` - Sección 4.2.1 (página 1094-1097)
 
@@ -784,13 +800,14 @@ if (response == 0) {
 **¿Cómo la esperas?**
 ```c
 // La función debe retornar inmediatamente
-// El VPC3+ envía la respuesta al maestro
 ```
 
 **¿Por qué debe cumplirse?**
-- El maestro necesita confirmación para continuar
-- Sin respuesta, el maestro no enviará configuración
-- Es parte del protocolo de handshake PROFIBUS
+- El maestro espera confirmación de aceptación
+- Sin respuesta, el maestro no puede continuar
+- Es parte del handshake obligatorio
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Procesamiento de Configuración) requiere que la respuesta de parametrización haya sido enviada exitosamente.
 
 **Manual de referencia:**
 - `VPC_Software_description.txt` - Sección 4.2.1 (página 1094-1097)
@@ -801,17 +818,19 @@ if (response == 0) {
 
 ### 6.1 Detección de Evento NEW_CFG_DATA
 
-**Prerrequisito:** La parametrización ha sido aceptada por el esclavo y notificada al maestro.
+**Prerrequisito:** La parametrización ha sido aceptada exitosamente por el maestro y se ha enviado la respuesta correspondiente.
 
-**Acción General:** El maestro envía la configuración de I/O (cuántos bytes de entrada y salida se usarán). El esclavo debe validarla.
+**Acción General:** El maestro envía la configuración específica del esclavo. El esclavo debe recibirla, validarla y responder.
 
 **Encargado:** Maestro (inicia), Microcontrolador (procesa y responde).
 
-**Significado:** Este es el segundo y último paso del handshake. El esclavo confirma las "tuberías" de datos que se usarán.
+**Significado:** Este es el segundo paso del handshake. El esclavo le dice al maestro si acepta la configuración específica de entrada/salida.
 
 **¿Qué haces?**
 ```c
 // En función VPC3_Poll(), detectar evento
+uint16_t events = Vpc3Read(INT_REG_L) | (Vpc3Read(INT_REG_H) << 8);
+
 if (events & 0x0400) {  // NEW_CFG_DATA
     printf("Evento NEW_CFG_DATA detectado\n");
     // Procesar configuración
@@ -820,6 +839,7 @@ if (events & 0x0400) {  // NEW_CFG_DATA
 
 **¿Dónde lees?**
 - INT_REG_L (0x02), bit 6
+- INT_REG_H (0x03), bit 10
 
 **¿Qué respuesta esperas?**
 ```c
@@ -830,16 +850,18 @@ if (events & 0x0400) {  // NEW_CFG_DATA
 **¿Cómo la esperas?**
 ```c
 // En polling continuo, verificar el bit
-// Debe activarse después de parametrización exitosa
+// No es necesario esperar, solo detectar cuando esté activo
 ```
 
 **¿Por qué debe cumplirse?**
-- 0x0400 indica que el maestro envió trama Check_Cfg
+- 0x0400 indica que el maestro envió trama Set_Cfg
 - Es el segundo paso para establecer comunicación
-- Sin configuración válida, no puede entrar en DATA_EX
+- Sin configuración válida, no puede continuar
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Obtención del Puntero del Buffer de Configuración) requiere que se haya detectado el evento NEW_CFG_DATA.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.3.1 (página 1203-1214)
+- `VPC_Software_description.txt` - Sección 4.2.1 (página 1075-1083)
 
 ### 6.2 Obtención del Puntero del Buffer de Configuración
 
@@ -849,7 +871,7 @@ if (events & 0x0400) {  // NEW_CFG_DATA
 
 **Encargado:** Microcontrolador.
 
-**Significado:** Es necesario para acceder a los datos de configuración que definen el tamaño de los buffers I/O.
+**Significado:** Es necesario para acceder a los datos de configuración que definen la estructura de entrada/salida del esclavo.
 
 **¿Qué haces?**
 ```c
@@ -863,7 +885,7 @@ uint16_t cfg_ptr = Vpc3Read(0x34);  // CFG_PTR register
 **¿Qué respuesta esperas?**
 ```c
 // cfg_ptr debe ser una dirección válida en el rango 0x0000-0x07FF
-// Típicamente 0x00D0 para el primer buffer
+// Típicamente 0x00BA para el primer buffer
 if (cfg_ptr >= 0x0000 && cfg_ptr <= 0x07FF) {
     printf("Puntero CFG válido: 0x%04X\n", cfg_ptr);
 } else {
@@ -874,16 +896,18 @@ if (cfg_ptr >= 0x0000 && cfg_ptr <= 0x07FF) {
 **¿Cómo la esperas?**
 ```c
 // Verificar inmediatamente después de leer
-// Debe ser una dirección válida dentro del rango de memoria
+// Debe ser una dirección válida dentro del rango de memoria del VPC3+
 ```
 
 **¿Por qué debe cumplirse?**
 - El puntero indica dónde están los datos de configuración
 - Sin puntero válido, no puedes leer la configuración
-- La dirección debe estar dentro del rango configurado
+- La dirección debe estar dentro del rango de memoria configurado
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Lectura de Datos de Configuración) requiere que se haya obtenido el puntero del buffer de configuración.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.3.2 (página 1251-1278)
+- `VPC_Software_description.txt` - Sección 4.2.2 (página 1110-1127)
 
 ### 6.3 Lectura de Datos de Configuración
 
@@ -908,34 +932,36 @@ CopyFromVpc3(local_buffer, cfg_ptr, 2);  // 2 bytes de configuración
 **¿Qué respuesta esperas?**
 ```c
 // local_buffer debe contener 2 bytes válidos
-// Estructura esperada:
-// [0]: 0x20 (32 decimal) - Configuración de entrada
-// [1]: 0x10 (16 decimal) - Configuración de salida
+// Estructura esperada según GSD:
+// [0]: 0x20 (Station_Status_2)
+// [1]: 0x10 (Watchdog_Time)
 
-printf("Configuración recibida: 0x%02X 0x%02X\n", 
-       local_buffer[0], local_buffer[1]);
+printf("Configuración recibida: 0x%02X 0x%02X\n", local_buffer[0], local_buffer[1]);
 ```
 
 **¿Cómo la esperas?**
 ```c
 // Verificar que CopyFromVpc3 retorne éxito
 // Verificar que los bytes tengan valores esperados
-// Comparar con configuración local
+// Verificar que Station_Status_2 sea compatible
 ```
 
 **¿Por qué debe cumplirse?**
-- La configuración define el tamaño de buffers I/O
-- Debe coincidir con la configuración del GSD
-- Sin configuración válida, no puede configurar buffers
+- La configuración define la estructura de entrada/salida
+- Station_Status_2 debe ser compatible con el esclavo
+- Watchdog_Time afecta el timing de comunicación
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Validación de Configuración) requiere que se hayan leído los datos de configuración del buffer del VPC3+.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.3.2 (página 1257-1278)
+- `VPC_Software_description.txt` - Sección 4.2.2 (página 1114-1127)
+- `vpc3pluss_user-manual.txt` - Sección de Configuration Data
 
 ### 6.4 Validación de Configuración
 
 **Prerrequisito:** Se han leído los datos de configuración del buffer del VPC3+ y están disponibles en el buffer local.
 
-**Acción General:** Validar que la configuración recibida es compatible con los buffers configurados y cumple con los requisitos del protocolo.
+**Acción General:** Validar que la configuración recibida es compatible con las capacidades del esclavo y cumple con los requisitos del protocolo.
 
 **Encargado:** Microcontrolador.
 
@@ -963,16 +989,18 @@ if (result == 0) {
 **¿Cómo la esperas?**
 ```c
 // La función debe retornar inmediatamente
-// Debe validar que coincida con configuración esperada
+// Debe validar Station_Status_2 y Watchdog_Time
 ```
 
 **¿Por qué debe cumplirse?**
 - Sin validación exitosa, no puede continuar
-- La configuración debe ser compatible con buffers configurados
-- El maestro espera confirmación para proceder
+- La configuración debe ser compatible con las capacidades
+- El maestro espera confirmación de aceptación
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Respuesta de Configuración) requiere que la configuración haya sido validada exitosamente.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.3.1 (página 1203-1214)
+- `VPC_Software_description.txt` - Sección 4.2.1 (página 1094-1097)
 
 ### 6.5 Respuesta de Configuración
 
@@ -1012,601 +1040,631 @@ if (response == 0) {
 **¿Cómo la esperas?**
 ```c
 // La función debe retornar inmediatamente
-// El VPC3+ envía la respuesta al maestro
 ```
 
 **¿Por qué debe cumplirse?**
-- El maestro necesita confirmación para continuar
-- Sin respuesta, no puede entrar en DATA_EX
-- Es parte del protocolo de handshake PROFIBUS
+- El maestro espera confirmación de aceptación
+- Sin respuesta, el maestro no puede continuar
+- Es parte del handshake obligatorio
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Transición a DATA_EX) requiere que la respuesta de configuración haya sido enviada exitosamente.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.3.1 (página 1232-1239)
+- `VPC_Software_description.txt` - Sección 4.2.1 (página 1094-1097)
 
 ---
 
 ## 7. Transición a DATA_EX
 
-### 7.1 Verificación de Estado DP
+### 7.1 Envío del Comando GO_OFFLINE
 
-**Prerrequisito:** La parametrización y configuración han sido completadas y aceptadas exitosamente.
+**Prerrequisito:** La configuración ha sido aceptada exitosamente por el maestro y se ha enviado la respuesta correspondiente.
 
-**Acción General:** Verificar que el VPC3+ ha entrado automáticamente en el estado de intercambio de datos.
+**Acción General:** Poner el VPC3+ en estado OFFLINE temporalmente para cambiar la configuración de los registros de modo antes de la transición final a DATA_EX.
 
-**Encargado:** Microcontrolador (verifica).
+**Encargado:** Microcontrolador (STM32).
 
-**Significado:** Confirma que la comunicación está oficialmente establecida y el intercambio cíclico va a comenzar.
-
-**¿Qué haces?**
-```c
-// Leer STATUS_L y extraer estado DP
-uint8_t status_l = Vpc3Read(0x04);
-uint8_t dp_state = (status_l >> 5) & 0x03;  // Bits 5-6
-```
-
-**¿Dónde lees?**
-- STATUS_L (0x04), bits 5-6
-
-**¿Qué respuesta esperas?**
-```c
-// dp_state debe ser 0x02 (DATA_EX)
-// Estados posibles:
-// 0x00: WAIT_PRM (esperando parametrización)
-// 0x01: WAIT_CFG (esperando configuración)
-// 0x02: DATA_EX (intercambio de datos)
-// 0x03: DP_ERROR (error)
-
-if (dp_state == 0x02) {
-    printf("VPC3+ en estado DATA_EX\n");
-} else {
-    printf("Estado DP incorrecto: 0x%02X\n", dp_state);
-}
-```
-
-**¿Cómo la esperas?**
-```c
-// Verificar después de parametrización y configuración exitosas
-// Debe cambiar de 0x01 (WAIT_CFG) a 0x02 (DATA_EX)
-```
-
-**¿Por qué debe cumplirse?**
-- 0x02 indica que la comunicación está establecida
-- El esclavo está listo para intercambio de datos
-- Sin este estado, no puede recibir tramas de datos
-
-**Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.9 (página 1594-1620)
-
-### 7.2 Activación de Estados de Aplicación
-
-**Prerrequisito:** El VPC3+ ha entrado en estado DATA_EX y la comunicación está establecida.
-
-**Acción General:** Configurar los estados internos de la aplicación para indicar que está lista para el intercambio de datos.
-
-**Encargado:** Microcontrolador.
-
-**Significado:** Es necesario para activar la lógica de aplicación que procesará los datos de entrada y salida durante el intercambio cíclico.
+**Significado:** Es necesario para poder modificar los registros de modo que solo pueden cambiarse mientras el chip está offline.
 
 **¿Qué haces?**
 ```c
-// Configurar estados internos de la aplicación
-eDpStateApplReady = 4;  // Aplicación lista
-eDpStateRun = 2;        // Aplicación ejecutándose
+// Enviar comando GO_OFFLINE
+Vpc3Write(0x08, 0x04);  // GO_OFFLINE command
 ```
 
 **¿Dónde escribes?**
-- Variables globales de estado en tu aplicación
+- Registro 0x08 (Control Register)
 
 **¿Qué respuesta esperas?**
 ```c
-// Los estados deben activarse correctamente
-if (eDpStateApplReady == 4 && eDpStateRun == 2) {
-    printf("Estados de aplicación activados\n");
+// STATUS_L debe cambiar a 0x00 (OFFLINE)
+// STATUS_H debe mantenerse en 0xE3
+uint8_t status_l = Vpc3Read(0x04);  // Debe ser 0x00
+uint8_t status_h = Vpc3Read(0x05);  // Debe ser 0xE3
+```
+
+**¿Cómo la esperas?**
+```c
+// Esperar hasta 50ms para el cambio de estado
+uint32_t start_time = HAL_GetTick();
+uint8_t status_l;
+
+do {
+    status_l = Vpc3Read(0x04);
+    HAL_Delay(10);
+    
+    if (HAL_GetTick() - start_time > 50) {
+        printf("Timeout esperando OFFLINE\n");
+        return 0;
+    }
+} while (status_l != 0x00);
+
+printf("VPC3+ en OFFLINE\n");
+```
+
+**¿Por qué debe cumplirse?**
+- 0x00 indica que el VPC3+ está en estado OFFLINE
+- Solo en este estado se pueden modificar los registros de modo
+- Es necesario para la transición a DATA_EX
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Configuración de Registros de Modo para DATA_EX) requiere que el chip esté en estado OFFLINE.
+
+**Manual de referencia:**
+- `VPC_Software_description.txt` - Sección 3.7 (página 873-878)
+- `vpc3pluss_user-manual.txt` - Sección de Go Offline Command
+
+### 7.2 Configuración de Registros de Modo para DATA_EX
+
+**Prerrequisito:** El VPC3+ está en estado OFFLINE (`STATUS_L == 0x00`) después de enviar el comando GO_OFFLINE.
+
+**Acción General:** Configurar los registros de modo para habilitar la operación en modo DATA_EX, incluyendo la habilitación de interrupciones y la configuración de buffers.
+
+**Encargado:** Microcontrolador (STM32).
+
+**Significado:** Es necesario para preparar el chip para la operación normal de intercambio de datos con el maestro.
+
+**¿Qué haces?**
+```c
+// Configurar registros de modo para DATA_EX
+Vpc3Write(0x06, 0xC0);  // MODE_REG_0_L: modo DP, watchdog 10ms
+Vpc3Write(0x07, 0x25);  // MODE_REG_0_H: timer 1ms, EOI timing
+Vpc3Write(0x0C, 0x05);  // MODE_REG_2: 2KB RAM, interrupciones GC
+Vpc3Write(0x12, 0x00);  // MODE_REG_3: sin PLL, verificación S_SAP
+```
+
+**¿Dónde escribes?**
+- Registro 0x06 (MODE_REG_0_L)
+- Registro 0x07 (MODE_REG_0_H)
+- Registro 0x0C (MODE_REG_2)
+- Registro 0x12 (MODE_REG_3)
+
+**¿Qué respuesta esperas?**
+```c
+// Al leer cada registro debe devolver el valor escrito
+uint8_t mode_reg_0_l = Vpc3Read(0x06);  // Debe ser 0xC0
+uint8_t mode_reg_0_h = Vpc3Read(0x07);  // Debe ser 0x25
+uint8_t mode_reg_2 = Vpc3Read(0x0C);    // Debe ser 0x05
+uint8_t mode_reg_3 = Vpc3Read(0x12);    // Debe ser 0x00
+
+if (mode_reg_0_l == 0xC0 && mode_reg_0_h == 0x25 && 
+    mode_reg_2 == 0x05 && mode_reg_3 == 0x00) {
+    printf("Registros de modo configurados para DATA_EX\n");
 } else {
-    printf("Error activando estados de aplicación\n");
+    printf("Error en configuración de registros de modo\n");
 }
 ```
 
 **¿Cómo la esperas?**
 ```c
-// Verificar inmediatamente después de asignar
-// Los valores deben ser exactamente 4 y 2
+// Verificar inmediatamente después de escribir cada registro
+// Todos los registros deben mantener los valores escritos
 ```
 
 **¿Por qué debe cumplirse?**
-- Estos estados controlan el comportamiento de la aplicación
-- Sin estados activos, no puede procesar datos
-- Son necesarios para el funcionamiento normal
+- Los registros de modo definen el comportamiento del chip
+- Solo se pueden modificar mientras está offline
+- Son necesarios para la operación en modo DATA_EX
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Envío del Comando START para DATA_EX) requiere que todos los registros de modo estén configurados correctamente.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.9 (página 1594-1620)
+- `VPC_Software_description.txt` - Sección 3.2.10 "Set Hardware Mode" (página 597-723)
+- `vpc3pluss_user-manual.txt` - Sección de Mode Registers
+
+### 7.3 Envío del Comando START para DATA_EX
+
+**Prerrequisito:** Los registros de modo han sido configurados correctamente para la operación en modo DATA_EX.
+
+**Acción General:** Poner el VPC3+ "en línea" nuevamente para que comience a operar en modo DATA_EX y pueda intercambiar datos con el maestro.
+
+**Encargado:** Microcontrolador (STM32).
+
+**Significado:** El chip transiciona del estado OFFLINE al estado DATA_EX, donde está listo para el intercambio normal de datos.
+
+**¿Qué haces?**
+```c
+// Enviar comando START para DATA_EX
+Vpc3Write(0x08, 0x01);  // START command
+```
+
+**¿Dónde escribes?**
+- Registro 0x08 (Control Register)
+
+**¿Qué respuesta esperas?**
+```c
+// STATUS_L debe cambiar a 0x91 (PASSIVE_IDLE)
+// STATUS_H debe mantenerse en 0xE3
+uint8_t status_l = Vpc3Read(0x04);  // Debe ser 0x91
+uint8_t status_h = Vpc3Read(0x05);  // Debe ser 0xE3
+```
+
+**¿Cómo la esperas?**
+```c
+// Esperar hasta 50ms para el cambio de estado
+uint32_t start_time = HAL_GetTick();
+uint8_t status_l;
+
+do {
+    status_l = Vpc3Read(0x04);
+    HAL_Delay(10);
+    
+    if (HAL_GetTick() - start_time > 50) {
+        printf("Timeout esperando PASSIVE_IDLE para DATA_EX\n");
+        return 0;
+    }
+} while (status_l != 0x91);
+
+printf("VPC3+ en PASSIVE_IDLE para DATA_EX\n");
+```
+
+**¿Por qué debe cumplirse?**
+- 0x91 indica que el VPC3+ está en estado PASSIVE_IDLE
+- El chip está listo para recibir tramas del maestro
+- La comunicación física está establecida para DATA_EX
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Intercambio de Datos) requiere que el chip esté en estado PASSIVE_IDLE y listo para DATA_EX.
+
+**Manual de referencia:**
+- `VPC_Software_description.txt` - Sección 3.7 (página 873-878)
+- `vpc3pluss_user-manual.txt` - Sección de Start Command
 
 ---
 
 ## 8. Intercambio de Datos
 
-### 8.1 Detección de Evento DX_OUT
+### 8.1 Detección de Eventos de Datos
 
-**Prerrequisito:** El esclavo está en estado `DATA_EXCHANGE`.
+**Prerrequisito:** El VPC3+ está en estado PASSIVE_IDLE (`STATUS_L == 0x91`) y configurado para operación en modo DATA_EX.
 
-**Acción General:** Gestionar el flujo continuo de datos de entrada y salida con el maestro.
+**Acción General:** Monitorear continuamente los eventos de interrupción para detectar cuando hay datos de entrada o salida disponibles para procesar.
 
-**Encargado:** Maestro y Esclavo (ambos, de forma cíclica).
+**Encargado:** Microcontrolador (STM32).
 
-**Significado:** Este es el funcionamiento normal y final del esclavo, donde cumple su función de I/O remota.
+**Significado:** Es necesario para detectar y procesar las tramas de datos que llegan del maestro o que deben enviarse al maestro.
 
 **¿Qué haces?**
 ```c
-// En función VPC3_Poll(), detectar evento
-if (events & 0x2000) {  // DX_OUT
-    printf("Evento DX_OUT detectado\n");
+// En función VPC3_Poll(), detectar eventos de datos
+uint16_t events = Vpc3Read(INT_REG_L) | (Vpc3Read(INT_REG_H) << 8);
+
+if (events & 0x0200) {  // NEW_DX_IN_DATA
+    printf("Evento NEW_DX_IN_DATA detectado\n");
+    // Procesar datos de entrada
+}
+
+if (events & 0x0100) {  // NEW_DX_OUT_DATA
+    printf("Evento NEW_DX_OUT_DATA detectado\n");
     // Procesar datos de salida
-    DpAppl_IsrDxOut();
 }
 ```
 
 **¿Dónde lees?**
-- INT_REG_H (0x03), bit 13
+- INT_REG_L (0x02), bit 5 (NEW_DX_IN_DATA)
+- INT_REG_L (0x02), bit 4 (NEW_DX_OUT_DATA)
 
 **¿Qué respuesta esperas?**
 ```c
-// El bit 0x2000 debe estar activo
-// Indica que el maestro envió datos de salida
+// Los bits 0x0200 y 0x0100 deben estar activos cuando corresponda
+// Indican que hay datos de entrada o salida disponibles
 ```
 
 **¿Cómo la esperas?**
 ```c
-// En polling continuo, verificar el bit
-// Debe activarse cíclicamente durante DATA_EX
+// En polling continuo, verificar los bits
+// No es necesario esperar, solo detectar cuando estén activos
 ```
 
 **¿Por qué debe cumplirse?**
-- 0x2000 indica que llegaron datos del maestro
-- Es el evento principal durante DATA_EX
-- Sin este evento, no hay intercambio de datos
+- 0x0200 indica que llegaron datos de entrada del maestro
+- 0x0100 indica que hay datos de salida para enviar al maestro
+- Son necesarios para el intercambio normal de datos
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Procesamiento de Datos de Entrada) requiere que se haya detectado el evento NEW_DX_IN_DATA.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.4 (página 1341-1353)
+- `VPC_Software_description.txt` - Sección 4.2.1 (página 1075-1083)
+- `vpc3pluss_user-manual.txt` - Sección de Data Exchange Events
 
-### 8.2 Obtención del Puntero del Buffer de Salida
+### 8.2 Procesamiento de Datos de Entrada
 
-**Prerrequisito:** Se ha detectado el evento DX_OUT y se deben procesar los datos de salida del maestro.
+**Prerrequisito:** Se ha detectado el evento NEW_DX_IN_DATA y se deben procesar los datos de entrada recibidos del maestro.
 
-**Acción General:** Obtener la dirección del buffer de salida activo donde están almacenados los datos enviados por el maestro.
+**Acción General:** Obtener la dirección del buffer de datos de entrada, leer los datos y procesarlos según la aplicación específica.
 
 **Encargado:** Microcontrolador.
 
-**Significado:** Es necesario para acceder a los datos de salida que el maestro envió al esclavo.
+**Significado:** Es necesario para recibir y procesar los datos de control enviados por el maestro al esclavo.
 
 **¿Qué haces?**
 ```c
-// Obtener puntero del buffer de salida activo
-uint8_t output_state;
-VPC3_UNSIGNED8_PTR output_buffer = VPC3_GetDoutBufPtr(&output_state);
+// Obtener puntero del buffer de datos de entrada
+uint16_t dx_in_ptr = Vpc3Read(0x38);  // DX_IN_PTR register
+
+// Leer datos del buffer
+uint8_t input_data[32];  // Buffer local para datos de entrada
+CopyFromVpc3(input_data, dx_in_ptr, 32);  // Copiar 32 bytes
+
+// Procesar datos según la aplicación
+ProcessInputData(input_data, 32);
 ```
 
 **¿Dónde lees?**
-- Función VPC3_GetDoutBufPtr() retorna la dirección
+- Registro 0x38 (DX_IN_PTR)
+- Desde la dirección dx_in_ptr en memoria del VPC3+
 
 **¿Qué respuesta esperas?**
 ```c
-// output_buffer debe ser una dirección válida
-// output_state debe indicar el buffer activo (0, 1, o 2)
-if (output_buffer >= 0x0050 && output_buffer <= 0x0060) {
-    printf("Buffer de salida: 0x%04X, Estado: %d\n", 
-           output_buffer, output_state);
+// dx_in_ptr debe ser una dirección válida en el rango 0x0000-0x07FF
+// input_data debe contener los datos válidos del maestro
+
+if (dx_in_ptr >= 0x0000 && dx_in_ptr <= 0x07FF) {
+    printf("Puntero DX_IN válido: 0x%04X\n", dx_in_ptr);
+    printf("Datos de entrada recibidos: ");
+    for (int i = 0; i < 32; i++) {
+        printf("0x%02X ", input_data[i]);
+    }
+    printf("\n");
 } else {
-    printf("Buffer de salida inválido: 0x%04X\n", output_buffer);
+    printf("Puntero DX_IN inválido: 0x%04X\n", dx_in_ptr);
 }
 ```
 
 **¿Cómo la esperas?**
 ```c
-// La función debe retornar inmediatamente
-// La dirección debe estar en el rango configurado
-```
-
-**¿Por qué debe cumplirse?**
-- El puntero indica dónde están los datos del maestro
-- Sin puntero válido, no puedes leer los datos
-- Es necesario para el intercambio de datos
-
-**Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.4 (página 1341-1353)
-
-### 8.3 Lectura de Datos de Salida
-
-**Prerrequisito:** Se ha obtenido el puntero del buffer de salida y se conoce la longitud de los datos.
-
-**Acción General:** Copiar los datos de salida del buffer del VPC3+ a un buffer local para su procesamiento.
-
-**Encargado:** Microcontrolador.
-
-**Significado:** Es necesario para acceder y procesar los datos enviados por el maestro.
-
-**¿Qué haces?**
-```c
-// Copiar datos del buffer del VPC3+ a buffer local
-CopyFromVpc3(local_buffer, output_buffer, output_length);
-```
-
-**¿Dónde lees?**
-- Desde la dirección output_buffer en memoria del VPC3+
-- Hacia buffer local en STM32
-
-**¿Qué respuesta esperas?**
-```c
-// local_buffer debe contener datos válidos
-// output_length debe ser el número de bytes leídos
-printf("Datos de salida leídos: %d bytes\n", output_length);
-for (int i = 0; i < output_length; i++) {
-    printf("0x%02X ", local_buffer[i]);
-}
-printf("\n");
-```
-
-**¿Cómo la esperas?**
-```c
+// Verificar que dx_in_ptr sea una dirección válida
 // Verificar que CopyFromVpc3 retorne éxito
-// Verificar que output_length sea correcto
-// Verificar que los datos sean válidos
+// Verificar que los datos tengan sentido para la aplicación
 ```
 
 **¿Por qué debe cumplirse?**
-- Los datos del maestro deben leerse correctamente
-- Sin lectura exitosa, no puedes procesar los datos
-- Es la base del intercambio de datos
+- Los datos de entrada contienen comandos del maestro
+- Son necesarios para controlar el comportamiento del esclavo
+- Sin procesamiento, el esclavo no responde a comandos
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Procesamiento de Datos de Salida) puede ejecutarse independientemente, pero requiere que el procesamiento de datos de entrada haya sido exitoso.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.4 (página 1341-1353)
+- `VPC_Software_description.txt` - Sección 4.2.2 (página 1110-1127)
+- `vpc3pluss_user-manual.txt` - Sección de Input Data Processing
 
-### 8.4 Procesamiento de Datos de Salida
+### 8.3 Procesamiento de Datos de Salida
 
-**Prerrequisito:** Se han leído los datos de salida del buffer del VPC3+ y están disponibles en el buffer local.
+**Prerrequisito:** Se ha detectado el evento NEW_DX_OUT_DATA y se deben preparar los datos de salida para enviar al maestro.
 
-**Acción General:** Procesar los datos recibidos del maestro según la lógica de aplicación del esclavo.
+**Acción General:** Obtener la dirección del buffer de datos de salida, preparar los datos según la aplicación específica y escribirlos en el buffer.
 
 **Encargado:** Microcontrolador.
 
-**Significado:** Es necesario para aplicar los comandos o datos enviados por el maestro a la aplicación del esclavo.
+**Significado:** Es necesario para enviar datos de estado o respuesta al maestro, completando el ciclo de intercambio de datos.
 
 **¿Qué haces?**
 ```c
-// Procesar los datos recibidos del maestro
-// Por ejemplo, actualizar salidas digitales
-for (int i = 0; i < output_length; i++) {
-    // Procesar cada byte según tu lógica de aplicación
-    ProcessOutputByte(local_buffer[i], i);
-}
+// Obtener puntero del buffer de datos de salida
+uint16_t dx_out_ptr = Vpc3Read(0x3A);  // DX_OUT_PTR register
+
+// Preparar datos de salida según la aplicación
+uint8_t output_data[16];  // Buffer local para datos de salida
+PrepareOutputData(output_data, 16);  // Función específica de la aplicación
+
+// Escribir datos en el buffer del VPC3+
+CopyToVpc3(dx_out_ptr, output_data, 16);  // Copiar 16 bytes
 ```
 
 **¿Dónde escribes?**
-- Variables de estado de tu aplicación
-- Registros GPIO si es necesario
+- Registro 0x3A (DX_OUT_PTR)
+- Hacia la dirección dx_out_ptr en memoria del VPC3+
 
 **¿Qué respuesta esperas?**
 ```c
-// Los datos deben procesarse correctamente
-// Las salidas deben actualizarse según los datos
-printf("Datos de salida procesados exitosamente\n");
-```
-
-**¿Cómo la esperas?**
-```c
-// El procesamiento debe completarse inmediatamente
-// No debe haber errores en el procesamiento
-```
-
-**¿Por qué debe cumplirse?**
-- Los datos del maestro deben reflejarse en tu aplicación
-- Sin procesamiento, no hay funcionalidad
-- Es el propósito del intercambio de datos
-
-**Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.4 (página 1341-1353)
-
-### 8.5 Obtención del Puntero del Buffer de Entrada
-
-**Prerrequisito:** Se han procesado los datos de salida y se deben preparar los datos de entrada para enviar al maestro.
-
-**Acción General:** Obtener la dirección del buffer de entrada activo donde se escribirán los datos para el maestro.
-
-**Encargado:** Microcontrolador.
-
-**Significado:** Es necesario para acceder al buffer donde se escribirán los datos de entrada que el maestro leerá.
-
-**¿Qué haces?**
-```c
-// Obtener puntero del buffer de entrada activo
-VPC3_UNSIGNED8_PTR input_buffer = VPC3_GetDinBufPtr();
-```
-
-**¿Dónde lees?**
-- Función VPC3_GetDinBufPtr() retorna la dirección
-
-**¿Qué respuesta esperas?**
-```c
-// input_buffer debe ser una dirección válida
-if (input_buffer >= 0x0050 && input_buffer <= 0x0060) {
-    printf("Buffer de entrada: 0x%04X\n", input_buffer);
-} else {
-    printf("Buffer de entrada inválido: 0x%04X\n", input_buffer);
-}
-```
-
-**¿Cómo la esperas?**
-```c
-// La función debe retornar inmediatamente
-// La dirección debe estar en el rango configurado
-```
-
-**¿Por qué debe cumplirse?**
-- El puntero indica dónde escribir datos para el maestro
-- Sin puntero válido, no puedes enviar datos
-- Es necesario para el intercambio bidireccional
-
-**Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.5 (página 1360-1379)
-
-### 8.6 Preparación de Datos de Entrada
-
-**Prerrequisito:** Se ha obtenido el puntero del buffer de entrada y se conoce la longitud de los datos a enviar.
-
-**Acción General:** Preparar los datos de entrada (leer sensores, estado de la aplicación, etc.) en un buffer local.
-
-**Encargado:** Microcontrolador.
-
-**Significado:** Es necesario para preparar la información que se enviará al maestro en el siguiente ciclo de intercambio.
-
-**¿Qué haces?**
-```c
-// Preparar datos para enviar al maestro
-// Por ejemplo, leer entradas digitales
-for (int i = 0; i < input_length; i++) {
-    local_buffer[i] = ReadInputByte(i);
-}
-```
-
-**¿Dónde lees?**
-- Variables de estado de tu aplicación
-- Registros GPIO si es necesario
-
-**¿Qué respuesta esperas?**
-```c
-// local_buffer debe contener datos válidos
-// input_length debe ser el número de bytes preparados
-printf("Datos de entrada preparados: %d bytes\n", input_length);
-```
-
-**¿Cómo la esperas?**
-```c
-// La preparación debe completarse inmediatamente
-// Los datos deben ser válidos y actualizados
-```
-
-**¿Por qué debe cumplirse?**
-- Los datos de entrada deben estar disponibles para el maestro
-- Sin datos válidos, el maestro no puede leer el estado
-- Es parte del intercambio bidireccional
-
-**Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.5 (página 1360-1379)
-
-### 8.7 Escritura de Datos de Entrada
-
-**Prerrequisito:** Se han preparado los datos de entrada en el buffer local y se conoce la longitud de los datos.
-
-**Acción General:** Copiar los datos de entrada del buffer local al buffer del VPC3+ para que estén disponibles para el maestro.
-
-**Encargado:** Microcontrolador.
-
-**Significado:** Es necesario para hacer que los datos de entrada estén disponibles para que el maestro los lea en el siguiente ciclo.
-
-**¿Qué haces?**
-```c
-// Copiar datos del buffer local al VPC3+
-CopyToVpc3(input_buffer, local_buffer, input_length);
-```
-
-**¿Dónde escribes?**
-- En la dirección input_buffer en memoria del VPC3+
-
-**¿Qué respuesta esperas?**
-```c
+// dx_out_ptr debe ser una dirección válida en el rango 0x0000-0x07FF
 // CopyToVpc3 debe retornar éxito
-// Los datos deben escribirse correctamente
-printf("Datos de entrada escritos al VPC3+\n");
+
+if (dx_out_ptr >= 0x0000 && dx_out_ptr <= 0x07FF) {
+    printf("Puntero DX_OUT válido: 0x%04X\n", dx_out_ptr);
+    printf("Datos de salida preparados: ");
+    for (int i = 0; i < 16; i++) {
+        printf("0x%02X ", output_data[i]);
+    }
+    printf("\n");
+} else {
+    printf("Puntero DX_OUT inválido: 0x%04X\n", dx_out_ptr);
+}
 ```
 
 **¿Cómo la esperas?**
 ```c
-// La función debe retornar inmediatamente
-// No debe haber errores en la escritura
+// Verificar que dx_out_ptr sea una dirección válida
+// Verificar que CopyToVpc3 retorne éxito
+// Verificar que los datos tengan sentido para la aplicación
 ```
 
 **¿Por qué debe cumplirse?**
-- Los datos deben estar disponibles para el maestro
-- Sin escritura exitosa, el maestro no puede leer
-- Es necesario para completar el intercambio
+- Los datos de salida contienen respuestas del esclavo
+- Son necesarios para informar el estado al maestro
+- Sin datos de salida, el maestro no conoce el estado del esclavo
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Manejo de Diagnósticos) puede ejecutarse independientemente, pero requiere que el procesamiento de datos de salida haya sido exitoso.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.5 (página 1360-1379)
-
-### 8.8 Cambio de Buffer de Entrada
-
-**Prerrequisito:** Se han escrito los datos de entrada al buffer del VPC3+ y se debe cambiar al siguiente buffer.
-
-**Acción General:** Cambiar al siguiente buffer de entrada para permitir la escritura continua de datos.
-
-**Encargado:** Microcontrolador.
-
-**Significado:** Es necesario para el funcionamiento cíclico, permitiendo que se escriban datos en un buffer mientras el maestro lee del otro.
-
-**¿Qué haces?**
-```c
-// Cambiar al siguiente buffer de entrada
-uint8_t new_buffer = VPC3_INPUT_UPDATE();
-```
-
-**¿Dónde escribes?**
-- No escribes, la función cambia internamente
-
-**¿Qué respuesta esperas?**
-```c
-// new_buffer debe ser 0, 1, o 2
-// Indica el buffer activo después del cambio
-printf("Buffer de entrada cambiado a: %d\n", new_buffer);
-```
-
-**¿Cómo la esperas?**
-```c
-// La función debe retornar inmediatamente
-// El valor debe ser válido (0, 1, o 2)
-```
-
-**¿Por qué debe cumplirse?**
-- El cambio de buffer permite escritura continua
-- Sin cambio, solo podrías escribir en un buffer
-- Es necesario para el funcionamiento cíclico
-
-**Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.5 (página 1360-1379)
+- `VPC_Software_description.txt` - Sección 4.2.2 (página 1110-1127)
+- `vpc3pluss_user-manual.txt` - Sección de Output Data Processing
 
 ---
 
 ## 9. Manejo de Diagnósticos
 
-### 9.1 Detección de Evento DIAG_BUFFER_CHANGED
+### 9.1 Detección de Eventos de Diagnóstico
 
-**Prerrequisito:** El esclavo está operando (en cualquier estado después de la inicialización).
+**Prerrequisito:** El VPC3+ está operando en modo DATA_EX y puede recibir solicitudes de diagnóstico del maestro.
 
-**Acción General:** Preparar y enviar información de diagnóstico al maestro cuando sea necesario (por un error o a petición).
+**Acción General:** Monitorear continuamente los eventos de interrupción para detectar cuando el maestro solicita información de diagnóstico del esclavo.
 
-**Encargado:** Microcontrolador.
+**Encargado:** Microcontrolador (STM32).
 
-**Significado:** Permite al esclavo comunicar su estado de salud y errores específicos al maestro, lo cual es fundamental para la fiabilidad del sistema.
+**Significado:** Es necesario para responder a las solicitudes de diagnóstico del maestro y mantener la comunicación estable.
 
 **¿Qué haces?**
 ```c
-// En función VPC3_Poll(), detectar evento
-if (events & 0x0100) {  // DIAG_BUFFER_CHANGED
-    printf("Evento DIAG_BUFFER_CHANGED detectado\n");
-    // Procesar cambios en buffer de diagnóstico
+// En función VPC3_Poll(), detectar eventos de diagnóstico
+uint16_t events = Vpc3Read(INT_REG_L) | (Vpc3Read(INT_REG_H) << 8);
+
+if (events & 0x0080) {  // NEW_DIAG_DATA
+    printf("Evento NEW_DIAG_DATA detectado\n");
+    // Procesar solicitud de diagnóstico
 }
 ```
 
 **¿Dónde lees?**
-- INT_REG_H (0x03), bit 8
+- INT_REG_L (0x02), bit 3 (NEW_DIAG_DATA)
 
 **¿Qué respuesta esperas?**
 ```c
-// El bit 0x0100 debe estar activo
-// Indica que el buffer de diagnóstico cambió
+// El bit 0x0080 debe estar activo
+// Indica que el maestro solicitó información de diagnóstico
 ```
 
 **¿Cómo la esperas?**
 ```c
 // En polling continuo, verificar el bit
-// Puede activarse cuando hay cambios de estado
+// No es necesario esperar, solo detectar cuando esté activo
 ```
 
 **¿Por qué debe cumplirse?**
-- 0x0100 indica cambios en el estado del esclavo
-- Es necesario para manejo de errores y estado
+- 0x0080 indica que el maestro solicitó diagnóstico
+- Es necesario para mantener la comunicación estable
 - Permite al maestro conocer el estado del esclavo
 
-**Verificación para el Siguiente Paso:** El maestro puede tomar decisiones basándose en el diagnóstico, como reconfigurar el esclavo o mostrar una alarma al operador.
+**Verificación para el Siguiente Paso:** El siguiente paso (Preparación de Datos de Diagnóstico) requiere que se haya detectado el evento NEW_DIAG_DATA.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.6 (página 1385-1401)
-- Sección 4.6 "Diagnostic": Detalla la estructura de los datos de diagnóstico y las funciones de la API para su manejo
+- `VPC_Software_description.txt` - Sección 4.2.1 (página 1075-1083)
+- `vpc3pluss_user-manual.txt` - Sección de Diagnostic Events
 
-### 9.2 Obtención del Puntero del Buffer de Diagnóstico
+### 9.2 Preparación de Datos de Diagnóstico
 
-**Prerrequisito:** El esclavo está operando y se ha detectado un evento DIAG_BUFFER_CHANGED.
+**Prerrequisito:** Se ha detectado el evento NEW_DIAG_DATA y se deben preparar los datos de diagnóstico para enviar al maestro.
 
-**Acción General:** Obtener la dirección del buffer de diagnóstico activo para poder leer o escribir datos de diagnóstico.
+**Acción General:** Obtener la dirección del buffer de diagnóstico, preparar los datos de diagnóstico según la aplicación específica y escribirlos en el buffer.
 
 **Encargado:** Microcontrolador.
 
-**Significado:** Es necesario para acceder al buffer de diagnóstico donde se almacenan los mensajes de estado y error.
+**Significado:** Es necesario para informar al maestro sobre el estado actual del esclavo y cualquier condición de error o advertencia.
 
 **¿Qué haces?**
 ```c
-// Obtener puntero del buffer de diagnóstico activo
-VPC3_UNSIGNED8_PTR diag_buffer = VPC3_GetDiagBufPtr();
+// Obtener puntero del buffer de diagnóstico
+uint16_t diag_ptr = Vpc3Read(0x3C);  // DIAG_PTR register
+
+// Preparar datos de diagnóstico según la aplicación
+uint8_t diag_data[20];  // Buffer local para datos de diagnóstico
+PrepareDiagnosticData(diag_data, 20);  // Función específica de la aplicación
+
+// Escribir datos en el buffer del VPC3+
+CopyToVpc3(diag_ptr, diag_data, 20);  // Copiar 20 bytes
 ```
 
-**¿Dónde lees?**
-- Función VPC3_GetDiagBufPtr() retorna la dirección
+**¿Dónde escribes?**
+- Registro 0x3C (DIAG_PTR)
+- Hacia la dirección diag_ptr en memoria del VPC3+
 
 **¿Qué respuesta esperas?**
 ```c
-// diag_buffer debe ser una dirección válida
-if (diag_buffer >= 0x0080 && diag_buffer <= 0x0090) {
-    printf("Buffer de diagnóstico: 0x%04X\n", diag_buffer);
+// diag_ptr debe ser una dirección válida en el rango 0x0000-0x07FF
+// CopyToVpc3 debe retornar éxito
+
+if (diag_ptr >= 0x0000 && diag_ptr <= 0x07FF) {
+    printf("Puntero DIAG válido: 0x%04X\n", diag_ptr);
+    printf("Datos de diagnóstico preparados: ");
+    for (int i = 0; i < 20; i++) {
+        printf("0x%02X ", diag_data[i]);
+    }
+    printf("\n");
 } else {
-    printf("Buffer de diagnóstico inválido: 0x%04X\n", diag_buffer);
+    printf("Puntero DIAG inválido: 0x%04X\n", diag_ptr);
 }
 ```
 
 **¿Cómo la esperas?**
 ```c
-// La función debe retornar inmediatamente
-// La dirección debe estar en el rango configurado
+// Verificar que diag_ptr sea una dirección válida
+// Verificar que CopyToVpc3 retorne éxito
+// Verificar que los datos tengan sentido para la aplicación
 ```
 
 **¿Por qué debe cumplirse?**
-- El puntero indica dónde está el buffer de diagnóstico
-- Sin puntero válido, no puedes leer diagnósticos
-- Es necesario para el manejo de errores
+- Los datos de diagnóstico informan el estado del esclavo
+- Son necesarios para el mantenimiento y monitoreo
+- Sin diagnóstico, el maestro no puede detectar problemas
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Envío de Respuesta de Diagnóstico) requiere que se hayan preparado los datos de diagnóstico correctamente.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.6 (página 1385-1401)
+- `VPC_Software_description.txt` - Sección 4.2.2 (página 1110-1127)
+- `vpc3pluss_user-manual.txt` - Sección de Diagnostic Data Preparation
 
-### 9.3 Configuración de Diagnósticos
+### 9.3 Envío de Respuesta de Diagnóstico
 
-**Prerrequisito:** Se ha obtenido el puntero del buffer de diagnóstico y se han preparado los datos de diagnóstico.
+**Prerrequisito:** Se han preparado los datos de diagnóstico y están disponibles en el buffer del VPC3+.
 
-**Acción General:** Configurar y enviar información de diagnóstico al maestro para informar sobre el estado del esclavo.
+**Acción General:** Enviar la respuesta de diagnóstico al maestro a través del VPC3+ para completar la solicitud de diagnóstico.
 
 **Encargado:** Microcontrolador.
 
-**Significado:** Permite al maestro conocer el estado de salud del esclavo y tomar decisiones basadas en esta información.
+**Significado:** Es necesario para completar la solicitud de diagnóstico del maestro y mantener la comunicación estable.
 
 **¿Qué haces?**
 ```c
-// Configurar diagnóstico según el estado
-uint8_t result = VPC3_SetDiagnosis(diag_length, diag_control, check_flag);
+// Enviar respuesta de diagnóstico
+uint8_t response = VPC3_SET_DIAG_DATA_OK();
 ```
 
 **¿Dónde escribes?**
 - No escribes directamente, la función lo hace internamente
-- El VPC3+ actualiza el buffer de diagnóstico
+- El VPC3+ responde automáticamente al maestro
 
 **¿Qué respuesta esperas?**
 ```c
-// result debe ser 0 (éxito) o código de error
-if (result == 0) {
-    printf("Diagnóstico configurado exitosamente\n");
+// response debe ser 0 (éxito) o código de error
+if (response == 0) {
+    printf("Respuesta de diagnóstico enviada\n");
 } else {
-    printf("Error configurando diagnóstico: %d\n", result);
+    printf("Error enviando respuesta de diagnóstico: %d\n", response);
 }
 ```
 
 **¿Cómo la esperas?**
 ```c
 // La función debe retornar inmediatamente
-// El diagnóstico debe configurarse correctamente
+// Debe indicar éxito o fallo en el envío
 ```
 
 **¿Por qué debe cumplirse?**
-- Los diagnósticos informan al maestro del estado
-- Sin diagnósticos, el maestro no conoce el estado
-- Es necesario para el monitoreo y control
+- El maestro espera confirmación de la respuesta de diagnóstico
+- Sin respuesta, el maestro puede considerar el esclavo como no funcional
+- Es necesario para mantener la comunicación estable
+
+**Verificación para el Siguiente Paso:** El siguiente paso (Continuación del Ciclo de Datos) puede ejecutarse independientemente, pero requiere que la respuesta de diagnóstico haya sido enviada exitosamente.
 
 **Manual de referencia:**
-- `VPC_Software_description.txt` - Sección 4.6 (página 1385-1401)
+- `VPC_Software_description.txt` - Sección 4.2.1 (página 1094-1097)
+- `vpc3pluss_user-manual.txt` - Sección de Diagnostic Response
+
+---
+
+## Resumen de Verificaciones Críticas
+
+### Puntos de Verificación por Fase
+
+**Fase 1: Inicialización del Sistema**
+- ✅ Reset hardware exitoso: `STATUS_L=0x00, STATUS_H=0xE3`
+- ✅ Firmware inicializado: `VPC3_Initialization()` retorna `DP_OK`
+- ✅ Estado post-inicialización: `STATUS_L=0x00, STATUS_H=0xE3`
+
+**Fase 2: Configuración de Registros**
+- ✅ MODE_REG_0_L configurado: `0x06 = 0xC0`
+- ✅ MODE_REG_0_H configurado: `0x07 = 0x25`
+- ✅ MODE_REG_2 configurado: `0x0C = 0x05`
+- ✅ MODE_REG_3 configurado: `0x12 = 0x00`
+
+**Fase 3: Secuencia de START**
+- ✅ Comando START enviado: `0x08 = 0x01`
+- ✅ Estado PASSIVE_IDLE alcanzado: `STATUS_L=0x91`
+- ✅ Baudrate detectado y estable
+
+**Fase 4: Handshake con Maestro**
+- ✅ Parametrización aceptada: `NEW_PRM_DATA` procesado
+- ✅ Configuración aceptada: `NEW_CFG_DATA` procesado
+- ✅ Transición a DATA_EX exitosa
+
+**Fase 5: Operación Normal**
+- ✅ Datos de entrada procesados: `NEW_DX_IN_DATA`
+- ✅ Datos de salida procesados: `NEW_DX_OUT_DATA`
+- ✅ Diagnósticos manejados: `NEW_DIAG_DATA`
+
+### Códigos de Error Comunes
+
+**Errores de Inicialización:**
+- `DP_NOT_OFFLINE_ERROR`: VPC3+ no está en estado OFFLINE
+- `DP_ADDRESS_ERROR`: Dirección de esclavo inválida
+- `DP_CALCULATE_IO_ERROR`: Error en cálculo de buffers
+- `DP_LESS_MEM_ERROR`: Memoria insuficiente
+
+**Errores de Estado:**
+- `STATUS_L != 0x00/0x91`: Estado incorrecto para la operación
+- `STATUS_H != 0xE3`: Chip no identificado como VPC3+S
+- `CTRL(0x08) != 0x00`: Registro de control no limpio
+
+**Errores de Comunicación:**
+- `SPI transfer failed`: Fallo en comunicación SPI
+- `HAL_TIMEOUT`: Timeout en operación SPI
+- `CopyToVpc3/CopyFromVpc3 failed`: Fallo en transferencia de memoria
+
+### Recomendaciones de Debugging
+
+1. **Verificar Comunicación Básica Primero:**
+   - Reset hardware y lectura de registros de estado
+   - Verificar configuración SPI (CPOL/CPHA, velocidad)
+   - Confirmar que `STATUS_L=0x00, STATUS_H=0xE3` post-reset
+
+2. **Verificar Inicialización del Firmware:**
+   - Confirmar que `VPC3_Initialization()` retorna `DP_OK`
+   - Verificar estado post-inicialización
+   - Revisar logs de error si falla
+
+3. **Verificar Secuencia de START:**
+   - Confirmar transición a `PASSIVE_IDLE` (`STATUS_L=0x91`)
+   - Verificar detección de baudrate estable
+   - Revisar timing y delays
+
+4. **Verificar Handshake:**
+   - Confirmar procesamiento de `NEW_PRM_DATA`
+   - Confirmar procesamiento de `NEW_CFG_DATA`
+   - Verificar transición exitosa a DATA_EX
+
+5. **Verificar Operación Normal:**
+   - Confirmar procesamiento de `NEW_DX_IN_DATA`
+   - Confirmar procesamiento de `NEW_DX_OUT_DATA`
+   - Verificar manejo de `NEW_DIAG_DATA`
+
+### Referencias de Manuales
+
+**Documentación Principal:**
+- `VPC_Software_description.txt`: Descripción completa del software y protocolo
+- `vpc3pluss_user-manual.txt`: Manual de usuario del chip VPC3+S
+
+**Secciones Críticas:**
+- Sección 3.6 "Initializing of VPC3+": Inicialización del sistema
+- Sección 3.2.10 "Set Hardware Mode": Configuración de registros de modo
+- Sección 3.7 "Start Command": Secuencia de START
+- Sección 4.2.1 "Event Handling": Manejo de eventos
+- Sección 4.2.2 "Buffer Management": Gestión de buffers
+
+**Notas Importantes:**
+- Todos los registros de modo solo pueden modificarse mientras el chip está `OFFLINE`
+- La inicialización del firmware es crítica y debe retornar `DP_OK`
+- El handshake con el maestro es obligatorio antes de DATA_EX
+- El polling continuo es necesario para detectar eventos
+- Los timeouts y delays son críticos para la estabilidad
 
 ---
 

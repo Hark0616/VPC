@@ -122,11 +122,11 @@ typedef uint16_t            VPC3_ADR;
 /**************************************************************************//**
  * @section strap_pins  Configuration-Strap Pins on VPC3+S ASIC
  ******************************************************************************/
-#define VPC3_RESET_PIN         GPIO_PIN_4  /*!< Reset del VPC3+S */
-#define VPC3_RESET_PORT        GPIOB
+#define VPC3_RESET_PIN         GPIO_PIN_1  /*!< Reset del VPC3+S */
+#define VPC3_RESET_PORT        GPIOA
 
-#define VPC3_INT_PIN           GPIO_PIN_5  /*!< Interrupción INT_EV# */
-#define VPC3_INT_PORT          GPIOB
+#define VPC3_INT_PIN           GPIO_PIN_13 /*!< Interrupción INT_EV# */
+#define VPC3_INT_PORT          GPIOC
 
 #define VPC3_HLDTOK_PIN        GPIO_PIN_6  /*!< Hold Token HLDTOK# */
 #define VPC3_HLDTOK_PORT       GPIOB
