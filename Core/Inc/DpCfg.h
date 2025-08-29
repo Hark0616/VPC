@@ -44,7 +44,7 @@
    Use following values:
    - 0 to 244
 */
-#define DIN_BUFSIZE                 ((uint8_t)0x02)     // Length of the DIn Buffer (Data Slave to Master) //originalmente 0x02               0..244
+#define DIN_BUFSIZE                 ((uint8_t)0x80)     // Length of the DIn Buffer (Data Slave to Master) // Ajustado a 128 bytes para evitar DP_LESS_MEM_ERROR
 
 /*!
    \def DOUT_BUFSIZE
@@ -53,7 +53,7 @@
    Use following values:
    - 0 to 244
 */
-#define DOUT_BUFSIZE                ((uint8_t)0x02)     // Length of the DOut Buffer     (Data Master to Slave) //originalmente 0x02          0..244
+#define DOUT_BUFSIZE                ((uint8_t)0x80)     // Length of the DOut Buffer     (Data Master to Slave) // Ajustado a 128 bytes para evitar DP_LESS_MEM_ERROR
 
 /*!
    \def PRM_BUFSIZE
@@ -64,7 +64,7 @@
    Use following values:
    - 7 to 244
 */
-#define PRM_BUFSIZE                 ((uint8_t)0x10)     // Length of the Parameter Buffer                                 7..244
+#define PRM_BUFSIZE                 ((uint8_t)0x80)     // Length of the Parameter Buffer                                 // Ajustado a 128 bytes para evitar DP_LESS_MEM_ERROR
 
 /*!
    \def DIAG_BUFSIZE
@@ -84,7 +84,7 @@
    Use following values:
    - 1 to 244
 */
-#define CFG_BUFSIZE                 ((uint8_t)0x02)     // Length of the Configuration Buffer                             1..244
+#define CFG_BUFSIZE                 ((uint8_t)0x80)     // Length of the Configuration Buffer                             // Ajustado a 128 bytes para evitar DP_LESS_MEM_ERROR
 
 /*!
    \def SSA_BUFSIZE
@@ -473,12 +473,12 @@
 #define DP_ISOCHRONOUS_MODE 0
 
 #define MAX(A, B)   ((A) > (B) ? (A) : (B))     /*!< Determine aximum.  */
-// Ampliar HELP_BUFSIZE para debugging y prevenir overflow
+// HELP_BUFSIZE optimizado para coincidir con GSD (244 bytes máximo)
 // Original: MAX(PRM_BUFSIZE=16, CFG_BUFSIZE=2) = 16 bytes
-// Nuevo: 64 bytes para manejar tramas grandes de forma segura durante debugging
-#define HELP_BUFSIZE_DEBUG          ((uint16_t)64)      // Buffer ampliado para debugging
+// Nuevo: 244 bytes para manejar tramas completas del GSD
+#define HELP_BUFSIZE_DEBUG          ((uint16_t)0x80)   // Buffer ajustado a 128 bytes para evitar DP_LESS_MEM_ERROR
 #define HELP_BUFSIZE_ORIGINAL       ((uint16_t)MAX( PRM_BUFSIZE, CFG_BUFSIZE ))
-#define HELP_BUFSIZE                HELP_BUFSIZE_DEBUG  // Usar versión ampliada
+#define HELP_BUFSIZE                HELP_BUFSIZE_DEBUG  // Usar versión ampliada para GSD completo
 
 // == Segmentation VPC3+ ===============================================================
 #if DP_VPC3_4KB_MODE

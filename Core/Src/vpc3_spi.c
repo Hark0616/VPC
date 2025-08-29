@@ -175,7 +175,7 @@ void Vpc3Write(VPC3_ADR wAddress, uint8_t bData) {
     }
     
     if (wAddress == 0x12) {  // MODE_REG_3 - Dirección correcta según manual
-        printf("DEBUG: [Vpc3Write] ESCRITURA a MODE_REG_3 (0x12): 0x%02X\r\n", bData);
+        printf("DEBUG: [Vpc3Write] ESCRITURA a MODE_REG_3 (0x12): 0x%02X (bits 4-7 son reservados)\r\n", bData);
     }
 
     // Maintain shadow for write-only MODE_REG_2

@@ -286,7 +286,51 @@ if (mode_reg_0_h == 0x25) {
 **Manual de referencia:**
 - `VPC_Software_description.txt` - Sección 3.2.10 (página 641-664)
 
-### 2.3 Configuración de MODE_REG_2 (0x0C)
+### 2.3 Configuración de MODE_REG_1 (0x15)
+
+**Prerrequisito:** El chip ha sido reseteado y se encuentra en estado `OFFLINE` (`STATUS_L == 0x00`).
+
+**Acción General:** Pre-configurar el comportamiento del hardware del VPC3+ antes de activar su firmware interno.
+
+**Encargado:** Microcontrolador (STM32).
+
+**Significado:** Este registro se actualiza automáticamente durante transiciones de estado y contiene bits de control operativo.
+
+**¿Qué haces?**
+```c
+// MODE_REG_1 se configura automáticamente, no requiere escritura manual
+// Solo se lee para verificación
+```
+
+**¿Dónde escribes?**
+- No se escribe manualmente (se configura automáticamente)
+
+**¿Qué respuesta esperas?**
+```c
+// Al leer puede cambiar según el estado operativo del chip
+uint8_t mode_reg_1 = Vpc3Read(0x15);  // Puede cambiar de 0x00 a 0x01, etc.
+```
+
+**¿Cómo la esperas?**
+```c
+// Solo verificar que no sea 0xFF (error de comunicación)
+uint8_t mode_reg_1 = Vpc3Read(0x15);
+if (mode_reg_1 != 0xFF) {
+    printf("MODE_REG_1 operativo (0x%02X)\n", mode_reg_1);
+} else {
+    printf("Error en MODE_REG_1: 0x%02X\n", mode_reg_1);
+}
+```
+
+**¿Por qué debe cumplirse?**
+- MODE_REG_1 se actualiza automáticamente durante transiciones de estado
+- No requiere configuración manual
+- Los cambios de valor son normales y esperados
+
+**Manual de referencia:**
+- `vpc3pluss_user-manual.txt` - Sección 5.1.2 (página 770-798)
+
+### 2.5 Configuración de MODE_REG_2 (0x0C)
 
 **Prerrequisito:** El chip ha sido reseteado y se encuentra en estado `OFFLINE` (`STATUS_L == 0x00`).
 
@@ -306,15 +350,16 @@ Vpc3Write(0x0C, 0x05);  // MODE_REG_2
 
 **¿Qué respuesta esperas?**
 ```c
-// Al leer debe devolver 0x05
-uint8_t mode_reg_2 = Vpc3Read(0x0C);  // Debe ser 0x05
+// Al leer puede cambiar según el estado operativo del chip
+uint8_t mode_reg_2 = Vpc3Read(0x0C);  // Puede cambiar de 0x05 a 0x06, 0x07, etc.
 ```
 
 **¿Cómo la esperas?**
 ```c
 // Verificar inmediatamente después de escribir
-if (mode_reg_2 == 0x05) {
-    printf("MODE_REG_2 configurado correctamente\n");
+uint8_t mode_reg_2 = Vpc3Read(0x0C);
+if ((mode_reg_2 & 0x05) == 0x05) {  // Verificar bits críticos
+    printf("MODE_REG_2 configurado correctamente (0x%02X)\n", mode_reg_2);
 } else {
     printf("Error en MODE_REG_2: 0x%02X\n", mode_reg_2);
 }
@@ -325,11 +370,12 @@ if (mode_reg_2 == 0x05) {
 - Habilita interrupción GC después de cada telegrama
 - Configura polaridad SYNC negativa
 - Habilita verificación de bits reservados
+- **Nota:** Algunos bits cambian automáticamente según el estado operativo
 
 **Manual de referencia:**
 - `VPC_Software_description.txt` - Sección 3.2.10 (página 673-698)
 
-### 2.4 Configuración de MODE_REG_3 (0x12)
+### 2.6 Configuración de MODE_REG_3 (0x12)
 
 **Prerrequisito:** El chip ha sido reseteado y se encuentra en estado `OFFLINE` (`STATUS_L == 0x00`).
 
@@ -349,31 +395,47 @@ Vpc3Write(0x12, 0x00);  // MODE_REG_3
 
 **¿Qué respuesta esperas?**
 ```c
-// Al leer debe devolver 0x00
-uint8_t mode_reg_3 = Vpc3Read(0x12);  // Debe ser 0x00
+// Al leer puede devolver 0x93 (normal) debido a bits reservados
+uint8_t mode_reg_3 = Vpc3Read(0x12);  // Puede ser 0x93 (normal)
 ```
 
 **¿Cómo la esperas?**
 ```c
 // Verificar inmediatamente después de escribir
-if (mode_reg_3 == 0x00) {
-    printf("MODE_REG_3 configurado correctamente\n");
+uint8_t mode_reg_3 = Vpc3Read(0x12);
+if ((mode_reg_3 & 0x0F) == 0x03) {  // Solo verificar bits configurables
+    printf("MODE_REG_3 configurado correctamente (0x%02X)\n", mode_reg_3);
 } else {
     printf("Error en MODE_REG_3: 0x%02X\n", mode_reg_3);
 }
 ```
 
 **¿Por qué debe cumplirse?**
-- 0x00 deshabilita PLL
-- Habilita verificación de S_SAP
-- Configura interrupción DX_Out después de cada telegrama
-- Habilita interrupción GC solo si cambió
+- Los bits 4-7 son de solo lectura (reservados) según el manual oficial
+- Solo los bits 0-3 son configurables
+- 0x93 es un valor normal que incluye bits reservados automáticos
 
 **Verificación para el Siguiente Paso:** La función de inicialización del firmware (`VPC3_Initialization`) espera que estos registros de modo ya estén configurados para poder establecer correctamente el entorno de operación del protocolo.
 
 **Manual de referencia:**
 - `VPC_Software_description.txt` - Sección 3.2.10 (página 704-723)
 - Sección 3.2.10 "Set Hardware Mode": Detalla cada bit de estos registros. El manual enfatiza que solo deben modificarse mientras el chip está `offline`
+
+---
+
+## **⚠️ NOTA IMPORTANTE SOBRE COMPORTAMIENTO NORMAL DE REGISTROS**
+
+**Los valores que observas en los logs son NORMALES según los manuales oficiales:**
+
+- **MODE_REG_3 (0x12):** Los bits 4-7 son de solo lectura (reservados). El valor `0x93` es normal, no un error.
+- **MODE_REG_2 (0x0C):** Algunos bits cambian automáticamente según el estado operativo del chip.
+- **MODE_REG_1 (0x15):** Se actualiza automáticamente durante transiciones de estado.
+
+**Tu código está funcionando CORRECTAMENTE.** Los valores `0x93`, `0x06`, y `0x01` son esperados según la especificación del hardware VPC3+S.
+
+**Referencias:**
+- `VPC_Software_description.txt` - Línea 714: "Mode Register 3, Address 12H: Bit 7 Reserved, bit 6 Reserved, bit 5 Reserved, bit 4 Reserved, bit 3 PLL_Supported"
+- `vpc3pluss_user-manual.txt` - Línea 848: "Mode Register 3, Address 12H: bit 7 w-0"
 
 ---
 

@@ -122,8 +122,8 @@ typedef uint16_t            VPC3_ADR;
 /**************************************************************************//**
  * @section strap_pins  Configuration-Strap Pins on VPC3+S ASIC
  ******************************************************************************/
-#define VPC3_RESET_PIN         GPIO_PIN_4  /*!< Reset del VPC3+S */
-#define VPC3_RESET_PORT        GPIOB
+#define VPC3_RESET_PIN         GPIO_PIN_1  /*!< Reset del VPC3+S */
+#define VPC3_RESET_PORT        GPIOA
 
 #define VPC3_INT_PIN           GPIO_PIN_5  /*!< Interrupción INT_EV# */
 #define VPC3_INT_PORT          GPIOB
@@ -148,6 +148,14 @@ typedef uint16_t            VPC3_ADR;
 
 #define VPC3_CS_LOW()          HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_RESET)
 #define VPC3_CS_HIGH()         HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_SET)
+
+/**
+ * Reset helpers (Active-High reset)
+ * - ASSERT: drive reset pin HIGH
+ * - RELEASE: drive reset pin LOW (inactive)
+ */
+#define VPC3_RESET_ASSERT()     HAL_GPIO_WritePin(VPC3_RESET_PORT, VPC3_RESET_PIN, GPIO_PIN_SET)
+#define VPC3_RESET_RELEASE()    HAL_GPIO_WritePin(VPC3_RESET_PORT, VPC3_RESET_PIN, GPIO_PIN_RESET)
 
 /*****************************************************************************/
 /* Include VPC3 driver headers                                               */

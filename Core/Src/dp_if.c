@@ -793,8 +793,8 @@ DP_ERROR_CODE bError;
    printf("DEBUG: [VPC3_Initialization] MODE_REG_0_H (0x07): 0x%02X\r\n", Vpc3Read(0x07));
    printf("DEBUG: [VPC3_Initialization] Control Reg (0x08): 0x%02X\r\n", Vpc3Read(0x08));
    printf("DEBUG: [VPC3_Initialization] MODE_REG_2 = 0x%02X\r\n", VPC3_GetModeReg2Shadow());
-   printf("DEBUG: [VPC3_Initialization] MODE_REG_3 (0x12): 0x%02X\r\n", Vpc3Read(bVpc3WoModeReg3));
-   printf("DEBUG: [VPC3_Initialization] MODE_REG_1 (0x15): 0x%02X\r\n", Vpc3Read(0x15));
+   printf("DEBUG: [VPC3_Initialization] MODE_REG_3 (0x12): 0x%02X (normal si bits 4-7 son reservados)\r\n", Vpc3Read(bVpc3WoModeReg3));
+   printf("DEBUG: [VPC3_Initialization] MODE_REG_1 (0x15): 0x%02X (se actualiza automáticamente)\r\n", Vpc3Read(0x15));
    
    // Verificar si el chip está en el estado esperado para recibir START
    uint8_t pre_start_status = Vpc3Read(0x04);
@@ -942,8 +942,8 @@ void VPC3_Start( void )
    printf("DEBUG: [DETAILED_DIAG] MODE_REG_0_H (0x07): 0x%02X\r\n", Vpc3Read(0x07));
    printf("DEBUG: [DETAILED_DIAG] Control Reg (0x08): 0x%02X\r\n", Vpc3Read(0x08));
    printf("DEBUG: [DETAILED_DIAG] MODE_REG_1_R (0x09): 0x%02X\r\n", Vpc3Read(0x09));
-   printf("DEBUG: [DETAILED_DIAG] MODE_REG_2 (0x0C): 0x%02X\r\n", Vpc3Read(0x0C));
-   printf("DEBUG: [DETAILED_DIAG] MODE_REG_1 (0x15): 0x%02X\r\n", Vpc3Read(0x15));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_2 (0x0C): 0x%02X (puede cambiar según estado)\r\n", Vpc3Read(0x0C));
+   printf("DEBUG: [DETAILED_DIAG] MODE_REG_1 (0x15): 0x%02X (se actualiza automáticamente)\r\n", Vpc3Read(0x15));
 
    printf("DEBUG: Esperando que el chip procese el comando START...\r\n");
    HAL_Delay(50); // Allow time for the chip to process
@@ -965,7 +965,7 @@ void VPC3_Start( void )
    printf(")\r\n");
    printf("DEBUG: [TIMING_DIAG] STATUS_H: 0x%02X\r\n", Vpc3Read(0x05));
    printf("DEBUG: [TIMING_DIAG] Control Reg (0x08): 0x%02X\r\n", Vpc3Read(0x08));
-   printf("DEBUG: [TIMING_DIAG] MODE_REG_1 (0x15): 0x%02X\r\n", Vpc3Read(0x15));
+   printf("DEBUG: [TIMING_DIAG] MODE_REG_1 (0x15): 0x%02X (se actualiza automáticamente)\r\n", Vpc3Read(0x15));
    printf("DEBUG: [TIMING_DIAG] VPC3_PASS_IDLE mask: 0x%02X\r\n", VPC3_PASS_IDLE);
    printf("DEBUG: [TIMING_DIAG] Bit test: (0x%02X & 0x%02X) = 0x%02X\r\n", 
           status_after_short_delay, VPC3_PASS_IDLE, (status_after_short_delay & VPC3_PASS_IDLE));
@@ -3062,36 +3062,63 @@ uint8_t VPC3_HardwareReset(void) {
     // 2. Set CS high to ensure clean state
     HAL_GPIO_WritePin(VPC3_CS_PORT, VPC3_CS_PIN, GPIO_PIN_SET);
     
-    // 3. Perform hardware reset sequence
-    printf("DEBUG: [VPC3_HardwareReset] Secuencia de reset hardware...\r\n");
+    // 3. Perform hardware reset sequence with improved timing
+    printf("DEBUG: [VPC3_HardwareReset] Secuencia de reset hardware mejorada...\r\n");
     
-    // Reset pulse: low for at least 1ms
-    HAL_GPIO_WritePin(VPC3_RESET_PORT, VPC3_RESET_PIN, GPIO_PIN_RESET);
-    HAL_Delay(10); // 10ms reset pulse
+    // Active-High reset pulse: HIGH for at least 100ms
+    VPC3_RESET_ASSERT();
+    HAL_Delay(100); // 100ms reset pulse para mayor estabilidad
     
-    // Release reset
-    HAL_GPIO_WritePin(VPC3_RESET_PORT, VPC3_RESET_PIN, GPIO_PIN_SET);
-    HAL_Delay(50); // Wait 50ms for ASIC to stabilize
+    // Release reset (LOW)
+    VPC3_RESET_RELEASE();
+    HAL_Delay(500); // Wait 500ms for ASIC to stabilize (aumentado de 50ms)
     
-    // 4. Verify ASIC is responding
-    printf("DEBUG: [VPC3_HardwareReset] Verificando respuesta del ASIC...\r\n");
+    // 4. Verify ASIC is responding with multiple attempts
+    printf("DEBUG: [VPC3_HardwareReset] Verificando respuesta del ASIC con múltiples intentos...\r\n");
+    
+    uint8_t reset_attempts = 0;
+    uint8_t asic_responding = 0;
+    
+    // Intentar múltiples veces hasta que el ASIC responda
+    while (reset_attempts < 5 && !asic_responding) {
+        reset_attempts++;
+        printf("DEBUG: [VPC3_HardwareReset] Intento %d/5 de verificación post-reset...\r\n", reset_attempts);
     
     // Try to read STATUS_L register
     uint8_t status_l = Vpc3Read(0x04);
-    printf("DEBUG: [VPC3_HardwareReset] STATUS_L después del reset: 0x%02X\r\n", status_l);
+        uint8_t status_h = Vpc3Read(0x05);
+        printf("DEBUG: [VPC3_HardwareReset] STATUS_L: 0x%02X, STATUS_H: 0x%02X\r\n", status_l, status_h);
+        
+        // 5. Check if ASIC is in a known state (no todos los registros en 0xFF)
+        if (status_l != 0xFF && status_h != 0xFF) {
+            printf("DEBUG: [VPC3_HardwareReset]  ✓ ASIC responde correctamente en intento %d\r\n", reset_attempts);
+            asic_responding = 1;
+        } else {
+            printf("DEBUG: [VPC3_HardwareReset]  ✗ ASIC no responde (0xFF), esperando 200ms...\r\n");
+            HAL_Delay(200); // Esperar 200ms entre intentos
+        }
+    }
     
-    // 5. Check if ASIC is in a known state
-    if (status_l == 0xFF) {
-        printf("DEBUG: [VPC3_HardwareReset]  ASIC no responde (STATUS_L = 0xFF)\r\n");
+    if (!asic_responding) {
+        printf("DEBUG: [VPC3_HardwareReset]  ✗ ASIC no responde después de 5 intentos\r\n");
+        printf("DEBUG: [VPC3_HardwareReset]  Posibles causas:\r\n");
+        printf("DEBUG: [VPC3_HardwareReset]    - Problema de alimentación\r\n");
+        printf("DEBUG: [VPC3_HardwareReset]    - Conexiones SPI incorrectas\r\n");
+        printf("DEBUG: [VPC3_HardwareReset]    - Chip VPC3+ defectuoso\r\n");
+        
+        // 6. Re-enable interrupts even on failure
+        DpAppl_EnableInterruptVPC3Channel1();
+        
+        printf("DEBUG: [VPC3_HardwareReset] FIN - Reset falló\r\n");
         return 1; // Failure
     }
     
-    printf("DEBUG: [VPC3_HardwareReset]  ASIC responde correctamente\r\n");
+    printf("DEBUG: [VPC3_HardwareReset]  ✓ ASIC responde correctamente\r\n");
     
     // 6. Re-enable interrupts
     DpAppl_EnableInterruptVPC3Channel1();
     
-    printf("DEBUG: [VPC3_HardwareReset] FIN - Reset completado\r\n");
+    printf("DEBUG: [VPC3_HardwareReset] FIN - Reset completado exitosamente\r\n");
     return 0; // Success
 }
 

@@ -201,9 +201,10 @@ volatile uint8_t bResult;
                     break; // Salir del bucle do-while
                 }
                 
-                // Validar que la longitud es razonable
-                if (bPrmLength > 50) {
-                    printf(" [dp_isr] ERROR: Longitud PRM sospechosa (%d bytes). Rechazando.\r\n", bPrmLength);
+                // Validar que la longitud es razonable según manual VPC3+ (7..244 bytes)
+                if (bPrmLength > HELP_BUFSIZE) {
+                    printf(" [dp_isr] ERROR: Longitud PRM excede buffer destino (%d bytes > %d bytes). Rechazando.\r\n", 
+                           bPrmLength, HELP_BUFSIZE);
                     bResult = VPC3_SET_PRM_DATA_NOT_OK();
                     break; // Salir del bucle do-while
                 }
@@ -302,9 +303,10 @@ volatile uint8_t bResult;
                    break; // Salir del bucle do-while
                }
                
-               // Validar que la longitud es razonable
-               if (bCfgLength > 50) {
-                   printf(" [dp_isr] ERROR: Longitud CFG sospechosa (%d bytes). Rechazando.\r\n", bCfgLength);
+               // Validar que la longitud es razonable según manual VPC3+ (1..244 bytes)
+               if (bCfgLength > HELP_BUFSIZE) {
+                   printf(" [dp_isr] ERROR: Longitud CFG excede buffer destino (%d bytes > %d bytes). Rechazando.\r\n", 
+                          bCfgLength, HELP_BUFSIZE);
                    bResult = VPC3_SET_CFG_DATA_NOT_OK();
                    break; // Salir del bucle do-while
                }
