@@ -125,16 +125,13 @@ static void DpAppl_CheckEvIoOut( void )
 
    if( DpAppl_TestApplEvent( eDpApplEv_IoOut ) )
    {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [DpAppl_CheckEvIoOut] Evento IoOut detectado y procesado por el bucle principal (sincrono).\n");
       
       // Debug del estado del buffer antes de obtener el puntero
       printf("DEBUG: [BUFFER_STATE] === ANÁLISIS DEL BUFFER DE SALIDA ===\n");
-      #endif
       
       pToOutputBuffer = VPC3_GetDoutBufPtr( &bOutputState );
       
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [BUFFER_STATE] bOutputState = 0x%02X\n", bOutputState);
       printf("DEBUG: [BUFFER_STATE] pToOutputBuffer = 0x%08X\n", (unsigned int)pToOutputBuffer);
       
@@ -142,10 +139,8 @@ static void DpAppl_CheckEvIoOut( void )
       printf("DEBUG: [BUFFER_STATE] pDoutBuffer1 = 0x%08X\n", (unsigned int)pDpSystem->pDoutBuffer1);
       printf("DEBUG: [BUFFER_STATE] pDoutBuffer2 = 0x%08X\n", (unsigned int)pDpSystem->pDoutBuffer2);
       printf("DEBUG: [BUFFER_STATE] pDoutBuffer3 = 0x%08X\n", (unsigned int)pDpSystem->pDoutBuffer3);
-      #endif
       if( pToOutputBuffer )
       {
-         #ifdef DEBUG_ISR_NO_BLOCK
          printf("DEBUG: [DpAppl_CheckEvIoOut] pToOutputBuffer[0]=0x%02X, pToOutputBuffer[1]=0x%02X\n", pToOutputBuffer[0], pToOutputBuffer[1]);
          
          // *** DEBUG EXHAUSTIVO: TODA LA TRAMA PROFIBUS ***
@@ -170,12 +165,10 @@ static void DpAppl_CheckEvIoOut( void )
          
          // Mostrar el contenido del buffer después de CopyFromVpc3
          printf("DEBUG: [AFTER_COPY] Buffer después de CopyFromVpc3:\n");
-         #endif
          
          // Copy output data from PROFIBUS buffer
          CopyFromVpc3( &sSystem.sOutput.abDo8[0], pToOutputBuffer, pDpSystem->bOutputDataLength );
          
-         #ifdef DEBUG_ISR_NO_BLOCK
          // Debug después de la copia
          printf("DEBUG: [AFTER_COPY] sOutput.abDo8 después de CopyFromVpc3:\n");
          for(uint8_t i = 0; i < 8; i++) {
@@ -188,7 +181,6 @@ static void DpAppl_CheckEvIoOut( void )
          {
             printf( "DEBUG: [DpAppl_CheckEvIoOut] sOutput.abDo8[%u] = 0x%02X\n", i, sSystem.sOutput.abDo8[i] );
          }
-         #endif
 
          /*/ Handle Set Point (0-100) and Relay Control
          uint8_t setpoint = sSystem.sOutput.abDo8[0] & 0x7F;  // Bits 0-6 for setpoint (0-100)
@@ -256,9 +248,7 @@ static void DpAppl_ReadInputData( void )
 */
 static void DpAppl_ApplicationReady( void )
 {
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [ApplicationReady] INICIO - Configurando aplicación después de Chk_Cfg exitoso\n");
-   #endif
    
    #if DPV1_IM_SUPP
       DpIm_ClearImIndex( 0x03 );
@@ -270,30 +260,20 @@ static void DpAppl_ApplicationReady( void )
    DpAppl_ReadInputData();
 
    //reset Diag.Stat
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [ApplicationReady] Llamando DpDiag_ResetStatDiag()...\n");
-   #endif
    if( DpDiag_ResetStatDiag() )
    {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [ApplicationReady] DpDiag_ResetStatDiag() exitoso, configurando estados\n");
-      #endif
       VPC3_ClrDpState( eDpStateCfgOkStatDiag );
       VPC3_SetDpState( eDpStateApplReady );
       VPC3_SetDpState( eDpStateRun );
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [ApplicationReady] Estados configurados: eDpStateCfgOkStatDiag=%d, eDpStateApplReady=%d, eDpStateRun=%d\n",
              VPC3_GetDpState(eDpStateCfgOkStatDiag), VPC3_GetDpState(eDpStateApplReady), VPC3_GetDpState(eDpStateRun));
-      #endif
    } else {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [ApplicationReady] DpDiag_ResetStatDiag() FALLÓ\n");
-      #endif
    }//if( DpDiag_ResetStatDiag() )
    
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [ApplicationReady] FIN - Aplicación configurada\n");
-   #endif
 }//static void DpAppl_ApplicationReady( void )
 
 /*---------------------------------------------------------------------------*/
@@ -455,10 +435,8 @@ uint8_t bDpState;
       static uint8_t lastStatusLow = 0xFF;
       static uint8_t lastStatusHigh = 0xFF;
       if (bStatusRegLow != lastStatusLow || bStatusRegHigh != lastStatusHigh) {
-         #ifdef DEBUG_ISR_NO_BLOCK
          printf("DEBUG: [STATUS_CHANGE] STATUS_L: 0x%02X -> 0x%02X, STATUS_H: 0x%02X -> 0x%02X\n", 
                 lastStatusLow, bStatusRegLow, lastStatusHigh, bStatusRegHigh);
-         #endif
          lastStatusLow = bStatusRegLow;
          lastStatusHigh = bStatusRegHigh;
       }
@@ -467,10 +445,8 @@ uint8_t bDpState;
       //if( (( bStatusRegLow & VPC3_PASS_IDLE ) == 0x00 ) || (( bStatusRegHigh & AT_MASK ) != AT_VPC3S ) ) //Funcion original
       if( ( bStatusRegHigh & AT_MASK ) != AT_VPC3S )
       {
-         #ifdef DEBUG_ISR_NO_BLOCK
          printf("DEBUG: [FATAL_CHECK] STATUS_L=0x%02X, STATUS_H=0x%02X, AT_MASK check=%d (ERROR FATAL)\n", 
          bStatusRegLow, bStatusRegHigh, (bStatusRegHigh & AT_MASK) != AT_VPC3S);
-         #endif
          sVpc3Error.bErrorCode = bStatusRegLow;
          sVpc3Error.bCnId = bStatusRegHigh;
          DpAppl_FatalError( _DP_APPL, __LINE__, &sVpc3Error );
@@ -481,10 +457,8 @@ uint8_t bDpState;
       {
          static uint32_t offline_count = 0;
          offline_count++;
-         #ifdef DEBUG_ISR_NO_BLOCK
          printf("DEBUG: [STATE_WARNING] VPC3+ en OFFLINE (STATUS_L=0x%02X) - esperando reconexión del master (ciclo %lu)\n", 
                 bStatusRegLow, offline_count);
-         #endif
          // No es fatal, solo un warning - el sistema puede recuperarse
          
          // El sistema está funcionando correctamente en modo offline
@@ -494,7 +468,6 @@ uint8_t bDpState;
       bDpState = VPC3_GET_DP_STATE();
    #endif /* #if VPC3_SERIAL_MODE */
 
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [STATE_SWITCH] bDpState=0x%02X (WAIT_PRM=0x%02X, WAIT_CFG=0x%02X, DATA_EX=0x%02X)\n",
           bDpState, WAIT_PRM, WAIT_CFG, DATA_EX);
       printf("DEBUG: [STATE_CALC] STATUS_L=0x%02X, MASK_DP_STATE=0x%02X, cálculo=((0x%02X & 0x%02X) >> 5)=0x%02X\n",
@@ -525,14 +498,11 @@ uint8_t bDpState;
       printf(")\n");
       printf("DEBUG: [STATE_ANALYSIS] Comparación: bDpState=0x%02X vs DATA_EX=0x%02X (¿iguales? %s)\n",
           bDpState, DATA_EX, (bDpState == DATA_EX) ? "SÍ" : "NO");
-      #endif
    
    // Detectar cambio de estado específico
    static uint8_t last_dp_state = 0xFF;
    if (last_dp_state != bDpState) {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [STATE_CHANGE] DP_STATE cambió de 0x%02X a 0x%02X\n", last_dp_state, bDpState);
-      #endif
       last_dp_state = bDpState;
    }
    switch( bDpState )
@@ -545,9 +515,8 @@ uint8_t bDpState;
             SET_LED_RED__;
          #endif//#ifdef EvaBoard_AT89C5132
 
-         #ifdef DEBUG_ISR_NO_BLOCK
-         printf("DEBUG: [STATE_WAIT_PRM] VPC3+ en WAIT_PRM - esperando telegrama Prm\n");
-         #endif
+   
+      printf("DEBUG: [STATE_WAIT_PRM] VPC3+ en WAIT_PRM - esperando telegrama Prm\n");
          break;
       }//case WAIT_PRM:
 
@@ -559,9 +528,7 @@ uint8_t bDpState;
             SET_LED_RED__;
          #endif//#ifdef EvaBoard_AT89C5132
 
-         #ifdef DEBUG_ISR_NO_BLOCK
          printf("DEBUG: [STATE_WAIT_CFG] VPC3+ en WAIT_CFG - esperando telegrama Chk_Cfg\n");
-         #endif
          break;
       }//case WAIT_CFG:
 
@@ -576,25 +543,19 @@ uint8_t bDpState;
          // En la primera entrada a DATA_EX, después de una configuración válida, preparamos la aplicación.
          if (VPC3_GetDpState(eDpStateCfgOkStatDiag))
          {
-            #ifdef DEBUG_ISR_NO_BLOCK
             printf("DEBUG: [DATA_EX] Condición para llamar a ApplicationReady CUMPLIDA. Llamando...\n");
-            #endif
             DpAppl_ApplicationReady();
          }
 
-         #ifdef DEBUG_ISR_NO_BLOCK
          printf("DEBUG: [STATE_DATA_EX] VPC3+ en DATA_EX - comunicación activa\n");
          printf("DEBUG: [STATE_CHECK] eDpStateApplReady=%d, eDpStateRun=%d\n", 
                 VPC3_GetDpState( eDpStateApplReady ), VPC3_GetDpState( eDpStateRun ));
-         #endif
          
          if(    ( VPC3_GetDpState( eDpStateApplReady ) )
              && ( VPC3_GetDpState( eDpStateRun )  )
            )
          {
-            #ifdef DEBUG_ISR_NO_BLOCK
             printf("DEBUG: [APPLICATION_READY] Ambos estados activos - aplicación funcionando\n");
-            #endif
             /*-------------------------------------------------------------------*/
             /* user application                                                  */
             /*-------------------------------------------------------------------*/
@@ -675,10 +636,8 @@ uint8_t bDpState;
             static uint8_t last_plc_value = 0xFF; // Para detectar cambios
             
             if (byte_from_plc != last_plc_value) {
-                #ifdef DEBUG_ISR_NO_BLOCK
                 printf("*** CAMBIO DETECTADO EN PLC: 0x%02X -> 0x%02X (decimal: %d -> %d) ***\n", 
                        last_plc_value, byte_from_plc, last_plc_value, byte_from_plc);
-                #endif
                 last_plc_value = byte_from_plc;
             }
             
@@ -697,14 +656,10 @@ uint8_t bDpState;
 
             // Log detallado de la trama de datos en cada ciclo
             static uint32_t data_exchange_count = 0;
-            #ifdef DEBUG_ISR_NO_BLOCK
             printf("[DATA_EXCHANGE_TRAMA #%lu] PLC->STM32: 0x%02X (%3d) | STM32->PLC: 0x%02X (%3d)\n",
                    ++data_exchange_count,
                    byte_from_plc, byte_from_plc,
                    byte_to_plc, byte_to_plc);
-            #else
-            data_exchange_count++; // Mantener el contador incluso sin debug
-            #endif
 
             // Escribir el nuevo valor en el buffer de entrada hacia el PLC.
             // Este buffer (sSystem.sInput.abDi8) será leído por el master en el siguiente ciclo.
@@ -720,9 +675,7 @@ uint8_t bDpState;
 
       case DP_ERROR:
       {
-         #ifdef DEBUG_ISR_NO_BLOCK
          printf("DEBUG: [STATE_DP_ERROR] VPC3+ en estado DP_ERROR - error de protocolo\n");
-         #endif
          sVpc3Error.bErrorCode = VPC3_GET_DP_STATE();
          DpAppl_FatalError( _DP_USER, __LINE__, &sVpc3Error );
          break;
@@ -731,10 +684,8 @@ uint8_t bDpState;
       default:
       {
          // Caso para estados no reconocidos (debería ser raro ahora)
-         #ifdef DEBUG_ISR_NO_BLOCK
          printf("DEBUG: [STATE_DEFAULT] VPC3+ en estado 0x%02X (no reconocido) - STATUS_L=0x%02X\n", bDpState, bStatusRegLow);
          printf("DEBUG: [STATE_UNKNOWN] Estado no reconocido: 0x%02X\n", bDpState);
-         #endif
          break;
       }//default:
    }//switch( bDpState )
@@ -742,16 +693,12 @@ uint8_t bDpState;
    /*------------------------------------------------------------------------*/
    /* profibus output ( master to slave )                                    */
    /*------------------------------------------------------------------------*/
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [ProfibusMain] STATUS antes de DpAppl_CheckEvIoOut: L=0x%02X, H=0x%02X\n", 
           VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
-   #endif
    
    // Detectar corrupción antes de CheckEvIoOut
    if (VPC3_GET_STATUS_L() == 0x26 && VPC3_GET_STATUS_H() == 0xB7) {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [ProfibusMain]  CORRUPCIÓN DETECTADA ANTES de CheckEvIoOut\n");
-      #endif
    }
    
    // Detectar transición de DATA_EX a corrupción en main loop
@@ -762,58 +709,46 @@ uint8_t bDpState;
    
    if (main_last_status_l == 0x45 && main_last_status_h == 0xE3 && 
        (main_current_status_l != 0x45 || main_current_status_h != 0xE3)) {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [ProfibusMain]  TRANSICIÓN DETECTADA EN MAIN: STATUS_L=0x45->0x%02X, STATUS_H=0xE3->0x%02X\n", 
              main_current_status_l, main_current_status_h);
-      #endif
    }
    
    main_last_status_l = main_current_status_l;
    main_last_status_h = main_current_status_h;
    
    DpAppl_CheckEvIoOut();
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [ProfibusMain] STATUS después de DpAppl_CheckEvIoOut: L=0x%02X, H=0x%02X\n", 
           VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
-   #endif
    
    // Detectar corrupción después de CheckEvIoOut
    if (VPC3_GET_STATUS_L() == 0x26 && VPC3_GET_STATUS_H() == 0xB7) {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [ProfibusMain]  CORRUPCIÓN DETECTADA DESPUÉS de CheckEvIoOut\n");
-      #endif
    }
 
         // Detailed log every 5 seconds
         if (HAL_GetTick() - last_debug > 5000) {
             print_vpc3_registers();
-            #ifdef DEBUG_ISR_NO_BLOCK
             printf("==============================================\r\n");
             print_vpc3_state();
             printf("==============================================\r\n");
-            #endif
             
             // DEBUG: Diagnóstico del modo de memoria del ASIC
             static uint8_t memory_mode_diagnosed = 0;
             if (!memory_mode_diagnosed) {
                 VPC3_DiagnoseMemoryMode();
                 memory_mode_diagnosed = 1;
-                #ifdef DEBUG_ISR_NO_BLOCK
                 printf("DEBUG: [ProfibusMain] Diagnóstico de modo de memoria completado\r\n");
-                #endif
             }
             
             // DEBUG: Monitoreo específico de MODE_REG_2
             uint8_t current_mode_reg2 = VPC3_GetModeReg2Shadow();  // write-only, use shadow
             static uint8_t last_mode_reg2 = 0xFF;
             if (current_mode_reg2 != last_mode_reg2) {
-                #ifdef DEBUG_ISR_NO_BLOCK
                 printf("DEBUG: [MODE_REG2_MONITOR]  MODE_REG_2 cambió de 0x%02X a 0x%02X (esperado: 0x05)\r\n", 
                        last_mode_reg2, current_mode_reg2);
                 if (current_mode_reg2 != 0x05) {
                     printf("DEBUG: [MODE_REG2_MONITOR]  VALOR INCORRECTO DETECTADO - Esto causará LECTURAS ILEGALES\r\n");
                 }
-                #endif
                 last_mode_reg2 = current_mode_reg2;
             }
             
@@ -825,10 +760,8 @@ uint8_t bDpState;
       if (HAL_GetTick() - last_validation > 5000) { // Check every 5 seconds
          DP_ERROR_CODE validationStatus = VPC3_ValidateSegmentPointers();
          if (validationStatus == DP_NOK) {
-            #ifdef DEBUG_ISR_NO_BLOCK
             printf("ERROR: [DpAppl_ProfibusMain] Segment pointer corruption detected during operation!\r\n");
             printf("ERROR: This may cause LECTURA ILEGAL errors. Consider ASIC reset.\r\n");
-            #endif
          }
          last_validation = HAL_GetTick();
       }
@@ -838,13 +771,9 @@ uint8_t bDpState;
       if (HAL_GetTick() - last_mode_monitor > 1000) { // Check every second
          uint8_t monitor_result = VPC3_MonitorAndRecoverModeReg2();
          if (monitor_result == 1) {
-            #ifdef DEBUG_ISR_NO_BLOCK
             printf("INFO: [DpAppl_ProfibusMain] MODE_REG_2 was automatically recovered\r\n");
-            #endif
          } else if (monitor_result == 2) {
-            #ifdef DEBUG_ISR_NO_BLOCK
             printf("ERROR: [DpAppl_ProfibusMain] MODE_REG_2 recovery failed - this may cause LECTURA ILEGAL errors\r\n");
-            #endif
          }
          last_mode_monitor = HAL_GetTick();
       }
@@ -854,9 +783,7 @@ uint8_t bDpState;
       if (HAL_GetTick() - last_mode_check > 1000) { // Check every second
         uint8_t mode_reg2 = VPC3_GetModeReg2Shadow();
          if (mode_reg2 != 0x05) {
-            #ifdef DEBUG_ISR_NO_BLOCK
             printf("WARNING: [DpAppl_ProfibusMain] MODE_REG_2 instability detected: 0x%02X (expected 0x05)\r\n", mode_reg2);
-            #endif
          }
          last_mode_check = HAL_GetTick();
       }
@@ -865,17 +792,13 @@ uint8_t bDpState;
       // VPC3_AdaptiveModeReg2Monitor();
 
       // --- Polling de eventos VPC3+ ---
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf(" [ProfibusMain] ANTES de llamar dp_isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n", 
              VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
-      #endif
       
       dp_isr();
       
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf(" [ProfibusMain] DESPUÉS de llamar dp_isr - STATUS_L=0x%02X, STATUS_H=0x%02X\r\n", 
              VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
-      #endif
 
 
 }//void DpAppl_ProfibusMain( void )
@@ -903,24 +826,18 @@ static uint8_t DpAppl_ValidateCommunicationStability(void) {
     
     // Check for corrupted status registers
     if (status_l == 0xFF || status_h == 0xFF) {
-        #ifdef DEBUG_ISR_NO_BLOCK
         printf("DEBUG: [DpAppl_ValidateCommunicationStability]  STATUS registers corrupted (0xFF)\n");
-        #endif
         return 0;
     }
     
     // Check for known corruption patterns
     if (status_l == 0x26 && status_h == 0xB7) {
-        #ifdef DEBUG_ISR_NO_BLOCK
         printf("DEBUG: [DpAppl_ValidateCommunicationStability]  Known corruption pattern detected\n");
-        #endif
         return 0;
     }
     
-    #ifdef DEBUG_ISR_NO_BLOCK
     printf("DEBUG: [DpAppl_ValidateCommunicationStability]  Unknown state: STATUS_L=0x%02X, STATUS_H=0x%02X, DP_STATE=0x%02X\n", 
            status_l, status_h, dp_state);
-    #endif
     
     // If we can't determine, assume it's stable to avoid unnecessary resets
     return 1;
@@ -932,7 +849,6 @@ static uint8_t DpAppl_ValidateCommunicationStability(void) {
 void DpAppl_FatalError( DP_ERROR_FILE bFile, uint16_t wLine, VPC3_ERRCB_PTR sVpc3Error )
 {
    // Debug prints to identify the fatal error
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("\r\n=== FATAL ERROR DETECTED ===\r\n");
    printf("DEBUG: [FATAL_ERROR] Context - Current STATUS_L: 0x%02X, STATUS_H: 0x%02X\n", 
           VPC3_GET_STATUS_L(), VPC3_GET_STATUS_H());
@@ -947,7 +863,6 @@ void DpAppl_FatalError( DP_ERROR_FILE bFile, uint16_t wLine, VPC3_ERRCB_PTR sVpc
       printf("sVpc3Error is NULL\r\n");
    }
    printf("=== ENTERING INFINITE LOOP ===\r\n");
-   #endif // DEBUG_ISR_NO_BLOCK
 
    #ifdef EvaBoard_AT89C5132
       uint8_t i,j;
@@ -1035,77 +950,55 @@ void DpAppl_MacReset( void )
 */
 void DpAppl_IsrGoLeaveDataExchange( uint8_t bDpState )
 {
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [IsrGoLeaveDataExchange] INICIO - bDpState=0x%02X, DATA_EX=0x%02X\n", bDpState, DATA_EX);
-   #endif
    
    // --- Validación robusta del estado antes de resetear ---
    uint8_t status_l = VPC3_GET_STATUS_L();
    uint8_t status_h = VPC3_GET_STATUS_H();
    
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [IsrGoLeaveDataExchange] STATUS_L=0x%02X, STATUS_H=0x%02X\n", status_l, status_h);
-   #endif
    
    // Verificar si realmente estamos en DATA_EX basándonos en STATUS_L
    uint8_t actual_dp_state = (status_l & 0x60) >> 5; // Extraer bits 5-6 de STATUS_L
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [IsrGoLeaveDataExchange] Estado real calculado de STATUS_L: 0x%02X\n", actual_dp_state);
-   #endif
    
    // Solo resetear si hay una discrepancia real y el sistema no está funcionando
    if( bDpState != DATA_EX && actual_dp_state != DATA_EX )
    {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [IsrGoLeaveDataExchange]  Confirmado: bDpState=0x%02X != DATA_EX y actual_dp_state=0x%02X != DATA_EX\n", 
              bDpState, actual_dp_state);
       printf("DEBUG: [IsrGoLeaveDataExchange] Reseteando estados - salida real de DATA_EX detectada\n");
-      #endif
       
       VPC3_ClrDpState( eDpStateApplReady | eDpStateRun );
       VPC3_SetDpState( eDpStateInit );
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [IsrGoLeaveDataExchange] Estados reseteados - esto puede causar OFFLINE\n");
-      #endif
    } 
    else if( bDpState != DATA_EX && actual_dp_state == DATA_EX )
    {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [IsrGoLeaveDataExchange]  bDpState=0x%02X != DATA_EX pero actual_dp_state=0x%02X == DATA_EX\n", 
              bDpState, actual_dp_state);
       printf("DEBUG: [IsrGoLeaveDataExchange]  Posible corrupción de MODE_REG_2 - NO reseteando estados para mantener comunicación\n");
       printf("DEBUG: [IsrGoLeaveDataExchange]  Intentando recuperar MODE_REG_2 sin resetear estados...\n");
-      #endif
       
       // Intentar recuperar MODE_REG_2 sin resetear estados
       if (VPC3_ForceModeReg2() == 0) {
-         #ifdef DEBUG_ISR_NO_BLOCK
          printf("DEBUG: [IsrGoLeaveDataExchange]  MODE_REG_2 recuperado sin resetear estados\n");
-         #endif
       } else {
-         #ifdef DEBUG_ISR_NO_BLOCK
          printf("DEBUG: [IsrGoLeaveDataExchange]  No se pudo recuperar MODE_REG_2, pero manteniendo comunicación\n");
-         #endif
       }
    }
    else if( bDpState == DATA_EX && actual_dp_state == DATA_EX )
    {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [IsrGoLeaveDataExchange]  OK: bDpState == DATA_EX y actual_dp_state == DATA_EX - comunicación estable\n");
-      #endif
    }
    else
    {
-      #ifdef DEBUG_ISR_NO_BLOCK
       printf("DEBUG: [IsrGoLeaveDataExchange]  Estado inconsistente: bDpState=0x%02X, actual_dp_state=0x%02X\n", 
              bDpState, actual_dp_state);
       printf("DEBUG: [IsrGoLeaveDataExchange]  Manteniendo estados actuales para evitar interrupciones\n");
-      #endif
    }
    
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [IsrGoLeaveDataExchange] FIN\n");
-   #endif
 }//void DpAppl_IsrGoLeaveDataExchange( uint8_t bDpState )
 
 /*---------------------------------------------------------------------------*/
@@ -1119,13 +1012,9 @@ void DpAppl_IsrGoLeaveDataExchange( uint8_t bDpState )
 */
 void DpAppl_IsrDxOut( void )
 {
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [DpAppl_IsrDxOut] INICIO - Configurando evento IoOut\n");
-   #endif
    DpAppl_SetApplEvent( eDpApplEv_IoOut );
-   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [DpAppl_IsrDxOut] FIN - Evento IoOut configurado\n");
-   #endif
 }//void DpAppl_IsrDxOut( void )
 
 /*---------------------------------------------------------------------------*/

@@ -1,0 +1,210 @@
+;===============================================================================
+; GSD file:    DPRS2V60A
+; Product:     GT200-DP-RS
+; Language:    English
+; Description: SSTCOMM PROFIBUS DP-V0 Slave
+; 
+;===============================================================================
+
+
+#Profibus_DP
+
+
+;===============================================================================
+;==== General DP Keywords ======================================================
+;===============================================================================
+
+GSD_Revision        = 5
+Vendor_Name         = "SSTCOMM"
+Model_Name          = "GT200-DP-RS V6.0"
+Revision            = "V6.0"
+Ident_Number        = 0x0DC9
+Protocol_Ident      = 0    ; DP protocol
+Station_Type        = 0    ; Slave device
+Hardware_Release    = "V8.0"
+Software_Release    = "V6.0"
+
+
+;===============================================================================
+;==== Supported baudrates ======================================================
+;===============================================================================
+
+9.6_supp            = 1
+19.2_supp           = 1
+45.45_supp          = 1
+93.75_supp          = 1
+187.5_supp          = 1
+500_supp            = 1
+1.5M_supp           = 1
+3M_supp             = 1
+6M_supp             = 1
+12M_supp            = 1
+
+
+;===============================================================================
+;==== Maximum responder time for supported baudrates ===========================
+;===============================================================================
+
+MaxTsdr_9.6         = 20
+MaxTsdr_19.2        = 20
+MaxTsdr_45.45       = 20
+MaxTsdr_93.75       = 20
+MaxTsdr_187.5       = 20
+MaxTsdr_500         = 20
+MaxTsdr_1.5M        = 25
+MaxTsdr_3M          = 50
+MaxTsdr_6M          = 60
+MaxTsdr_12M         = 100
+
+
+;===============================================================================
+;==== Slave specific values ====================================================
+;===============================================================================
+
+Implementation_Type = "VPC3+"
+Bitmap_Device       = "PM160"
+Freeze_Mode_supp    = 1    ; supported
+Sync_Mode_supp      = 1    ; supported
+Auto_Baud_supp      = 1    ; supported
+Fail_safe           = 0
+; Maximum polling frequency
+Min_Slave_Intervall = 6    ; 600 us
+Max_Diag_Data_Len   = 6
+Slave_Family        = 0@CONVERTER
+
+
+;===============================================================================
+;==== User-Prm-Data ============================================================
+;===============================================================================
+
+Max_User_Prm_Data_Len = 0
+
+
+;===============================================================================
+;==== Maximum supported sizes ==================================================
+;===============================================================================
+
+Modular_Station     = 1
+Max_Module          = 64
+Max_Input_Len       = 244
+Max_Output_Len      = 244
+Max_Data_Len        = 488
+Modul_Offset        = 0
+
+
+;===============================================================================
+;==== Module-Definition-List ===================================================
+;===============================================================================
+
+Module = "4 Words Input, 4 Words Output"      0x53,0x63
+1
+EndModule
+
+Module = "8 Words Input, 8 Words Output"      0x57,0x67
+2
+EndModule
+
+Module = "24 Words Input, 24 Words Output"    0x40,0x57,0x80,0x57
+3
+EndModule
+
+Module = "56 Words Input, 56 Words Output"    0x40,0x77,0x80,0x77
+4
+EndModule
+
+Module = " 1 Byte Input "                     0x10
+5
+EndModule
+
+Module = " 1 Word Input "                     0x50
+6
+EndModule
+
+Module = " 2 Words Input "                     0x51
+7
+EndModule
+
+Module = " 4 Words Input "                     0x53
+8
+EndModule
+
+Module = " 8 Words Input "                    0x57
+9
+EndModule
+
+Module = " 16 Words Input "                    0x5F
+10
+EndModule
+
+Module = " 32 Words Input "                    0x40,0x5F
+11
+EndModule
+
+Module = " 64 Words Input "                    0x40,0x7F
+12
+EndModule
+
+Module = " 2 Words Input Consistent "          0xD1
+13
+EndModule
+
+Module = " 4 Words Input Consistent "          0xD3
+14
+EndModule
+
+Module = " 8 Words Input Consistent "          0xD7
+15
+EndModule
+
+Module = " 16 Words Input Consistent "         0xDF
+16
+EndModule
+
+Module = " 1 Byte Output "                    0x20
+17
+EndModule
+
+Module = " 1 Word Output "                    0x60
+18
+EndModule
+
+Module = " 2 Words Output "                    0x61
+19
+EndModule
+
+Module = " 4 Words Output "                    0x63
+20
+EndModule
+
+Module = " 8 Words Output "                   0x67
+21
+EndModule
+
+Module = " 16 Words Output "                   0x6F
+22
+EndModule
+
+Module = " 32 Words Output "                   0x80,0x5F
+23
+EndModule
+
+Module = " 64 Words Output "                   0x80,0x7F
+24
+EndModule
+
+Module = " 2 Words Output Consistent "         0xE1
+25
+EndModule
+
+Module = " 4 Words Output Consistent "         0xE3
+26
+EndModule
+
+Module = " 8 Words Output Consistent "         0xE7
+27
+EndModule
+
+Module = " 16 Words Output Consistent "        0xEF
+28
+EndModule
+

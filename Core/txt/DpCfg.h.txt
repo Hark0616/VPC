@@ -87,15 +87,6 @@
 #define CFG_BUFSIZE                 ((uint8_t)0x02)     // Length of the Configuration Buffer                             // Ajustado a 2 bytes para coincidir con GSD
 
 /*!
-   \def DpApplCfgDataLength
-   \brief Length of the actual application configuration data.
-   
-   This is the real configuration length that matches our GSD file.
-   It may differ from CFG_BUFSIZE if we accept extended configurations.
-*/
-#define DpApplCfgDataLength         ((uint8_t)0x02)     // Real configuration length: 2 bytes (DI + DO modules)
-
-/*!
    \def SSA_BUFSIZE
    \brief Set length of the set slave address buffer.
 

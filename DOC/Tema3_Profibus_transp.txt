@@ -1,0 +1,2193 @@
+Sistemas Industriales
+Distribuidos
+Profibus
+
+Sistemas Industriales Distribuidos
+PROFIBUS: Historia
+1987
+
+Primeras actividades desarrolladas por Bosch,
+Klockner-Moeller y Siemens
+1/1988 Estándar preliminar DIN 19245 (part 1) es
+publicado
+9/1989 Demostración de funcionamiento multi-fabricante
+en la feria Interkama
+4/1990 Proposición de estándar DIN 19245 partes 1 y 2
+remitida a los organismos de estandarización (DKE)
+12/1990 Partes 1 y 2 del estándar admitidas en el ámbito
+nacional con referencia DIN 19245
+5/1994 Publicación de la parte 3 del estándar DIN 19245
+(PROFIBUS DP)
+4/1996 PROFIBUS se convierte en un estándar europeo
+EN 50170
+3º Ing. Técnica Telecom.
+
+2
+
+PROFIBUS - EN 50 170
+
+Revisión técnica
+Estructura general
+
+Sistemas Industriales Distribuidos
+PROFIBUS: Ámbito de operación
+Nivel de
+fábrica
+
+Comunicación transparente desde
+los sensores/actuadores hasta el
+controlador de área
+
+Controlador de
+Área
+
+MMS, TCP/IP Backbone
+
+Tiempo de
+ciclo del bus
+
+< 1000 ms
+PC/VME
+
+Nivel de
+célula
+
+Controlador
+de células
+
+CNC
+
+PROFIBUS-FMS
+
+Tiempo de
+ciclo del bus
+
+Tiempo de
+ciclo del bus
+
+PROFIBUS-PA
+
+VME/PC
+
+< 100 ms
+
+Nivel de
+campo
+
+DCS
+
+PLC
+Sensor
+
+Sensor
+
+PROFIBUS-DP
+
+Disp.
+campo
+
+< 3º
+10Ing.
+msTécnica Telecom.
+
+PROFIBUS-FMS
+
+PROFIBUS-PA
+
+M
+I/O
+
+Sensor
+
+Driver
+
+Transmisor
+
+Disp.
+campo
+
+4
+
+Sistemas Industriales Distribuidos
+La familia PROFIBUS
+EN 50170 Volumen 2 y DIN 19245 Partes 1 a 4
+Automatización de
+propósito general
+
+Automatización
+de Procesos
+
+PROFIBUS-DP PROFIBUS-FMS PROFIBUS-PA
+rápido
+- plug and play
+- Eficiente y económico
+
+3º Ing. Técnica Telecom.
+
+universal
+
+Orientado a
+aplicaciones
+
+- Gran variedad de aplicaciones
+- Comunicación multi-maestro
+
+-Alimentación a través
+del bus (opcional)
+-Seguridad intrínseca (opcion)
+
+Perfiles de dispos.
+Perfiles de aplicac.
+
+Automatización
+de fábricas
+
+5
+
+Sistemas Industriales Distribuidos
+Beneficios de la
+estandardización de PROFIBUS
+PROFIBUS
+EN 50170
+
+Protección de la inversión de los fabricantes y
+usuarios.
+EN 50170 existirá incluso si un bus de campo
+internacional aparece.
+Todas las aplicaciones públicas en europa que
+utilizan bus de campo están basadas en EN
+50170.
+EN 50170 garantiza un estándar completo,
+abierto, independiente y validado.
+
+3º Ing. Técnica Telecom.
+
+6
+
+Sistemas Industriales Distribuidos
+Más de 800 Productos EN 50170
+Existen productos de todo tipo para automatización sobre Profibus
+
+Controladores (PLC)
+
+Componentes de red
+
+Drivers de motores
+
+Sensores/Actuadores
+
+Puertas de enlace
+
+Drivers Software
+Herramientas de desarrollo
+
+Aplicaciones y especificaciones en:
+http://www.profibus.com
+
+3º Ing. Técnica Telecom.
+
+7
+
+Sistemas Industriales Distribuidos
+Productos PROFIBUS
+Controladores
+Drivers
+
+PLC/CNC/RC
+
+Herramientas
+Software Drivers
+
+de Configuración
+
+AC Drives
+
+VME
+
+DOS/Windows/NT/95
+
+Monitores de Bus
+
+DC Drives
+
+PC
+
+RT-OS/OS9/VRTX
+
+Sistemas de Test
+
+Workstation
+
+VxWorks/PSOS+
+
+Sensores/Actuadores
+I/O Digitales
+
+OS2
+
+Components de red
+
+UNIX/VMS
+
+VAX computers
+
+QNX
+
+VME computers
+
+I/O Analógicas
+
+Repetidores
+
+Reguladores
+
+Componentes de Fibra optica
+
+Temporizadores
+
+Acopladores ópticos en estrella
+
+Contadores
+
+Cables
+
+Válvulas neumáticas/Magnéticas
+
+3º Ing. Técnica Telecom.
+
+Interfaces para
+
+Puertas de enlace
+MAP 3.0 networks, TCP/IP
+Vendor specific networks
+8
+
+Sistemas Industriales Distribuidos
+Productos certificados aseguran
+interoperabilidad
+Dispositivo a certificar
+
+Dispositivos de diferentes
+fabricantes podrán funcionar sin
+problemas si se encuentran
+certificados
+La organización de usuarios de
+PROFIBUS ha establecido un
+procedimiento de certificación
+
+Pruebas de
+laboratorio
+
+No
+OK ?
+
+Sí
+Certificación de
+la organización
+PROFIBUS
+
+3º Ing. Técnica Telecom.
+
+9
+
+Sistemas Industriales Distribuidos
+Aplicaciones PROFIBUS
+•
+
+Automatización manufacturera
+Fabricación de vehículos
+Sistemas de embotellado
+Sistemas de almacenamiento
+
+e.g. BMW, Regensburg
+
+•
+
+Automatización de edificios
+
+e.g. Café Darboven,
+Hamburgo
+e.g. Planta de embotellado
+Taunton, UK
+
+Automatización del tráfico
+Calefacción y aire acondicionado
+
+•
+
+Automatización de Procesos
+
+e.g. Biblioteca Nacional
+de Francia, Paris
+
+•
+
+Plantas depuradoras
+Industria química y petroquímica
+Industria textil y del papel
+
+e.g. Metro de Varsovia,
+Polonia
+
+Industria energética y distribución de
+energía
+
+e.g. Refinería de petróleo,
+Esmeralda, Ecuador
+
+3º Ing. Técnica Telecom.
+
+e.g. Tanque de almacenamiento
+de polímeros, Scarborough, Canada
+10
+
+Sistemas Industriales Distribuidos
+PROFIBUS FMS en ISO/OSI
+Programa de Aplicación
+FMS
+
+7 Aplicación
+
+7
+
+6 Presentación
+
+6
+
+5 Sesión
+
+5
+
+4 Transporte
+
+4
+
+3 Red
+
+3
+
+2 Enlace de Datos
+
+2 FDL
+
+1 Física
+
+FMA 7
+
+1 PHY
+
+FMS: Fieldbus Message Specification
+LLI: Lower Layer Interface
+3º Ing. Técnica Telecom.
+
+LLI
+
+FMA1/2
+
+FMA: Fieldbus MAnagement
+FDL: Fieldbus Data Link
+11
+
+Sistemas Industriales Distribuidos
+PROFIBUS DP en el modelo ISO/OSI
+7 Aplicación
+6 Presentación
+
+Aplicación
+
+5 Sesión
+
+USIF
+
+4 Transporte
+3 Red
+2 Enlace de Datos
+
+DDLM
+2 FDL
+1 PHY
+
+FMA1/2
+
+1 Física
+
+Servicios que
+incorpora FDL
+(layer 2)
+3º Ing. Técnica Telecom.
+
+12
+
+PROFIBUS - EN 50 170
+
+Capa Física y FDL
+
+Sistemas Industriales Distribuidos
+Técnica de Transmisión
+Terminador
+
+Terminador
+
+PROFIBUS emplea una topología de bus con terminación en ambos extremos
+Esta técnica asegura el acoplamiento y desacoplamiento de estaciones
+(incluso en áreas de seguridad) durante operación normal sin afectar al resto
+
+Se permiten cuatro medios físicos diferentes:
+RS 485:
+IEC 1158-2:
+Fibra Optica:
+Ethernet:
+3º Ing. Técnica Telecom.
+
+Usada básicamente para DP y FMS
+Usada para PA
+Usada para DP y FMS
+DP y TCP/IP
+
+14
+
+Sistemas Industriales Distribuidos
+Técnica de Transmisión
+RS 485 (H2)
+Transmisión asíncrona NRZ de acuerdo al RS 485
+Transferencias desde 9.6 KBit/s hasta 12 MBit/s seleccionable
+Par trenzado apantallado
+32 estaciones por segmento, max. 127 estaciones
+Distancia máxima dependiente de velocidad deseada
+12 MBit/s = 100 m; 1.5 MBit/s = 400m; < 187.5 kBit/s = 1000 m
+Distancia extendida por repetidores hasta 10 km
+Conector 9 PIN, D-Sub
+
+IEC 1158-2 (H1)
+Transmisión síncrona Manchester de doble fase, 31.25 kBit/s, modo corriente
+Seguridad Intrínseca (opcional) y alimentación de las estaciones a través del
+mismo bus
+Par trenzado apantallado o no apantallado
+Distancia hasta 1900 m por segmento, extendida por repetidores hasta 10 km
+127 estaciones máximo, de 10 a 32 por segmento (depende del tipo de
+dispositivo y consumo)
+
+3º Ing. Técnica Telecom.
+
+15
+
+Sistemas Industriales Distribuidos
+PROFIBUS Layer 1
+
+Distancias sin repetidores
+Velocidad
+
+9,6 Kbit/s, 187 Kbit/s
+19,2 Kbit/s,
+93,75 Kbit/s
+
+500 Kbit/s, 3 Mbit/s,
+1,5 Mbit/s 6 Mbit/s,
+12 Mbit/s
+
+Distancia
+sobre
+Cobre
+
+1,2 km
+
+1000 m
+
+400 m
+
+100 m
+
+Distancia
+sobre
+Fibra
+
+Alrededor
+de
+6 km
+
+Alrededor
+de
+6 km
+
+Alrededor
+de
+6 km
+
+Alrededor
+de
+6 km
+
+3º Ing. Técnica Telecom.
+
+16
+
+Sistemas Industriales Distribuidos
+Patillaje del cable
+Cada estación se conecta al medio físico a través
+de un conector de 9-pines D-sub (DB9)
+Pin # RS 485 Ref. Signal Name
+1
+Shield*
+2
+RP*
+3
+B/B’
+RxD/TxD-P
+4
+CNTR-P*
+5
+C/C’
+DGND
+6
+VP**
+7
+RP*
+8
+A/A’
+RxD/TxD-N
+9
+CNTR-N*
+
+Meaning
+Shield, Protective Ground
+Reserved for power
+Receive/Transmit-Data-P
+Control-P
+Data Ground
+Voltage plus
+Reserved for power
+Receive/Transmit-Data-N
+Control-N
+
+** Signal is only necessary at station at the end of the bus cable
+*
+
+Signal is optional
+
+3º Ing. Técnica Telecom.
+
+17
+
+Sistemas Industriales Distribuidos
+Alimentación a través de BUS:
+IEC 1158
+Se emplean adaptadores de RS485 (93,75Kbits/seg máx)
+que incorporan la alimentación ó Enlaces directos
+
+3º Ing. Técnica Telecom.
+
+18
+
+Sistemas Industriales Distribuidos
+Tipos de estaciones
+PROFIBUS define dos tipos de estaciones:
+Maestros
+Esclavos
+
+Forman el anillo lógico de
+testigo
+Pueden acceder al medio
+mientras poseen el testigo
+Inician ciclos de mensajes a
+otras estaciones
+3º Ing. Técnica Telecom.
+
+Actúan neutralmente con
+respecto al acceso al medio
+Responden a peticiones
+de estaciones maestras
+dentro de un sólo ciclo de
+mensaje
+19
+
+Sistemas Industriales Distribuidos
+PROFIBUS-Token Ring
+Anillo lógico entre maestros
+Estaciones activas, dispositivos maestros
+
+PLC
+
+PLC
+
+PROFIBUS
+
+M
+Sensor
+
+Sensor
+
+Driver
+
+Actuador
+
+Sensor
+
+Estaciones pasivas, dispositivos esclavos
+
+3º Ing. Técnica Telecom.
+
+M
+
+T
+
+Driver
+
+Transmisor
+
+20
+
+PROFIBUS EN 50 170
+
+PROFIBUS DP / FMS / PA
+
+Sistemas Industriales Distribuidos
+La familia PROFIBUS
+EN 50170 Volumen 2 y DIN 19245 Partes 1 a 4
+Automatización de
+propósito general
+
+Automatización
+de processos
+
+PROFIBUS-DP PROFIBUS-FMS PROFIBUS-PA
+rápido
+- plug and play
+- Eficiente y económico
+
+3º Ing. Técnica Telecom.
+
+universal
+
+Orientado a
+aplicaciones
+
+- Gran variedad de aplicaciones
+- Comunicación multi-maestro
+
+-Alimentación a través
+del bus (opcional)
+-Seguridad intrínseca (opcion)
+
+Perfiles de dispos.
+Perfiles de aplicac.
+
+Automatización
+de fábricas
+
+22
+
+Sistemas Industriales Distribuidos
+PROFIBUS-DP: Características
+Orientado a sustituir de manera económica el cableado entre
+diferentes PLC’s y elementos de entrada/salida
+Muy rápido, transmite 1 kByte de datos de entrada y salida en
+menos de 2 ms
+Herramientas potentes que reducen el trabajo de configuración y
+manteniemiento
+La mayoría de fabricantes de PLC soportan PROFIBUS
+Amplia gama de productos disponibles: PLC, PC, I/O, Drivers,
+Válvulas, Encoder, …
+Tranferencia cíclica y acíclica permitida
+Redes Mono y multi maestro
+Hasta 244 bytes de entrada y salida por estación
+3º Ing. Técnica Telecom.
+
+23
+
+Sistemas Industriales Distribuidos
+PROFIBUS-DP: Sistema Monomaestro
+DP-Master (Class 1)
+
+Los sistemas Monomaestro consiguen el
+mínimo tiempo de ciclo de bus
+Consisten en:
+- Un DP-Master (Class 1 ? PLC, PC)
+- 1 a 125 DP-esclavos (máximo)
+- DP-Master (Class 2) – opcional, son elementos
+necesarios para la implantación y diagnóstico
+del sistema
+
+PC
+
+PROFIBUS-DP
+
+Actuador
+
+Sensor
+
+Entradas y salidas descentralizadas
+
+Esclavos DP
+
+3º Ing. Técnica Telecom.
+
+24
+
+Sistemas Industriales Distribuidos
+
+Output-Data
+
+Header
+
+Trama de respuesta
+Header
+
+Input-Data
+
+Trailer
+
+DP-Maestro
+
+Tramas
+Petición SRD, longitud variable de datos de usuario
+SYN SD2 LE LEr SD2 DA SA FC DU FCS ED
+
+Respuesta SRD, longitud variable de datos de usuario
+
+Syn = Synchronization Time
+SD2 = Start Delimiter 2
+LE = Length
+
+3º Ing. Técnica Telecom.
+
+SD2 LE
+
+Er
+
+DP-Esclavo
+
+Trailer
+
+Respuesta
+inmediata
+
+DP-Maestro
+
+Trama de petición
+
+DP-Esclavo
+DP-Slave
+
+PROFIBUS-DP
+Principio de transferencia de datos
+
+SD2 DA SA FC DU FCS ED
+
+LEr = repeated Length
+DA = Destination Address
+SA = Source Address
+FC = Function Code
+
+DU = Data Unit
+FCS= Frame Check Sequence
+ED = End Delimiter
+
+25
+
+Sistemas Industriales Distribuidos
+PROFIBUS-DP
+Funciones de marcha y transmisión
+Un elemento maestro (clase 1) puede controlarse por un maestro clase 2 y
+quedar en los siguientes modos:
+STOP: No existe transmisión
+CLEAR: El maestro clase 1 puede leer la información de los esclavos pero
+las salidas quedan en modo de seguridad
+OPERATE: En este estado, el maestro clase 1 queda en modo de
+transferencia donde se lee y escribe de los esclavos
+Si un esclavo se desconecta, el maestro automáticamente lo reconoce
+
+Transmisión de datos hacia los esclavos (3 fases):
+Parametrización y Configuración: permite comprobar que el dispositivo
+esclavo elegido es el deseado y su configuración la apropiada
+Transferencia de datos: Gobernada por el maestro y donde se puede fijar a
+los esclavos en los modos
+SYNC: Las salidas no cambian de estado pero se siguen
+recibiendo datos del master
+3º Ing. Técnica Telecom.
+
+FREEZE: Las entradas de los esclavos no varían
+
+26
+
+Sistemas Industriales Distribuidos
+PROFIBUS-DP
+Funciones extendidas
+El modo de direccionamiento está basado en identificación de módulos donde
+cada uno de ellos especifica su números de entrads, salidas, y E/S
+La trama incluye el número de módulo e incorpora un índice que indica el
+bloque de datos que se desea leer o escribir
+
+Permiten transmisión acíclica entre maestro y esclavos:
+De gran utilidad para configuración y ajuste on-line sin alterar el
+funcionamiento
+Se realiza con menor prioridad que la transmisión cíclica habitual
+
+Se definen las siguientes funciones:
+Master (Clase 1): MSAC1_READ, MSAC1_WRITE, MSAC1_ALARM,
+MSAC1_ALARM_ACKNOWLEDGE, MSAC1_STATUS
+Master (Clase 2): MSAC2_INITIATE, MSAC2_ABORT, MSAC2_READ,
+MSAC2_WRITE, MSAC2_DATA_TRANSPORT
+3º Ing. Técnica Telecom.
+
+27
+
+Sistemas Industriales Distribuidos
+PROFIBUS-DP: Sistemas Multimaestro
+Los sistemas PROFIBUS-DP
+Multimaestro se componen de:
+- múltiples Maestros (class 1 or 2)
+- Escalvos DP (de 1 a 124 máx.)
+- max. 126 dispositivos en el mismo bus
+
+Varios Maestros DP
+Pueden acceder a un Esclavo DP
+para leer sus estados
+DP-Master
+(class 2)
+
+PC
+
+DP-Master
+(class 1)
+
+DP-Master
+(class 1)
+
+PROFIBUS - DP
+
+Actuador
+
+Sensor
+
+Entradas y salidas descentralizadas
+
+Entradas y salidas descentralizadas
+
+Esclavos DP
+3º Ing. Técnica Telecom.
+
+28
+
+Sistemas Industriales Distribuidos
+PROFIBUS: Configuración abierta
+del
+n
+ió
+c
+a
+r
+figu
+n
+o
+C
+
+a
+m
+e
+t
+s
+si
+
+Herramienta de
+configuración PROFIBUS
+
+PLC
+
+Base de datos de dispositivos
+Ficheros GSD
+
+PROFIBUS - DP
+
+Disp.
+de
+campo
+
+3º Ing. Técnica Telecom.
+
+M
+I/O
+
+Sensor
+
+Driver
+
+Transmisor
+
+Disp.
+de
+campo
+
+29
+
+Sistemas
+Industriales
+Distribuidos
+PROFIBUS: Configuración abierta (II)
+Herramienta de
+configuración PROFIBUS
+Control PC
+
+Co
+de nfig
+l s ura
+ist ció
+em n
+a
+
+Base de datos de dispositivos
+Ficheros GSD
+
+PROFIBUS - DP
+Disp.
+de
+campo
+
+3º Ing. Técnica Telecom.
+
+M
+I/O
+
+Sensor
+
+Driver
+
+Transmisor
+
+Disp.
+de
+campo
+
+30
+
+Sistemas Industriales Distribuidos
+Tiempo de ciclo de Bus en
+PROFIBUS-DP Monomaestro
+Tiempo de
+ciclo de bus [ms]
+500 kBit/s
+
+1.5 MBit/s
+
+12 MBit/s
+
+Esclavos DP
+Condiciones: Cada esclavo DP tiene 2 byte de datos de entrada y 2 byte de salida
+El intervalo mínimo de esclavo es de 200 ? s
+
+3º Ing. Técnica Telecom.
+
+31
+
+Sistemas Industriales Distribuidos
+La familia PROFIBUS
+EN 50170 Volumen 2 y DIN 19245 Partes 1 a 4
+Automatización de
+propósito general
+
+Automatización
+de processos
+
+PROFIBUS-DP PROFIBUS-FMS PROFIBUS-PA
+rápido
+- plug and play
+- Eficiente y económico
+
+3º Ing. Técnica Telecom.
+
+universal
+
+Orientado a
+aplicaciones
+
+- Gran variedad de aplicaciones
+- Comunicación multi-maestro
+
+-Alimentación a través
+del bus (opcional)
+-Seguridad intrínseca (opcion)
+
+Perfiles de dispos.
+Perfiles de aplicac.
+
+Automatización
+de fábricas
+
+32
+
+Sistemas Industriales Distribuidos
+PROFIBUS – FMS: Características
+Permite conectar dispositivos inteligentes de campo como PLC, PC y
+MMI (Man-Machine Interface)
+Potentes aplicaciones ofrecen un amplio abanico de funcionalidad para
+variables, eventos, programas, dominios, etc.
+Protocolo orientado a objetos
+Comunicaciones Multi-Maestro y Maestro-Esclavo
+Comunicaciones Punto a punto, Broadcast y Multicast
+Transferencia de datos cíclica y acíclica
+Hasta 244 bytes de datos de usuario por servicio
+Soportado por la mayoría de fabricantes de PLC
+Amplia gama de productos disponibles (e.g. PLC, PC, VME, MMI, I/O.…)
+3º Ing. Técnica Telecom.
+
+33
+
+Sistemas Industriales Distribuidos
+PROFIBUS – FMS:
+Operación Orientada a objetos
+Variables y Parámetros se designan como objetos
+Cada objeto de comunicación posee características que
+lo definen (Read, Write....)
+Los objetos de comunicación se introducen en el
+diccionario de objetos (OD)
+El diccionario de objetos se configura individualmente
+para cada dispositivo durante la configuración
+Entradas estándar en el diccionario están predefinidas
+mediante perfiles específicos
+3º Ing. Técnica Telecom.
+
+34
+
+Sistemas Industriales Distribuidos
+PROFIBUS – FMS:
+Definiciones de VFD y OD
+
+Objetos estáticos: Variable simple, Array, Registro (Record),
+Dominio (Domain), Evento (Event)
+3º Ing. Técnica Telecom.
+
+35
+
+Sistemas Industriales Distribuidos
+Diccionario de objetos
+Index
+Symbol
+--------------------------EMPTY
+
+PROFIBUS – FMS:
+Operación Orientada a objetos (II)
+
+Read Index # 100
+Write Index # 102
+
+Maestro
+
+Read Index # 1000
+
+Maestro
+
+Conexión Virtual
+3º Ing. Técnica Telecom.
+
+Transmisor
+
+Esclavo
+
+Diccionario de objetos
+Index
+Symbol
+--------------------------#100
+Shift Counter
+#101
+#of Cycles
+#102
+…
+.
+.
+.
+
+Diccionario de objetos
+Index
+Symbol
+--------------------------#1000
+Temperature
+#1001
+Status
+#1002
+Diagnostic
+.
+.
+.
+36
+
+Sistemas Industriales Distribuidos
+PROFIBUS-FMS: Servicios
+Gestión de contexto
+Initiate
+Abort
+Reject
+
+Acceso a variables
+Read
+Write
+PhysicalRead
+PhysicalWrite
+InformationReport
+
+OD-Management
+
+ReadWithType
+WriteWithType
+
+GetOD
+InitiatePutOD
+PutOD
+TerminatePutOD
+
+InformationReportWithType
+
+DefineVariableList
+DeleteVariableList
+
+VFD Support
+Status
+UnsolicitedStatus
+Identify
+
+Gestión de llamadas a programas
+CreateProgramInvocation
+DeleteProgramInvocation
+
+Gestión de Dominio
+
+InitiateDownloadSequence
+Start, Stop, Resume, Reset, Kill DownloadSegment
+TerminateDownloadSequence
+
+Gestión de eventos
+EventNotification
+EventNotificationWithType
+AcknowledgeEventNotification
+AlterEventConditionMonitoring
+
+InitiateUploadSequence
+UploadSegment
+TerminateUploadSequence
+RequestDomainDownload
+RequestDomainUpload
+
+Sólo los servicios subrayados deben ser de obligado soporte por los dispositivos PROFIBUS.
+La 3º
+elección
+de servicios
+añadidos se especifica en los perfiles PROFIBUS.
+Ing. Técnica
+Telecom.
+
+37
+
+Sistemas Industriales Distribuidos
+PROFIBUS-FMS: Servicios (II)
+Constituyen un subconjunto de los
+servicios MMS (Manufacturing
+Message Specification, ISO 9506)
+Se han añadido diversas funciones
+orientadas a los buses de campo que
+incluyen la gestión de la red de
+comunicaciones
+Dos tipos principales:
+Confirmados
+No confirmados (Broadcast y
+Multicast)
+
+3º Ing. Técnica Telecom.
+
+38
+
+Sistemas Industriales Distribuidos
+Sistema combinado
+PROFIBUS-DP y PROFIBUS-FMS
+Visualización
+PLC
+
+FMS
+
+FMS
+
+PROFIBUS-DP and PROFIBUS-FMS
+
+FMS
+
+FMS
+Lector de barras
+
+FMS
+
+DP
+
+3º Ing. Técnica Telecom.
+
+DP
+
+DP
+
+Sensores
+inteligentes
+
+072036324
+
+Esclavo FMS
+
+DP
+
+Entradas y salidas descentralizadas
+
+Esclavo combinado
+
+Esclavos DP
+39
+
+Sistemas Industriales Distribuidos
+Sistema simultáneo
+PROFIBUS-DP y PROFIBUS-FMS
+Control PC
+
+PROFIBUS-DP y PROFIBUS-FMS
+
+FMS
+
+FMS
+
+DP
+
+DP
+
+DP
+
+Sensores
+inteligentes
+Entradas y salidas descentralizadas
+
+Maestro FMS
+3º Ing. Técnica Telecom.
+
+Esclavo combinado
+
+Esclavos DP
+40
+
+Sistemas Industriales Distribuidos
+La familia PROFIBUS
+EN 50170 Volumen 2 y DIN 19245 Partes 1 a 4
+Automatización de
+propósito general
+
+Automatización
+de processos
+
+PROFIBUS-DP PROFIBUS-FMS PROFIBUS-PA
+rápido
+- plug and play
+- Eficiente y económico
+
+3º Ing. Técnica Telecom.
+
+universal
+
+Orientado a
+aplicaciones
+
+- Gran variedad de aplicaciones
+- Comunicación multi-maestro
+
+-Alimentación a través
+del bus (opcional)
+-Seguridad intrínseca (opcion)
+
+Perfiles de dispos.
+Perfiles de aplicac.
+
+Automatización
+de fábricas
+
+41
+
+Sistemas Industriales Distribuidos
+PROFIBUS - PA : Características
+Orientado a la industria de procesos
+Adecuado para reemplazar la tecnología actual de 4...20 mA
+Mejoras funcionales y transmisión digital fiable
+Control, regulación y monitorización a través de par trenzado
+apantallado
+Posibilidad de seguridad intrínseca mediante la alimentación de
+elementos a través del bus
+Perfiles disponibles basados en la tecnología de bloques de función
+Interoperabilidad e intercambio debido a la definición de Perfiles
+Tecnología básica (SW, HW, ASICs) disponible hoy en día
+Funciona con transmisión H1 (IEC 1158-2) ó H2 (RS485)
+Básicamente forma parte de los llamados perfiles de aplicación
+3º Ing. Técnica Telecom.
+
+42
+
+Sistemas Industriales Distribuidos
+
+?x
+
+Configuración de sistemas típica en
+automatización de procesos
+
+?x
+
+DCS/Controlador de Area
+
+Campo
+I
+
+RS 485 or IEC 1158-2
+PROFIBUS - PA
+
+IEC 1158-2 with 31.25 kBit/s
+PROFIBUS - PA
+
+T
+
+I
+Ex i
+
+Disp.
+de
+Campo
+
+I
+Ex i
+
+Ex i
+
+Transmisor
+
+Transmisor
+
+Transmisor
+
+Buspowered
+
+Buspowered
+
+Alimentac.
+externa
+
+Disp. de campo
+
+Área de seguridad
+No intrínseca
+
+3º Ing. Técnica Telecom.
+
+Alimentación
+
+T
+
+Área de seg. intrínseca
+
+Ex d
+230 V
+
+• La alimentación de los dispositivos de campo de bajo consumo
+(e.g. sensores de presión, temperatura,…) es posible por el bus
+• Dispositivos con mayores requerimientos de energía necesitan
+de fuente de alimentación externa.
+
+43
+
+Sistemas Industriales Distribuidos
+Ahorro de tiempo en implantación
+sistemas PROFIBUS: Comparación
+
+3º Ing. Técnica Telecom.
+
+44
+
+Sistemas Industriales Distribuidos
+Perfiles de Aplicación: Ejemplos
+Aplicaciones Failsafe: PROFISafe, basado en DP, gestiona alarmas y
+eventos de alta prioridad a través del mismo cableado con alto nivel
+de rechazo ante errrores
+Automatización de edificios: basado en FMS y orientado a
+monitorización, control, regulación, y gestión de alarmas presentes en
+edificios
+NC/RC: Basado en DP, orientado a control de robots de ensamblado y
+manufactura
+ENCODERS: Basado en DP, facilita el enlace con encoders de
+rotación, de ángulo o lineales
+Drivers de motores de velocidad variable: Basado en DP, facilita el
+intercambio de información (posiciones, velocidades…) entre drivers
+Interfaces Hombre-máquina: basado en DP extendido,
+3º Ing. Técnica Telecom.
+
+45
+
+PROFIBUS
+
+Ejemplos de Redes
+
+Sistemas Industriales Distribuidos
+PROFIBUS - Ejemplos
+Pequeñas Aplicaciones
+Laptop
+Depuración/Desarrollo
+
+Control PC
+(No Display)
+
+PROFIBUS DP
+
+PROFIboard
+
+Ethernet
+3º Ing. Técnica Telecom.
+
+I/O
+
+I/O
+
+I/O
+1.5 Mbit/s o más
+47
+
+Sistemas Industriales Distribuidos
+PROFIBUS - Ejemplos
+Aplicaciones medianas-grandes
+Control PC
+
+PROFIBUS DP
+
+PROFIboard
+
+Ethernet
+3º Ing. Técnica Telecom.
+
+I/O
+
+I/O
+
+Servo
+1.5 Mbit/s o más
+48
+
+Sistemas Industriales Distribuidos
+DP y FMS Simultáneamente para
+entornos de velocidad media
+
+500 Kbit/s
+
+DP Master 1
+
+Sta 1 LH
+
+DP Master 2
+
+DP Master 3
+
+DP Master 4
+FMS
+
+FMS
+
+3º Ing. Técnica Telecom.
+
+Entradas y salidas descentralizadas
+
+DP
+
+DP
+
+DP
+
+DP
+
+FMS
+
+49
+
+Sistemas Industriales Distribuidos
+DP y FMS por separado
+para aplicaciones de E/S rápidas
+
+500 Kbit/s
+1.5 Mbit/s o más
+
+Sta 1 LH
+
+Interface PC/ CNC
+
+PROFIBUS FMS
+
+DP Master 1
+
+DP Master 2
+
+DP
+
+DP
+
+DP
+
+DP
+
+...
+
+...
+
+...
+
+...
+
+3º Ing. Técnica Telecom.
+
+DP Master 3
+
+DP Master 4
+
+50
+
+Sistemas Industriales Distribuidos
+PROFIBUS DP sólo para
+aplicaciones de E/S rápidas
+1.5 Mbit/s o más
+Interface PC/ CNC
+
+PROFIBUS DP
+
+DP Maestro
+
+DP Esclavo
+
+DP Maestro
+
+...
+
+3º Ing. Técnica Telecom.
+
+...
+
+DP Esclavo
+
+DP Maestro
+
+...
+
+DP Esclavo
+
+DP Maestro
+
+...
+51
+
+Sistemas Industriales Distribuidos
+Ejemplo PROFIBUS:
+Aplicación de Robot
+
+I/O
+
+Control PC
+
+Robot
+Controlador
+de Robot
+
+PROFIboard
+
+PROFIBUS DP 1.5 Mbit/s o más
+Específico de cada fabricante
+
+I/O
+3º Ing. Técnica Telecom.
+
+52
+
+Sistemas Industriales Distribuidos
+Ejemplo PROFIBUS:
+Horno de alta temperatura
+I/O
+
+Control PC
+
+PROFIboard
+Control de quemado/ Gestión de llama
+
+PROFIBUS DP 1.5 Mbit/s o más
+
+3º Ing. Técnica Telecom.
+
+53
+
+Sistemas Industriales Distribuidos
+Beneficios para usuarios y fabricantes
+un bus de campo apto para automatización de procesos,
+manufacturas y producción en general
+
+El tiempo de instalación y
+cableado se reduce en un 40%
+PROFIBUS se ha probado en
+más de 50.000 aplicaciones
+PROFIBUS ofrece
+comunicación transparente
+desde nivel de campo hasta el
+nivel de célula empleando la
+misma técnica de transmisión
+PROFIBUS ofrece alta
+eficiencia y tiempos de ciclo de
+bus cortos
+PROFIBUS dispone de una
+amplia gama de productos
+3º Ing. Técnica Telecom.
+
+PROFIBUS se ha convertido en el
+estándar abierto europeo
+Productos certificados garantizan
+la interconexión
+Se permite la inclusión o
+desconexión de elementos sin
+afectar el resto de operaciones
+La tecnología básica de
+implementación (Hardware,
+Software, Chips, ASICs) está
+fácilmente disponible
+
+54
+
+PROFIBUS EN 50 170
+
+Comparación con otros
+Buses de campo
+
+Sistemas Industriales Distribuidos
+Información general
+Desarrollo de la
+tecnología
+PROFIBUS
+
+Año de
+aparición
+
+Interbus-S
+
+Implementaciones
+1988
+previas de diversas
+empresas
+Phoenix Contact (sólo) 1984
+
+DeviceNet
+
+Allen Bradley (sólo)
+
+Foundation Fieldbus Foundation
+Fieldbus
+SDS
+Honeywell (sólo)
+
+3º Ing. Técnica Telecom.
+
+Estándar
+asociado
+DIN 19245 y
+EN 50170
+DIN 19258
+
+Marzo 1994 ISO 11898 y
+ISO 11519
+1995
+ISA SP50/ IEC
+TC 65
+Enero 1994 Especificación
+remitida al
+IEC ISO 11989
+56
+
+Sistemas Industriales Distribuidos
+Características físicas
+Topología de la red
+
+Medio físico
+
+Dispositivos
+(Máximo)
+
+Distancia
+Máxima
+
+PROFIBUS
+DP
+
+Línea, estrella
+
+Par trenzado,
+fibra óptica
+
+127 nodos
+
+24 km
+(fibra opt.)
+
+Interbus-S
+
+Segmentado con
+Par trenzado
+ramificaciones en T fiber
+
+256 nodos
+
+12.8 km total
+
+DeviceNet
+
+Trunkline/Dropline
+con ramificaciones
+
+64 nodos
+
+500 m
+
+Foundation
+Fieldbus
+
+Multidrop con disp. Par trenzado
+alimentados por el
+bus
+Trunkline/Dropline Par trenzado
+para señal y
+potencia
+
+32/Segmento
+6500
+Segmentos
+64 nodos
+
+1900 m (H1)
+500 m (H2)
+
+SDS
+
+3º Ing. Técnica Telecom.
+
+Par trenzado
+Fibra opt./coax.
+
+500m
+
+57
+
+Sistemas Industriales Distribuidos
+Mecanismo de transporte
+`
+
+Método de
+comunicación
+
+Velocidad
+
+Tamaño de
+Datos
+
+Método de
+arbitraje
+
+Chequeo de Diagnostico
+Errores
+
+PROFIBUS Master/Master Hasta
+244 Bytes
+Paso de
+DP
+Master/Slave
+12 Mbit/s FMS permite testigo
+punto a punto PA hasta segmentación
+Multi/Broadcast 31,25 Kbit
+
+HD4 y CRC
+
+Interbus-S Master/Slave
+
+500 Kbit/s 512 Bytes
+
+16 bit CRC
+
+DeviceNet
+
+Hasta 500
+Kbit/s
+
+Master/Slave
+Multi-Master
+
+Foundation Cliente/Servidor
+Publisher/
+Fieldbus
+Subscriber
+
+SDS
+
+Master/Slave
+punto a punto
+multi-cast
+multi-master
+
+3º Ing. Técnica Telecom.
+
+Ninguno
+
+8 Bytes
+CSMA - CD CRC
+segmentación
+posible
+31,25 Kbit 246 Bytes
+Delegación 16 bit CRC
+1 Mbit
+segmentación del testigo
+2.5 Mbit
+posible
+
+Hasta
+1 Mbit/s
+
+8 byte
+
+CSMA – CD CEC
+
+Comentarios
+
+Dispositivo,
+Auto-reset
+Módulo y Canal selecciona
+de Diagnostico -ble si un
+esclavo
+falla
+Fallo de
+Un fallo en
+dispositivo
+un dispos.
+Conlleva
+un fallo del
+bus
+Monitorización -del Bus
+Diagnóstico
+-Remoto
+Monit. de red,
+Estado de
+parámetros
+Monit. del bus -Diagnostico de
+esclavos
+
+58
+
+Herramientas PROFIBUS
+
+Sistemas Industriales Distribuidos
+Productos para PROFIBUS
+Visualización
+
+Herramientas
+Bus Analyzer
+Dialog System
+Configuration SW
+for FMS and DP
+
+DDE Server - Wonderware
+FIX driver - Intellution
+OPC Server - e.g. Intellution, WinCC
+
+Interfaces
+- Half Slot PC Interfaces
+- Type II PCMCIA Interfaces
+
+PROFIBUS
+Protocol Software
+DP
+DP/V1
+
+FMS
+
+Protocol Software
+FMA
+
+FMS
+
+Fieldbus Data Link Layer
+ASPC2
+
+Dispositivo
+Maestro
+
+3º Ing. Técnica Telecom.
+
+DP
+DP/V1
+
+Fieldbus Data Link Layer
+
+Disp. esclavo
+
+SPC3 / Find1+
+
+60
+
+Sistemas Industriales Distribuidos
+Interface FMS/DP PC simultáneo
+Placa de interface para PC
+Ejecuta protocolos FMS Client/Server y DP
+master simultáneamente
+Funciona como un esclavo PROFIBUS DP
+Microprocesador SAB C 165
+ASPC2 - PROFIBUS ASIC para disp. maestros
+SPC3 - PROFIBUS ASIC para disp. esclavos
+Tasa de transferencia de hasta 12 Mbit/s
+Proporciona interface de programación en "C“
+para desarrollo de programas de aplicación propios
+Incluye drivers para MS-DOS, Windows,
+WindowsNT e Hyperkernel
+
+Descarga de drivers gratuita desde
+Internet.
+3º Ing. Técnica Telecom.
+
+61
+
+Sistemas Industriales Distribuidos
+Interfaces para portátiles
+PC Card (PCMCIA)
+Ejecuta protocolos FMS Client/Server y DP
+master
+Microprocesador SAB C 165
+ASPC2 - PROFIBUS ASIC para disp. maestros
+Tasa de transferencia de hasta 12 Mbit/s
+Encapsulado tipo housing
+Proporciona interface de programación en "C“
+para desarrollo de programas de aplicación propios
+Incluye drivers para MS-DOS, Windows,
+WindowsNT e Hyperkernel
+
+Descarga de drivers gratuita desde
+Internet.
+3º Ing. Técnica Telecom.
+
+62
+
+Sistemas Industriales Distribuidos
+Configurador de red
+
+PROFIBUS
+DP: ProfiConfig
+
+? Aplicación Windows NT
+? Lee formato GSD estándar y extendido
+?
+?
+
+3º Ing. Técnica Telecom.
+
+(GSD = Mandatory Device Data Sheet
+in ASCII format)
+Recoge la información de la red
+PROFIBUS y esclavos DP on-line con
+un simple click de ratón
+Genera varios ficheros de salida de
+configuración
+
+63
+
+Sistemas Industriales Distribuidos
+Analizador de Hardware PROFIBUS
+PROFIBUS Analyzer Hardware
+Placa PC en formato de medio slot
+Transferencias de 9.6 Kbit/s - 12 Mbit/s
+Microprocesador i960
+NO usa ASIC para la correcta detección de
+errores
+Selección de 16 canales de filtros en placa
+Trigger externo en placa (seleccionable por el
+usuario)
+3º Ing. Técnica Telecom.
+
+64
+
+Sistemas Industriales Distribuidos
+PROFIBUS Analyzer Software
+Herramienta basada en PC
+empleada para detección de
+errores en redes PROFIBUS
+Nodo pasivo no intrusivo
+Grabado de datos con fecha
+Decodificación de tramas en
+diferentes representaciones (simbólica,
+hexadecimal, específica del protocolo)
+Selección de mensaje configurable a
+través de criterios por filtro. El filtrado de
+bytes se realiza dentro de la trama de
+datos
+Grabación por Trigger basada en
+criterios de filtro y/o entrada externa.
+
+3º Ing. Técnica Telecom.
+
+65
+
+Sistemas Industriales Distribuidos
+PROFIBUS Mobile Analyzer
+PROFIBUS Mobile Analyzer
+PCMCIA tipo II
+Transferencias de 9.6 Kbit/s - 12 Mbit/s
+Microprocesador SAB 165
+Emplea un ASIC PROFIBUS
+Plug&Play PCMCIA
+
+3º Ing. Técnica Telecom.
+
+66
+
+Sistemas Industriales Distribuidos
+PROFIBUS OPC Server
+PROFIBUS OPC Server
+Cumple el estándar OPC
+Soporta auto-configuration
+Opera como PROFIBUS DP
+Master class I - Read Input
+Write Output
+Master class II - Read Input
+Read Output
+Soporta multiples aplicaciones cliente
+Soporta hasta cuatro placas de
+interface PROFIBUS
+Soporta peticiones directas del cliente
+y avisa de excepciones producidas
+en el funcionamiento
+
+3º Ing. Técnica Telecom.
+
+67
+
+Sistemas Industriales Distribuidos
+PROFIBUS DDE Server
+FMS/DP DDE Server
+Permite la conexión entre
+aplicaciones Windows y los
+dispositivos de procesos
+
+Características
+Alto rendimiento
+Fácil manejo e instalación
+Integración simple
+
+Sistema operativo
+Windows 95
+Windows NT 3.51 or higher
+3º Ing. Técnica Telecom.
+
+68
+
+Sistemas Industriales Distribuidos
+PROFIBUS Intellution driver
+FIX driver
+Proporciona la conexión
+entre intellution y
+PROFIBUS
+
+Características
+Alto rendimiento
+Fácil manejo e instalación
+Integración simple
+
+3º Ing. Técnica Telecom.
+
+69
+
+Sistemas Industriales Distribuidos
+Protocolo Software: Utilización en
+paralelo de Maestro FMS y DP
+Implementación de protocolos
+disponibles basados en
+
+Protocolo Software
+
+Maestro
+
+DP
+FMS / LLI
+DP/V1
+
+FMA
+
+Fieldbus Data Link Layer
+ASPC2
+
+Protocolo Software
+
+Maestro
+
+DP
+DP/V1
+
+FMS / LLI
+
+FMA
+
+Fieldbus Data Link Layer
+(FDL)
+
+* En cooperación con Motorola
+3º Ing. Técnica Telecom.
+
+V53+ / ASPC2
+SAB C 165 / ASPC2
+MC 68xxx / ASPC2
+
+12 Mbit/s
+12 Mbit/s
+12 Mbit/s
+
+Implementación de protocolos
+disponibles basados en
+MC 68302
+MC 68360*
+
+500 Kbit/s
+1.5 Mbit/s
+70
+
+Sistemas Industriales Distribuidos
+Protocolo Software – Esclavo
+Protocolo Software
+FMS / LLI
+
+FMA
+
+8051family
+
+Esclavo
+Fieldbus Data Link Layer
+(FDL)
+
+Protocolo Software
+
+Esclavo
+
+Implementación de protocolos
+disponibles basados en
+
+PROFIBUS
+DP
+DP/V1
+Fieldbus Data Link Layer
+SPC3 / Find1+
+
+3º Ing. Técnica Telecom.
+
+93.25 Kbit/s
+
+Protocol escrito en ANSI C
+
+Implementación de protocolos
+disponibles basados en
+8051 family / SPC3
+SAB C 165 / SPC3
+M37735/Find1+ *
+
+12 MBit/s
+12 Mbit/s
+31.25 Kbit/s
+
+*conforme a la capa física IEC 1158
+
+71
+
+

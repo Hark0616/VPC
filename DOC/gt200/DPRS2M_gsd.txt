@@ -1,0 +1,4034 @@
+;===============================================================================
+; GSD file:    DPRS2V60M
+; Product:     GT200-DP-RS Master
+; Language:    English
+; Description: SSTCOMM PROFIBUS DP-V0 Slave
+; 
+;===============================================================================
+
+
+#Profibus_DP
+
+
+;===============================================================================
+;==== Prm-Text-Def-List ========================================================
+;===============================================================================
+
+PrmText   = 1000
+Text(0)   = "300"
+Text(1)   = "600"
+Text(2)   = "1200"
+Text(3)   = "2400"
+Text(9)   = "4800"
+Text(4)   = "9600"
+Text(5)   = "19200"
+Text(6)   = "38400"
+Text(7)   = "57600"
+Text(8)   = "115200"
+EndPrmText
+
+PrmText   = 1
+Text(0)   = "8 None 1"
+Text(1)   = "8 Odd 1"
+Text(2)   = "8 Even 1"
+Text(3)   = "8 Mark 1"
+Text(4)   = "8 Space 1"
+Text(5)   = "8 None 2"
+EndPrmText
+
+PrmText   = 2
+Text(0)   = "Modbus Master"
+;Text(1)   = "Modbus Slave"
+;Text(3)   = "Serial"
+EndPrmText
+
+PrmText   = 3
+Text(1)   = "100ms"
+Text(2)   = "200ms"
+Text(3)   = "300ms"
+Text(4)   = "400ms"
+Text(5)   = "500ms"
+Text(6)   = "600ms"
+Text(7)   = "700ms"
+Text(8)   = "800ms"
+Text(9)   = "900ms"
+Text(10)  = "1000ms"
+Text(15)  = "1500ms"
+Text(20)  = "2000ms"
+Text(30)  = "3000ms"
+Text(40)  = "4000ms"
+Text(50)  = "5000ms"
+EndPrmText
+
+PrmText   = 4
+Text(0)   = "No Delay"
+Text(5)   = "50ms"
+Text(10)  = "100ms"
+Text(15)  = "150ms"
+Text(20)  = "200ms"
+Text(30)  = "300ms"
+Text(40)  = "400ms"
+Text(50)  = "500ms"
+Text(60)  = "600ms"
+Text(70)  = "700ms"
+Text(80)  = "800ms"
+Text(90)  = "900ms"
+Text(100) = "1000ms"
+Text(150) = "1500ms"
+Text(200) = "2000ms"
+EndPrmText
+
+PrmText   = 5
+Text(0)   = "RTU"
+Text(1)   = "ASCII"
+EndPrmText
+
+PrmText   = 6
+Text(0)   = "Change of Value"
+Text(1)   = "Cycle"
+EndPrmText
+
+PrmText   = 10
+Text(1)   = "1"
+EndPrmText
+
+PrmText   = 11
+Text(2)   = "2"
+EndPrmText
+
+PrmText   = 12
+Text(3)   = "3"
+EndPrmText
+
+PrmText   = 13
+Text(4)   = "4"
+EndPrmText
+
+PrmText   = 14
+Text(5)   = "5"
+EndPrmText
+
+PrmText   = 15
+Text(6)   = "6"
+EndPrmText
+
+PrmText   = 16
+Text(7)   = "15"
+EndPrmText
+
+PrmText   = 17
+Text(8)   = "16"
+EndPrmText
+
+PrmText   = 18
+Text(0)   = "Hold Data"
+Text(1)   = "Clear Data"
+EndPrmText
+
+PrmText   = 20
+Text(0)   = "RS485"
+Text(1)   = "RS232"
+EndPrmText
+
+PrmText   = 100
+Text(7)   = "1"
+Text(6)   = "2"
+Text(5)   = "3"
+Text(4)   = "4"
+Text(3)   = "5"
+Text(2)   = "6"
+Text(1)   = "7"
+Text(0)   = "8"
+EndPrmText
+
+PrmText   = 101
+Text(7)   = "9"
+Text(6)   = "10"
+Text(5)   = "11"
+Text(4)   = "12"
+Text(3)   = "13"
+Text(2)   = "14"
+Text(1)   = "15"
+Text(0)   = "16"
+EndPrmText
+
+PrmText   = 102
+Text(7)   = "17"
+Text(6)   = "18"
+Text(5)   = "19"
+Text(4)   = "20"
+Text(3)   = "21"
+Text(2)   = "22"
+Text(1)   = "23"
+Text(0)   = "24"
+EndPrmText
+
+PrmText   = 103
+Text(7)   = "25"
+Text(6)   = "26"
+Text(5)   = "27"
+Text(4)   = "28"
+Text(3)   = "29"
+Text(2)   = "30"
+Text(1)   = "31"
+Text(0)   = "32"
+EndPrmText
+
+PrmText   = 104
+Text(7)   = "33"
+Text(6)   = "34"
+Text(5)   = "35"
+Text(4)   = "36"
+Text(3)   = "37"
+Text(2)   = "38"
+Text(1)   = "39"
+Text(0)   = "40"
+EndPrmText
+
+PrmText   = 105
+Text(7)   = "41"
+Text(6)   = "42"
+Text(5)   = "43"
+Text(4)   = "44"
+Text(3)   = "45"
+Text(2)   = "46"
+Text(1)   = "47"
+Text(0)   = "48"
+EndPrmText
+
+PrmText   = 106
+Text(7)   = "49"
+Text(6)   = "50"
+Text(5)   = "51"
+Text(4)   = "52"
+Text(3)   = "53"
+Text(2)   = "54"
+Text(1)   = "55"
+Text(0)   = "56"
+EndPrmText
+
+PrmText   = 107
+Text(7)   = "57"
+Text(6)   = "58"
+Text(5)   = "59"
+Text(4)   = "60"
+Text(3)   = "61"
+Text(2)   = "62"
+Text(1)   = "63"
+Text(0)   = "64"
+EndPrmText
+
+PrmText   = 108
+Text(7)   = "65"
+Text(6)   = "66"
+Text(5)   = "67"
+Text(4)   = "68"
+Text(3)   = "69"
+Text(2)   = "70"
+Text(1)   = "71"
+Text(0)   = "72"
+EndPrmText
+
+PrmText   = 109
+Text(7)   = "73"
+Text(6)   = "74"
+Text(5)   = "75"
+Text(4)   = "76"
+Text(3)   = "77"
+Text(2)   = "78"
+Text(1)   = "79"
+Text(0)   = "80"
+EndPrmText
+
+PrmText   = 110
+Text(7)   = "81"
+Text(6)   = "82"
+Text(5)   = "83"
+Text(4)   = "84"
+Text(3)   = "85"
+Text(2)   = "86"
+Text(1)   = "87"
+Text(0)   = "88"
+EndPrmText
+
+PrmText   = 111
+Text(7)   = "89"
+Text(6)   = "90"
+Text(5)   = "91"
+Text(4)   = "92"
+Text(3)   = "93"
+Text(2)   = "94"
+Text(1)   = "95"
+Text(0)   = "96"
+EndPrmText
+
+PrmText   = 112
+Text(7)   = "97"
+Text(6)   = "98"
+Text(5)   = "99"
+Text(4)   = "100"
+Text(3)   = "101"
+Text(2)   = "102"
+Text(1)   = "103"
+Text(0)   = "104"
+EndPrmText
+
+PrmText   = 113
+Text(7)   = "105"
+Text(6)   = "106"
+Text(5)   = "107"
+Text(4)   = "108"
+Text(3)   = "109"
+Text(2)   = "110"
+Text(1)   = "111"
+Text(0)   = "112"
+EndPrmText
+
+PrmText   = 114
+Text(7)   = "113"
+Text(6)   = "114"
+Text(5)   = "115"
+Text(4)   = "116"
+Text(3)   = "117"
+Text(2)   = "118"
+Text(1)   = "119"
+Text(0)   = "120"
+EndPrmText
+
+PrmText   = 115
+Text(7)   = "121"
+Text(6)   = "122"
+Text(5)   = "123"
+Text(4)   = "124"
+Text(3)   = "125"
+Text(2)   = "126"
+Text(1)   = "127"
+Text(0)   = "128"
+EndPrmText
+
+PrmText   = 116
+Text(7)   = "129"
+Text(6)   = "130"
+Text(5)   = "131"
+Text(4)   = "132"
+Text(3)   = "133"
+Text(2)   = "134"
+Text(1)   = "135"
+Text(0)   = "136"
+EndPrmText
+
+PrmText   = 117
+Text(7)   = "137"
+Text(6)   = "138"
+Text(5)   = "139"
+Text(4)   = "140"
+Text(3)   = "141"
+Text(2)   = "142"
+Text(1)   = "143"
+Text(0)   = "144"
+EndPrmText
+
+PrmText   = 118
+Text(7)   = "145"
+Text(6)   = "146"
+Text(5)   = "147"
+Text(4)   = "148"
+Text(3)   = "149"
+Text(2)   = "150"
+Text(1)   = "151"
+Text(0)   = "152"
+EndPrmText
+
+PrmText   = 119
+Text(7)   = "153"
+Text(6)   = "154"
+Text(5)   = "155"
+Text(4)   = "156"
+Text(3)   = "157"
+Text(2)   = "158"
+Text(1)   = "159"
+Text(0)   = "160"
+EndPrmText
+
+PrmText   = 120
+Text(7)   = "161"
+Text(6)   = "162"
+Text(5)   = "163"
+Text(4)   = "164"
+Text(3)   = "165"
+Text(2)   = "166"
+Text(1)   = "167"
+Text(0)   = "168"
+EndPrmText
+
+PrmText   = 121
+Text(7)   = "169"
+Text(6)   = "170"
+Text(5)   = "171"
+Text(4)   = "172"
+Text(3)   = "173"
+Text(2)   = "174"
+Text(1)   = "175"
+Text(0)   = "176"
+EndPrmText
+
+PrmText   = 122
+Text(7)   = "177"
+Text(6)   = "178"
+Text(5)   = "179"
+Text(4)   = "180"
+Text(3)   = "181"
+Text(2)   = "182"
+Text(1)   = "183"
+Text(0)   = "184"
+EndPrmText
+
+PrmText   = 123
+Text(7)   = "185"
+Text(6)   = "186"
+Text(5)   = "187"
+Text(4)   = "188"
+Text(3)   = "189"
+Text(2)   = "190"
+Text(1)   = "191"
+Text(0)   = "192"
+EndPrmText
+
+PrmText   = 124
+Text(7)   = "193"
+Text(6)   = "194"
+Text(5)   = "195"
+Text(4)   = "196"
+Text(3)   = "197"
+Text(2)   = "198"
+Text(1)   = "199"
+Text(0)   = "200"
+EndPrmText
+
+PrmText   = 125
+Text(7)   = "201"
+Text(6)   = "202"
+Text(5)   = "203"
+Text(4)   = "204"
+Text(3)   = "205"
+Text(2)   = "206"
+Text(1)   = "207"
+Text(0)   = "208"
+EndPrmText
+
+PrmText   = 126
+Text(7)   = "209"
+Text(6)   = "210"
+Text(5)   = "211"
+Text(4)   = "212"
+Text(3)   = "213"
+Text(2)   = "214"
+Text(1)   = "215"
+Text(0)   = "216"
+EndPrmText
+
+PrmText   = 127
+Text(7)   = "217"
+Text(6)   = "218"
+Text(5)   = "219"
+Text(4)   = "220"
+Text(3)   = "221"
+Text(2)   = "222"
+Text(1)   = "223"
+Text(0)   = "224"
+EndPrmText
+
+PrmText   = 128
+Text(7)   = "225"
+Text(6)   = "226"
+Text(5)   = "227"
+Text(4)   = "228"
+Text(3)   = "229"
+Text(2)   = "230"
+Text(1)   = "231"
+Text(0)   = "232"
+EndPrmText
+
+PrmText   = 129
+Text(7)   = "233"
+Text(6)   = "234"
+Text(5)   = "235"
+Text(4)   = "236"
+Text(3)   = "237"
+Text(2)   = "238"
+Text(1)   = "239"
+Text(0)   = "240"
+EndPrmText
+
+PrmText   = 130
+Text(7)   = "241"
+Text(6)   = "242"
+Text(5)   = "243"
+Text(4)   = "244"
+Text(3)   = "245"
+Text(2)   = "246"
+Text(1)   = "247"
+Text(0)   = "248"
+EndPrmText
+
+PrmText   = 131
+Text(7)   = "249"
+Text(6)   = "250"
+Text(5)   = "251"
+Text(4)   = "252"
+Text(3)   = "253"
+Text(2)   = "254"
+Text(1)   = "255"
+Text(0)   = "256"
+EndPrmText
+
+
+;===============================================================================
+;==== Ext-User-Prm-Data-Def-List ===============================================
+;===============================================================================
+
+ExtUserPrmData=0 "Baudrate (bps)"
+BitArea(4-7) 4 0-9
+Prm_Text_Ref=1000
+EndExtUserPrmData
+
+ExtUserPrmData=1 "Data bits, Parity bit, Stop bits"
+BitArea(0-3) 0 0-5
+Prm_Text_Ref=1
+EndExtUserPrmData
+
+ExtUserPrmData=2 "Protocol Type"
+Unsigned8 0 0-3
+Prm_Text_Ref=2
+EndExtUserPrmData
+
+ExtUserPrmData=3 "Response Timeout"
+Unsigned8 3 1-50
+Prm_Text_Ref=3
+EndExtUserPrmData
+
+ExtUserPrmData=4 "Delay Between Polls"
+Unsigned8 0 0-200
+Prm_Text_Ref=4
+EndExtUserPrmData
+
+ExtUserPrmData=5 "Slave Address"
+Unsigned8 1 1-247
+EndExtUserPrmData
+
+ExtUserPrmData=6 "Slave Address"
+Unsigned8 1 1-247
+EndExtUserPrmData
+
+ExtUserPrmData=7 "Transmission Mode"
+Bit(0) 0 0-1
+Prm_Text_Ref=5
+EndExtUserPrmData
+
+ExtUserPrmData=8 "Starting Address"
+Unsigned16 0 0-65535
+EndExtUserPrmData
+
+ExtUserPrmData=9 "Write Mode"
+Bit(1) 0 0-1
+Prm_Text_Ref=6
+EndExtUserPrmData
+
+ExtUserPrmData=10 "Function"
+BitArea(4-7) 1 1-1
+Prm_Text_Ref=10
+EndExtUserPrmData
+
+ExtUserPrmData=11 "Function"
+BitArea(4-7) 2 2-2
+Prm_Text_Ref=11
+EndExtUserPrmData
+
+ExtUserPrmData=12 "Function"
+BitArea(4-7) 3 3-3
+Prm_Text_Ref=12
+EndExtUserPrmData
+
+ExtUserPrmData=13 "Function"
+BitArea(4-7) 4 4-4
+Prm_Text_Ref=13
+EndExtUserPrmData
+
+ExtUserPrmData=14 "Function"
+BitArea(4-7) 5 5-5
+Prm_Text_Ref=14
+EndExtUserPrmData
+
+ExtUserPrmData=15 "Function"
+BitArea(4-7) 6 6-6
+Prm_Text_Ref=15
+EndExtUserPrmData
+
+ExtUserPrmData=16 "Function"
+BitArea(4-7) 7 7-7
+Prm_Text_Ref=16
+EndExtUserPrmData
+
+ExtUserPrmData=17 "Function"
+BitArea(4-7) 8 8-8
+Prm_Text_Ref=17
+EndExtUserPrmData
+
+ExtUserPrmData=18 "Response Timeout Action"
+Bit(2) 0 0-1
+Prm_Text_Ref=18
+EndExtUserPrmData
+
+ExtUserPrmData=19 "Response Timeout for N times"
+Unsigned8 3 2-254
+EndExtUserPrmData
+
+ExtUserPrmData=20 "Communication Interface"
+Bit(3) 0 0-1
+Prm_Text_Ref=20
+EndExtUserPrmData
+
+ExtUserPrmData=100 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=100
+EndExtUserPrmData
+
+ExtUserPrmData=101 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=101
+EndExtUserPrmData
+
+ExtUserPrmData=102 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=102
+EndExtUserPrmData
+
+ExtUserPrmData=103 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=103
+EndExtUserPrmData
+
+ExtUserPrmData=104 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=104
+EndExtUserPrmData
+
+ExtUserPrmData=105 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=105
+EndExtUserPrmData
+
+ExtUserPrmData=106 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=106
+EndExtUserPrmData
+
+ExtUserPrmData=107 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=107
+EndExtUserPrmData
+
+ExtUserPrmData=108 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=108
+EndExtUserPrmData
+
+ExtUserPrmData=109 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=109
+EndExtUserPrmData
+
+ExtUserPrmData=110 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=110
+EndExtUserPrmData
+
+ExtUserPrmData=111 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=111
+EndExtUserPrmData
+
+ExtUserPrmData=112 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=112
+EndExtUserPrmData
+
+ExtUserPrmData=113 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=113
+EndExtUserPrmData
+
+ExtUserPrmData=114 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=114
+EndExtUserPrmData
+
+ExtUserPrmData=115 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=115
+EndExtUserPrmData
+
+ExtUserPrmData=116 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=116
+EndExtUserPrmData
+
+ExtUserPrmData=117 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=117
+EndExtUserPrmData
+
+ExtUserPrmData=118 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=118
+EndExtUserPrmData
+
+ExtUserPrmData=119 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=119
+EndExtUserPrmData
+
+ExtUserPrmData=120 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=120
+EndExtUserPrmData
+
+ExtUserPrmData=121 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=121
+EndExtUserPrmData
+
+ExtUserPrmData=122 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=122
+EndExtUserPrmData
+
+ExtUserPrmData=123 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=123
+EndExtUserPrmData
+
+ExtUserPrmData=124 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=124
+EndExtUserPrmData
+
+ExtUserPrmData=125 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=125
+EndExtUserPrmData
+
+ExtUserPrmData=126 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=126
+EndExtUserPrmData
+
+ExtUserPrmData=127 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=127
+EndExtUserPrmData
+
+ExtUserPrmData=128 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=128
+EndExtUserPrmData
+
+ExtUserPrmData=129 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=129
+EndExtUserPrmData
+
+ExtUserPrmData=130 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=130
+EndExtUserPrmData
+
+ExtUserPrmData=131 "No. of Points"
+BitArea(0-3) 0 0-7
+Prm_Text_Ref=131
+EndExtUserPrmData
+
+
+;===============================================================================
+;==== General DP Keywords ======================================================
+;===============================================================================
+
+GSD_Revision        = 5
+Vendor_Name         = "SSTCOMM Automation"
+Model_Name          = "GT200-DP-RS Modbus Master V6.0"
+Revision            = "V6.0"
+Ident_Number        = 0x0DC9
+Protocol_Ident      = 0    ; DP protocol
+Station_Type        = 0    ; Slave device
+Hardware_Release    = "V8.0"
+Software_Release    = "V6.0"
+
+
+;===============================================================================
+;==== Supported baudrates ======================================================
+;===============================================================================
+
+9.6_supp            = 1
+19.2_supp           = 1
+45.45_supp          = 1
+93.75_supp          = 1
+187.5_supp          = 1
+500_supp            = 1
+1.5M_supp           = 1
+3M_supp             = 1
+6M_supp             = 1
+12M_supp            = 1
+
+
+;===============================================================================
+;==== Maximum responder time for supported baudrates ===========================
+;===============================================================================
+
+MaxTsdr_9.6         = 20
+MaxTsdr_19.2        = 20
+MaxTsdr_45.45       = 20
+MaxTsdr_93.75       = 20
+MaxTsdr_187.5       = 20
+MaxTsdr_500         = 20
+MaxTsdr_1.5M        = 25
+MaxTsdr_3M          = 50
+MaxTsdr_6M          = 60
+MaxTsdr_12M         = 100
+
+
+;===============================================================================
+;==== Slave specific values ====================================================
+;===============================================================================
+
+Implementation_Type = "VPC3+"
+Bitmap_Device       = "PM160"
+Freeze_Mode_supp    = 1    ; supported
+Sync_Mode_supp      = 1    ; supported
+Auto_Baud_supp      = 1    ; supported
+Fail_safe           = 0
+; Maximum polling frequency
+Min_Slave_Intervall = 6    ; 600 us
+Max_Diag_Data_Len   = 6
+Slave_Family        = 0@CONVERTER
+
+
+;===============================================================================
+;==== User-Prm-Data ============================================================
+;===============================================================================
+
+User_Prm_Data_Len   = 9
+Max_User_Prm_Data_Len = 201
+
+Ext_User_Prm_Data_Const(0)= 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
+Ext_User_Prm_Data_Ref(3) = 0
+Ext_User_Prm_Data_Ref(3) = 1
+Ext_User_Prm_Data_Ref(4) = 2
+Ext_User_Prm_Data_Ref(5) = 3
+Ext_User_Prm_Data_Ref(6) = 4
+Ext_User_Prm_Data_Ref(7) = 7
+Ext_User_Prm_Data_Ref(7) = 9
+Ext_User_Prm_Data_Ref(7) = 18
+Ext_User_Prm_Data_Ref(8) = 19
+Ext_User_Prm_Data_Ref(7) = 20
+
+
+;===============================================================================
+;==== Maximum supported sizes ==================================================
+;===============================================================================
+
+Modular_Station     = 1
+Max_Module          = 50
+Max_Input_Len       = 244
+Max_Output_Len      = 244
+Max_Data_Len        = 488
+Modul_Offset        = 0
+
+
+;===============================================================================
+;==== Module-Definition-List ===================================================
+;===============================================================================
+
+;Status:
+
+Module = "Status(8 Commands)"          0x41,0x00,0x00
+1
+EndModule
+
+Module = "Status(16 Commands)"         0x41,0x01,0x00
+2
+EndModule
+
+Module = "Status(24 Commands)"         0x41,0x02,0x00
+3
+EndModule
+
+Module = "Status(32 Commands)"         0x41,0x03,0x00
+4
+EndModule
+
+Module = "Status(40 Commands)"         0x41,0x04,0x00
+5
+EndModule
+
+Module = "Status(48 Commands)"         0x41,0x05,0x00
+6
+EndModule
+
+Module = "Exception Codes"             0x41,0x40,0x01
+7
+EndModule
+
+;01H:
+
+Module = "Read 1-8 Bits(0xxxx)" 0x10
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=100
+8
+EndModule
+
+Module = "Read 9-16 Bits(0xxxx)" 0x11
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=101
+9
+EndModule
+
+Module = "Read 17-24 Bits(0xxxx)" 0x12
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=102
+10
+EndModule
+
+Module = "Read 25-32 Bits(0xxxx)" 0x13
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=103
+11
+EndModule
+
+Module = "Read 33-40 Bits(0xxxx)" 0x14
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=104
+12
+EndModule
+
+Module = "Read 41-48 Bits(0xxxx)" 0x15
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=105
+13
+EndModule
+
+Module = "Read 49-56 Bits(0xxxx)" 0x16
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=106
+14
+EndModule
+
+Module = "Read 57-64 Bits(0xxxx)" 0x17
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=107
+15
+EndModule
+
+Module = "Read 65-72 Bits(0xxxx)" 0x18
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=108
+16
+EndModule
+
+Module = "Read 73-80 Bits(0xxxx)" 0x19
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=109
+17
+EndModule
+
+Module = "Read 81-88 Bits(0xxxx)" 0x1A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=110
+18
+EndModule
+
+Module = "Read 89-96 Bits(0xxxx)" 0x1B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=111
+19
+EndModule
+
+Module = "Read 97-104 Bits(0xxxx)" 0x1C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=112
+20
+EndModule
+
+Module = "Read 105-112 Bits(0xxxx)" 0x1D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=113
+21
+EndModule
+
+Module = "Read 113-120 Bits(0xxxx)" 0x1E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=114
+22
+EndModule
+
+Module = "Read 121-128 Bits(0xxxx)" 0x1F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=115
+23
+EndModule
+
+Module = "Read 129-136 Bits(0xxxx)" 0x40,0x10
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=116
+24
+EndModule
+
+Module = "Read 137-144 Bits(0xxxx)" 0x40,0x11
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=117
+25
+EndModule
+
+Module = "Read 145-152 Bits(0xxxx)" 0x40,0x12
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=118
+26
+EndModule
+
+Module = "Read 153-160 Bits(0xxxx)" 0x40,0x13
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=119
+27
+EndModule
+
+Module = "Read 161-168 Bits(0xxxx)" 0x40,0x14
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=120
+28
+EndModule
+
+Module = "Read 169-176 Bits(0xxxx)" 0x40,0x15
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=121
+29
+EndModule
+
+Module = "Read 177-184 Bits(0xxxx)" 0x40,0x16
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=122
+30
+EndModule
+
+Module = "Read 185-192 Bits(0xxxx)" 0x40,0x17
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=123
+31
+EndModule
+
+Module = "Read 193-200 Bits(0xxxx)" 0x40,0x18
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=124
+32
+EndModule
+
+Module = "Read 201-208 Bits(0xxxx)" 0x40,0x19
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=125
+33
+EndModule
+
+
+Module = "Read 209-216 Bits(0xxxx)" 0x40,0x1A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=126
+34
+EndModule
+
+Module = "Read 217-224 Bits(0xxxx)" 0x40,0x1B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=127
+35
+EndModule
+
+Module = "Read 225-232 Bits(0xxxx)" 0x40,0x1C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=128
+36
+EndModule
+
+Module = "Read 233-240 Bits(0xxxx)" 0x40,0x1D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=129
+37
+EndModule
+
+Module = "Read 241-248 Bits(0xxxx)" 0x40,0x1E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=130
+38
+EndModule
+
+Module = "Read 249-256 Bits(0xxxx)" 0x40,0x1F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x10,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=10
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=131
+39
+EndModule
+
+;02H:
+
+Module = "Read 1-8 Bits(1xxxx)" 0x10
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=100
+40
+EndModule
+
+Module = "Read 9-16 Bits(1xxxx)" 0x11
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=101
+41
+EndModule
+
+Module = "Read 17-24 Bits(1xxxx)" 0x12
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=102
+42
+EndModule
+
+Module = "Read 25-32 Bits(1xxxx)" 0x13
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=103
+43
+EndModule
+
+Module = "Read 33-40 Bits(1xxxx)" 0x14
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=104
+44
+EndModule
+
+Module = "Read 41-48 Bits(1xxxx)" 0x15
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=105
+45
+EndModule
+
+Module = "Read 49-56 Bits(1xxxx)" 0x16
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=106
+46
+EndModule
+
+Module = "Read 57-64 Bits(1xxxx)" 0x17
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=107
+47
+EndModule
+
+Module = "Read 65-72 Bits(1xxxx)" 0x18
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=108
+48
+EndModule
+
+Module = "Read 73-80 Bits(1xxxx)" 0x19
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=109
+49
+EndModule
+
+Module = "Read 81-88 Bits(1xxxx)" 0x1A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=110
+50
+EndModule
+
+Module = "Read 89-96 Bits(1xxxx)" 0x1B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=111
+51
+EndModule
+
+Module = "Read 97-104 Bits(1xxxx)" 0x1C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=112
+52
+EndModule
+
+Module = "Read 105-112 Bits(1xxxx)" 0x1D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=113
+53
+EndModule
+
+Module = "Read 113-120 Bits(1xxxx)" 0x1E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=114
+54
+EndModule
+
+Module = "Read 121-128 Bits(1xxxx)" 0x1F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=115
+55
+EndModule
+
+Module = "Read 129-136 Bits(1xxxx)" 0x40,0x10
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=116
+56
+EndModule
+
+Module = "Read 137-144 Bits(1xxxx)" 0x40,0x11
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=117
+57
+EndModule
+
+Module = "Read 145-152 Bits(1xxxx)" 0x40,0x12
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=118
+58
+EndModule
+
+Module = "Read 153-160 Bits(1xxxx)" 0x40,0x13
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=119
+59
+EndModule
+
+Module = "Read 161-168 Bits(1xxxx)" 0x40,0x14
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=120
+60
+EndModule
+
+Module = "Read 169-176 Bits(1xxxx)" 0x40,0x15
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=121
+61
+EndModule
+
+Module = "Read 177-184 Bits(1xxxx)" 0x40,0x16
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=122
+62
+EndModule
+
+Module = "Read 185-192 Bits(1xxxx)" 0x40,0x17
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=123
+63
+EndModule
+
+Module = "Read 193-200 Bits(1xxxx)" 0x40,0x18
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=124
+64
+EndModule
+
+Module = "Read 201-208 Bits(1xxxx)" 0x40,0x19
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=125
+65
+EndModule
+
+Module = "Read 209-216 Bits(1xxxx)" 0x40,0x1A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=126
+66
+EndModule
+
+Module = "Read 217-224 Bits(1xxxx)" 0x40,0x1B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=127
+67
+EndModule
+
+Module = "Read 225-232 Bits(1xxxx)" 0x40,0x1C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=128
+68
+EndModule
+
+Module = "Read 233-240 Bits(1xxxx)" 0x40,0x1D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=129
+69
+EndModule
+
+Module = "Read 241-248 Bits(1xxxx)" 0x40,0x1E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=130
+70
+EndModule
+
+Module = "Read 249-256 Bits(1xxxx)" 0x40,0x1F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x20,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=11
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=131
+71
+EndModule
+
+;03H:
+
+Module = "Read 1 Word(4xxxx)" 0x50
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+72
+EndModule
+
+Module = "Read 2 Words(4xxxx)" 0x51
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+73
+EndModule
+
+Module = "Read 3 Words(4xxxx)" 0x52
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+74
+EndModule
+
+Module = "Read 4 Words(4xxxx)" 0x53
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+75
+EndModule
+
+Module = "Read 5 Words(4xxxx)" 0x54
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+76
+EndModule
+
+Module = "Read 6 Words(4xxxx)" 0x55
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+77
+EndModule
+
+Module = "Read 7 Words(4xxxx)" 0x56
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+78
+EndModule
+
+Module = "Read 8 Words(4xxxx)" 0x57
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+79
+EndModule
+
+Module = "Read 9 Words(4xxxx)" 0x58
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+80
+EndModule
+
+Module = "Read 10 Words(4xxxx)" 0x59
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+81
+EndModule
+
+Module = "Read 11 Words(4xxxx)" 0x5A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+82
+EndModule
+
+Module = "Read 12 Words(4xxxx)" 0x5B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+83
+EndModule
+
+Module = "Read 13 Words(4xxxx)" 0x5C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+84
+EndModule
+
+Module = "Read 14 Words(4xxxx)" 0x5D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+85
+EndModule
+
+Module = "Read 15 Words(4xxxx)" 0x5E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+86
+EndModule
+
+Module = "Read 16 Words(4xxxx)" 0x5F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+87
+EndModule
+
+Module = "Read 17 Words(4xxxx)" 0x40,0x50
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+88
+EndModule
+
+Module = "Read 18 Words(4xxxx)" 0x40,0x51
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+89
+EndModule
+
+Module = "Read 19 Words(4xxxx)" 0x40,0x52
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+90
+EndModule
+
+Module = "Read 20 Words(4xxxx)" 0x40,0x53
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+91
+EndModule
+
+Module = "Read 21 Words(4xxxx)" 0x40,0x54
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+92
+EndModule
+
+Module = "Read 22 Words(4xxxx)" 0x40,0x55
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+93
+EndModule
+
+Module = "Read 23 Words(4xxxx)" 0x40,0x56
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+94
+EndModule
+
+Module = "Read 24 Words(4xxxx)" 0x40,0x57
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+95
+EndModule
+
+Module = "Read 25 Words(4xxxx)" 0x40,0x58
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+96
+EndModule
+
+Module = "Read 26 Words(4xxxx)" 0x40,0x59
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+97
+EndModule
+
+Module = "Read 27 Words(4xxxx)" 0x40,0x5A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+98
+EndModule
+
+Module = "Read 28 Words(4xxxx)" 0x40,0x5B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+99
+EndModule
+
+Module = "Read 29 Words(4xxxx)" 0x40,0x5C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+100
+EndModule
+
+Module = "Read 30 Words(4xxxx)" 0x40,0x5D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+101
+EndModule
+
+Module = "Read 31 Words(4xxxx)" 0x40,0x5E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+102
+EndModule
+
+Module = "Read 32 Words(4xxxx)" 0x40,0x5F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+103
+EndModule
+
+Module = "Read 33 Words(4xxxx)" 0x40,0x60
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+104
+EndModule
+
+Module = "Read 34 Words(4xxxx)" 0x40,0x61
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+105
+EndModule
+
+Module = "Read 35 Words(4xxxx)" 0x40,0x62
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+106
+EndModule
+
+Module = "Read 36 Words(4xxxx)" 0x40,0x63
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+107
+EndModule
+
+Module = "Read 37 Words(4xxxx)" 0x40,0x64
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+108
+EndModule
+
+Module = "Read 38 Words(4xxxx)" 0x40,0x65
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+109
+EndModule
+
+Module = "Read 39 Words(4xxxx)" 0x40,0x66
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+110
+EndModule
+
+Module = "Read 40 Words(4xxxx)" 0x40,0x67
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+111
+EndModule
+
+Module = "Read 41 Words(4xxxx)" 0x40,0x68
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+112
+EndModule
+
+Module = "Read 42 Words(4xxxx)" 0x40,0x69
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+113
+EndModule
+
+Module = "Read 43 Words(4xxxx)" 0x40,0x6A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+114
+EndModule
+
+Module = "Read 44 Words(4xxxx)" 0x40,0x6B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+115
+EndModule
+
+Module = "Read 45 Words(4xxxx)" 0x40,0x6C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+116
+EndModule
+
+Module = "Read 46 Words(4xxxx)" 0x40,0x6D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+117
+EndModule
+
+Module = "Read 47 Words(4xxxx)" 0x40,0x6E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+118
+EndModule
+
+Module = "Read 48 Words(4xxxx)" 0x40,0x6F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+119
+EndModule
+
+Module = "Read 49 Words(4xxxx)" 0x40,0x70
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+120
+EndModule
+
+Module = "Read 50 Words(4xxxx)" 0x40,0x71
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+121
+EndModule
+
+Module = "Read 51 Words(4xxxx)" 0x40,0x72
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+122
+EndModule
+
+Module = "Read 52 Words(4xxxx)" 0x40,0x73
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+123
+EndModule
+
+Module = "Read 53 Words(4xxxx)" 0x40,0x74
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+124
+EndModule
+
+Module = "Read 54 Words(4xxxx)" 0x40,0x75
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+125
+EndModule
+
+Module = "Read 55 Words(4xxxx)" 0x40,0x76
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+126
+EndModule
+
+Module = "Read 56 Words(4xxxx)" 0x40,0x77
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+127
+EndModule
+
+Module = "Read 57 Words(4xxxx)" 0x40,0x78
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+128
+EndModule
+
+Module = "Read 58 Words(4xxxx)" 0x40,0x79
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+129
+EndModule
+
+Module = "Read 59 Words(4xxxx)" 0x40,0x7A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+130
+EndModule
+
+Module = "Read 60 Words(4xxxx)" 0x40,0x7B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+131
+EndModule
+
+Module = "Read 61 Words(4xxxx)" 0x40,0x7C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+132
+EndModule
+
+Module = "Read 62 Words(4xxxx)" 0x40,0x7D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+133
+EndModule
+
+Module = "Read 63 Words(4xxxx)" 0x40,0x7E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+134
+EndModule
+
+Module = "Read 64 Words(4xxxx)" 0x40,0x7F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+135
+EndModule
+
+Module = "Read 2 Words(4xxxx) Consistent" 0xD1
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+136
+EndModule
+
+Module = "Read 3 Words(4xxxx) Consistent" 0xD2
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+137
+EndModule
+
+Module = "Read 4 Words(4xxxx) Consistent" 0xD3
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+138
+EndModule
+
+Module = "Read 5 Words(4xxxx) Consistent" 0xD4
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+139
+EndModule
+
+Module = "Read 6 Words(4xxxx) Consistent" 0xD5
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+140
+EndModule
+
+Module = "Read 7 Words(4xxxx) Consistent" 0xD6
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+141
+EndModule
+
+Module = "Read 8 Words(4xxxx) Consistent" 0xD7
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+142
+EndModule
+
+Module = "Read 9 Words(4xxxx) Consistent" 0xD8
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+143
+EndModule
+
+Module = "Read 10 Words(4xxxx) Consistent" 0xD9
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+144
+EndModule
+
+Module = "Read 11 Words(4xxxx) Consistent" 0xDA
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+145
+EndModule
+
+Module = "Read 12 Words(4xxxx) Consistent" 0xDB
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+146
+EndModule
+
+Module = "Read 13 Words(4xxxx) Consistent" 0xDC
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+147
+EndModule
+
+Module = "Read 14 Words(4xxxx) Consistent" 0xDD
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+148
+EndModule
+
+Module = "Read 15 Words(4xxxx) Consistent" 0xDE
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+149
+EndModule
+
+Module = "Read 16 Words(4xxxx) Consistent" 0xDF
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x30,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=12
+Ext_User_Prm_Data_Ref(2)=8
+150
+EndModule
+
+;04H:
+
+Module = "Read 1 Word(3xxxx)" 0x50
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+151
+EndModule
+
+Module = "Read 2 Words(3xxxx)" 0x51
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+152
+EndModule
+
+Module = "Read 3 Words(3xxxx)" 0x52
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+153
+EndModule
+
+Module = "Read 4 Words(3xxxx)" 0x53
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+154
+EndModule
+
+Module = "Read 5 Words(3xxxx)" 0x54
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+155
+EndModule
+
+Module = "Read 6 Words(3xxxx)" 0x55
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+156
+EndModule
+
+Module = "Read 7 Words(3xxxx)" 0x56
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+157
+EndModule
+
+Module = "Read 8 Words(3xxxx)" 0x57
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+158
+EndModule
+
+Module = "Read 9 Words(3xxxx)" 0x58
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+159
+EndModule
+
+Module = "Read 10 Words(3xxxx)" 0x59
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+160
+EndModule
+
+Module = "Read 11 Words(3xxxx)" 0x5A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+161
+EndModule
+
+Module = "Read 12 Words(3xxxx)" 0x5B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+162
+EndModule
+
+Module = "Read 13 Words(3xxxx)" 0x5C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+163
+EndModule
+
+Module = "Read 14 Words(3xxxx)" 0x5D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+164
+EndModule
+
+Module = "Read 15 Words(3xxxx)" 0x5E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+165
+EndModule
+
+Module = "Read 16 Words(3xxxx)" 0x5F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+166
+EndModule
+
+Module = "Read 17 Words(3xxxx)" 0x40,0x50
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+167
+EndModule
+
+Module = "Read 18 Words(3xxxx)" 0x40,0x51
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+168
+EndModule
+
+Module = "Read 19 Words(3xxxx)" 0x40,0x52
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+169
+EndModule
+
+Module = "Read 20 Words(3xxxx)" 0x40,0x53
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+170
+EndModule
+
+Module = "Read 21 Words(3xxxx)" 0x40,0x54
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+171
+EndModule
+
+Module = "Read 22 Words(3xxxx)" 0x40,0x55
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+172
+EndModule
+
+Module = "Read 23 Words(3xxxx)" 0x40,0x56
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+173
+EndModule
+
+Module = "Read 24 Words(3xxxx)" 0x40,0x57
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+174
+EndModule
+
+Module = "Read 25 Words(3xxxx)" 0x40,0x58
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+175
+EndModule
+
+Module = "Read 26 Words(3xxxx)" 0x40,0x59
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+176
+EndModule
+
+Module = "Read 27 Words(3xxxx)" 0x40,0x5A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+177
+EndModule
+
+Module = "Read 28 Words(3xxxx)" 0x40,0x5B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+178
+EndModule
+
+Module = "Read 29 Words(3xxxx)" 0x40,0x5C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+179
+EndModule
+
+Module = "Read 30 Words(3xxxx)" 0x40,0x5D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+180
+EndModule
+
+Module = "Read 31 Words(3xxxx)" 0x40,0x5E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+181
+EndModule
+
+Module = "Read 32 Words(3xxxx)" 0x40,0x5F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+182
+EndModule
+
+Module = "Read 33 Words(3xxxx)" 0x40,0x60
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+183
+EndModule
+
+Module = "Read 34 Words(3xxxx)" 0x40,0x61
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+184
+EndModule
+
+Module = "Read 35 Words(3xxxx)" 0x40,0x62
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+185
+EndModule
+
+Module = "Read 36 Words(3xxxx)" 0x40,0x63
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+186
+EndModule
+
+Module = "Read 37 Words(3xxxx)" 0x40,0x64
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+187
+EndModule
+
+Module = "Read 38 Words(3xxxx)" 0x40,0x65
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+188
+EndModule
+
+Module = "Read 39 Words(3xxxx)" 0x40,0x66
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+189
+EndModule
+
+Module = "Read 40 Words(3xxxx)" 0x40,0x67
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+190
+EndModule
+
+Module = "Read 41 Words(3xxxx)" 0x40,0x68
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+191
+EndModule
+
+Module = "Read 42 Words(3xxxx)" 0x40,0x69
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+192
+EndModule
+
+Module = "Read 43 Words(3xxxx)" 0x40,0x6A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+193
+EndModule
+
+Module = "Read 44 Words(3xxxx)" 0x40,0x6B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+194
+EndModule
+
+Module = "Read 45 Words(3xxxx)" 0x40,0x6C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+195
+EndModule
+
+Module = "Read 46 Words(3xxxx)" 0x40,0x6D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+196
+EndModule
+
+Module = "Read 47 Words(3xxxx)" 0x40,0x6E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+197
+EndModule
+
+Module = "Read 48 Words(3xxxx)" 0x40,0x6F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+198
+EndModule
+
+Module = "Read 49 Words(3xxxx)" 0x40,0x70
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+199
+EndModule
+
+Module = "Read 50 Words(3xxxx)" 0x40,0x71
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+200
+EndModule
+
+Module = "Read 51 Words(3xxxx)" 0x40,0x72
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+201
+EndModule
+
+Module = "Read 52 Words(3xxxx)" 0x40,0x73
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+202
+EndModule
+
+Module = "Read 53 Words(3xxxx)" 0x40,0x74
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+203
+EndModule
+
+Module = "Read 54 Words(3xxxx)" 0x40,0x75
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+204
+EndModule
+
+Module = "Read 55 Words(3xxxx)" 0x40,0x76
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+205
+EndModule
+
+Module = "Read 56 Words(3xxxx)" 0x40,0x77
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+206
+EndModule
+
+Module = "Read 57 Words(3xxxx)" 0x40,0x78
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+207
+EndModule
+
+Module = "Read 58 Words(3xxxx)" 0x40,0x79
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+208
+EndModule
+
+Module = "Read 59 Words(3xxxx)" 0x40,0x7A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+209
+EndModule
+
+Module = "Read 60 Words(3xxxx)" 0x40,0x7B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+210
+EndModule
+
+Module = "Read 61 Words(3xxxx)" 0x40,0x7C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+211
+EndModule
+
+Module = "Read 62 Words(3xxxx)" 0x40,0x7D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+212
+EndModule
+
+Module = "Read 63 Words(3xxxx)" 0x40,0x7E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+213
+EndModule
+
+Module = "Read 64 Words(3xxxx)" 0x40,0x7F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+214
+EndModule
+
+Module = "Read 2 Words(3xxxx) Consistent" 0xD1
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+215
+EndModule
+
+Module = "Read 3 Words(3xxxx) Consistent" 0xD2
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+216
+EndModule
+
+Module = "Read 4 Words(3xxxx) Consistent" 0xD3
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+217
+EndModule
+
+Module = "Read 5 Words(3xxxx) Consistent" 0xD4
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+218
+EndModule
+
+Module = "Read 6 Words(3xxxx) Consistent" 0xD5
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+219
+EndModule
+
+Module = "Read 7 Words(3xxxx) Consistent" 0xD6
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+220
+EndModule
+
+Module = "Read 8 Words(3xxxx) Consistent" 0xD7
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+221
+EndModule
+
+Module = "Read 9 Words(3xxxx) Consistent" 0xD8
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+222
+EndModule
+
+Module = "Read 10 Words(3xxxx) Consistent" 0xD9
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+223
+EndModule
+
+Module = "Read 11 Words(3xxxx) Consistent" 0xDA
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+224
+EndModule
+
+Module = "Read 12 Words(3xxxx) Consistent" 0xDB
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+225
+EndModule
+
+Module = "Read 13 Words(3xxxx) Consistent" 0xDC
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+226
+EndModule
+
+Module = "Read 14 Words(3xxxx) Consistent" 0xDD
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+227
+EndModule
+
+Module = "Read 15 Words(3xxxx) Consistent" 0xDE
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+228
+EndModule
+
+Module = "Read 16 Words(3xxxx) Consistent" 0xDF
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x40,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=13
+Ext_User_Prm_Data_Ref(2)=8
+229
+EndModule
+
+;05H:
+
+Module = "Write Single Bits(0xxxx)" 0x20
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x50,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=14
+Ext_User_Prm_Data_Ref(2)=8
+230
+EndModule
+
+;0FH:
+
+Module = "Write 1-8 Bits(0xxxx)" 0x20
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=100
+231
+EndModule
+
+Module = "Write 9-16 Bits(0xxxx)" 0x21
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=101
+232
+EndModule
+
+Module = "Write 17-24 Bits(0xxxx)" 0x22
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=102
+233
+EndModule
+
+Module = "Write 25-32 Bits(0xxxx)" 0x23
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=103
+234
+EndModule
+
+Module = "Write 33-40 Bits(0xxxx)" 0x24
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=104
+235
+EndModule
+
+Module = "Write 41-48 Bits(0xxxx)" 0x25
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=105
+236
+EndModule
+
+Module = "Write 49-56 Bits(0xxxx)" 0x26
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=106
+237
+EndModule
+
+Module = "Write 57-64 Bits(0xxxx)" 0x27
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=107
+238
+EndModule
+
+Module = "Write 65-72 Bits(0xxxx)" 0x28
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=108
+239
+EndModule
+
+Module = "Write 73-80 Bits(0xxxx)" 0x29
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=109
+240
+EndModule
+
+Module = "Write 81-88 Bits(0xxxx)" 0x2A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=110
+241
+EndModule
+
+Module = "Write 89-96 Bits(0xxxx)" 0x2B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=111
+242
+EndModule
+
+Module = "Write 97-104 Bits(0xxxx)" 0x2C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=112
+243
+EndModule
+
+Module = "Write 105-112 Bits(0xxxx)" 0x2D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=113
+244
+EndModule
+
+Module = "Write 113-120 Bits(0xxxx)" 0x2E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=114
+245
+EndModule
+
+Module = "Write 121-128 Bits(0xxxx)" 0x2F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=115
+246
+EndModule
+
+Module = "Write 129-136 Bits(0xxxx)" 0x80,0x10
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=116
+247
+EndModule
+
+Module = "Write 137-144 Bits(0xxxx)" 0x80,0x11
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=117
+248
+EndModule
+
+Module = "Write 145-152 Bits(0xxxx)" 0x80,0x12
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=118
+249
+EndModule
+
+Module = "Write 153-160 Bits(0xxxx)" 0x80,0x13
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=119
+250
+EndModule
+
+Module = "Write 161-168 Bits(0xxxx)" 0x80,0x14
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=120
+251
+EndModule
+
+Module = "Write 169-176 Bits(0xxxx)" 0x80,0x15
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=121
+252
+EndModule
+
+Module = "Write 177-184 Bits(0xxxx)" 0x80,0x16
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=122
+253
+EndModule
+
+Module = "Write 185-192 Bits(0xxxx)" 0x80,0x17
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=123
+254
+EndModule
+
+Module = "Write 193-200 Bits(0xxxx)" 0x80,0x18
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=124
+255
+EndModule
+
+Module = "Write 201-208 Bits(0xxxx)" 0x80,0x19
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=125
+256
+EndModule
+
+Module = "Write 209-216 Bits(0xxxx)" 0x80,0x1A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=126
+257
+EndModule
+
+Module = "Write 217-224 Bits(0xxxx)" 0x80,0x1B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=127
+258
+EndModule
+
+Module = "Write 225-232 Bits(0xxxx)" 0x80,0x1C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=128
+259
+EndModule
+
+Module = "Write 233-240 Bits(0xxxx)" 0x80,0x1D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=129
+260
+EndModule
+
+Module = "Write 241-248 Bits(0xxxx)" 0x80,0x1E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=130
+261
+EndModule
+
+Module = "Write 249-256 Bits(0xxxx)" 0x80,0x1F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x70,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=16
+Ext_User_Prm_Data_Ref(2)=8
+Ext_User_Prm_Data_Ref(1)=131
+262
+EndModule
+
+;06H:
+
+Module = "Write Single Word(4xxxx)" 0x60
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x60,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=15
+Ext_User_Prm_Data_Ref(2)=8
+263
+EndModule
+
+;10H:
+
+Module = "Write 1 Word(4xxxx)" 0x60
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+264
+EndModule
+
+Module = "Write 2 Words(4xxxx)" 0x61
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+265
+EndModule
+
+Module = "Write 3 Words(4xxxx)" 0x62
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+266
+EndModule
+
+Module = "Write 4 Words(4xxxx)" 0x63
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+267
+EndModule
+
+Module = "Write 5 Words(4xxxx)" 0x64
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+268
+EndModule
+
+Module = "Write 6 Words(4xxxx)" 0x65
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+269
+EndModule
+
+Module = "Write 7 Words(4xxxx)" 0x66
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+270
+EndModule
+
+Module = "Write 8 Words(4xxxx)" 0x67
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+271
+EndModule
+
+Module = "Write 9 Words(4xxxx)" 0x68
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+272
+EndModule
+
+Module = "Write 10 Words(4xxxx)" 0x69
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+273
+EndModule
+
+Module = "Write 11 Words(4xxxx)" 0x6A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+274
+EndModule
+
+Module = "Write 12 Words(4xxxx)" 0x6B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+275
+EndModule
+
+Module = "Write 13 Words(4xxxx)" 0x6C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+276
+EndModule
+
+Module = "Write 14 Words(4xxxx)" 0x6D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+277
+EndModule
+
+Module = "Write 15 Words(4xxxx)" 0x6E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+278
+EndModule
+
+Module = "Write 16 Words(4xxxx)" 0x6F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+279
+EndModule
+
+Module = "Write 17 Words(4xxxx)" 0x80,0x50
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+280
+EndModule
+
+Module = "Write 18 Words(4xxxx)" 0x80,0x51
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+281
+EndModule
+
+Module = "Write 19 Words(4xxxx)" 0x80,0x52
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+282
+EndModule
+
+Module = "Write 20 Words(4xxxx)" 0x80,0x53
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+283
+EndModule
+
+Module = "Write 21 Words(4xxxx)" 0x80,0x54
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+284
+EndModule
+
+Module = "Write 22 Words(4xxxx)" 0x80,0x55
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+285
+EndModule
+
+Module = "Write 23 Words(4xxxx)" 0x80,0x56
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+286
+EndModule
+
+Module = "Write 24 Words(4xxxx)" 0x80,0x57
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+287
+EndModule
+
+Module = "Write 25 Words(4xxxx)" 0x80,0x58
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+288
+EndModule
+
+Module = "Write 26 Words(4xxxx)" 0x80,0x59
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+289
+EndModule
+
+Module = "Write 27 Words(4xxxx)" 0x80,0x5A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+290
+EndModule
+
+Module = "Write 28 Words(4xxxx)" 0x80,0x5B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+291
+EndModule
+
+Module = "Write 29 Words(4xxxx)" 0x80,0x5C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+292
+EndModule
+
+Module = "Write 30 Words(4xxxx)" 0x80,0x5D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+293
+EndModule
+
+Module = "Write 31 Words(4xxxx)" 0x80,0x5E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+294
+EndModule
+
+Module = "Write 32 Words(4xxxx)" 0x80,0x5F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+295
+EndModule
+
+Module = "Write 33 Words(4xxxx)" 0x80,0x60
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+296
+EndModule
+
+Module = "Write 34 Words(4xxxx)" 0x80,0x61
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+297
+EndModule
+
+Module = "Write 35 Words(4xxxx)" 0x80,0x62
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+298
+EndModule
+
+Module = "Write 36 Words(4xxxx)" 0x80,0x63
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+299
+EndModule
+
+Module = "Write 37 Words(4xxxx)" 0x80,0x64
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+300
+EndModule
+
+Module = "Write 38 Words(4xxxx)" 0x80,0x65
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+301
+EndModule
+
+Module = "Write 39 Words(4xxxx)" 0x80,0x66
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+302
+EndModule
+
+Module = "Write 40 Words(4xxxx)" 0x80,0x67
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+303
+EndModule
+
+Module = "Write 41 Words(4xxxx)" 0x80,0x68
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+304
+EndModule
+
+Module = "Write 42 Words(4xxxx)" 0x80,0x69
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+305
+EndModule
+
+Module = "Write 43 Words(4xxxx)" 0x80,0x6A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+306
+EndModule
+
+Module = "Write 44 Words(4xxxx)" 0x80,0x6B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+307
+EndModule
+
+Module = "Write 45 Words(4xxxx)" 0x80,0x6C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+308
+EndModule
+
+Module = "Write 46 Words(4xxxx)" 0x80,0x6D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+309
+EndModule
+
+Module = "Write 47 Words(4xxxx)" 0x80,0x6E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+310
+EndModule
+
+Module = "Write 48 Words(4xxxx)" 0x80,0x6F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+311
+EndModule
+
+Module = "Write 49 Words(4xxxx)" 0x80,0x70
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+312
+EndModule
+
+Module = "Write 50 Words(4xxxx)" 0x80,0x71
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+313
+EndModule
+
+Module = "Write 51 Words(4xxxx)" 0x80,0x72
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+314
+EndModule
+
+Module = "Write 52 Words(4xxxx)" 0x80,0x73
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+315
+EndModule
+
+Module = "Write 53 Words(4xxxx)" 0x80,0x74
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+316
+EndModule
+
+Module = "Write 54 Words(4xxxx)" 0x80,0x75
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+317
+EndModule
+
+Module = "Write 55 Words(4xxxx)" 0x80,0x76
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+318
+EndModule
+
+Module = "Write 56 Words(4xxxx)" 0x80,0x77
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+319
+EndModule
+
+Module = "Write 57 Words(4xxxx)" 0x80,0x78
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+320
+EndModule
+
+Module = "Write 58 Words(4xxxx)" 0x80,0x79
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+321
+EndModule
+
+Module = "Write 59 Words(4xxxx)" 0x80,0x7A
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+322
+EndModule
+
+Module = "Write 60 Words(4xxxx)" 0x80,0x7B
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+323
+EndModule
+
+Module = "Write 61 Words(4xxxx)" 0x80,0x7C
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+324
+EndModule
+
+Module = "Write 62 Words(4xxxx)" 0x80,0x7D
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+325
+EndModule
+
+Module = "Write 63 Words(4xxxx)" 0x80,0x7E
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+326
+EndModule
+
+Module = "Write 64 Words(4xxxx)" 0x80,0x7F
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+327
+EndModule
+
+Module = "Write 2 Words(4xxxx) Consistent" 0xE1
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+328
+EndModule
+
+Module = "Write 3 Words(4xxxx) Consistent" 0xE2
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+329
+EndModule
+
+Module = "Write 4 Words(4xxxx) Consistent" 0xE3
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+330
+EndModule
+
+Module = "Write 5 Words(4xxxx) Consistent" 0xE4
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+331
+EndModule
+
+Module = "Write 6 Words(4xxxx) Consistent" 0xE5
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+332
+EndModule
+
+Module = "Write 7 Words(4xxxx) Consistent" 0xE6
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+333
+EndModule
+
+Module = "Write 8 Words(4xxxx) Consistent" 0xE7
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+334
+EndModule
+
+Module = "Write 9 Words(4xxxx) Consistent" 0xE8
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+335
+EndModule
+
+Module = "Write 10 Words(4xxxx) Consistent" 0xE9
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+336
+EndModule
+
+Module = "Write 11 Words(4xxxx) Consistent" 0xEA
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+337
+EndModule
+
+Module = "Write 12 Words(4xxxx) Consistent" 0xEB
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+338
+EndModule
+
+Module = "Write 13 Words(4xxxx) Consistent" 0xEC
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+339
+EndModule
+
+Module = "Write 14 Words(4xxxx) Consistent" 0xED
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+340
+EndModule
+
+Module = "Write 15 Words(4xxxx) Consistent" 0xEE
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+341
+EndModule
+
+Module = "Write 16 Words(4xxxx) Consistent" 0xEF
+Ext_Module_Prm_Data_Len=4
+Ext_User_Prm_Data_Const(0)= 0x01,0x80,0x00,0x00
+Ext_User_Prm_Data_Ref(0)=6
+Ext_User_Prm_Data_Ref(1)=17
+Ext_User_Prm_Data_Ref(2)=8
+342
+EndModule
+
+;Control:
+
+Module = "Control(8 Commands)"          0x81,0x00,0x00
+343
+EndModule
+
+Module = "Control(16 Commands)"         0x81,0x01,0x00
+344
+EndModule
+
+Module = "Control(24 Commands)"         0x81,0x02,0x00
+345
+EndModule
+
+Module = "Control(32 Commands)"         0x81,0x03,0x00
+346
+EndModule
+
+Module = "Control(40 Commands)"         0x81,0x04,0x00
+347
+EndModule
+
+Module = "Control(48 Commands)"         0x81,0x05,0x00
+348
+EndModule
+

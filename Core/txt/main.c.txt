@@ -244,7 +244,7 @@ int main(void)
 	print_vpc3_registers();
     printf("  - Slave Address: %d (0x%02X)\r\n", DP_ADDR, DP_ADDR);
     printf("  - Ident Number:  0x%04X\r\n", IDENT_NR);
-    printf("  - GSD File:      cafe.gsd\r\n");
+    printf("  - GSD File:      Profibus.gsd\r\n");
     printf("\r\n");
     
     DpAppl_ProfibusInit();
@@ -270,7 +270,7 @@ int main(void)
     printf("The PROFIBUS slave is now ready for master communication.\r\n");
     printf("\r\n");
     printf("================= PLC CONFIGURATION REQUIRED =================\r\n");
-    printf("1. Load GSD file:     cafe.gsd\r\n");
+    printf("1. Load GSD file:     Profibus.gsd\r\n");
     printf("2. Set slave address: %d (0x%02X)\r\n", DP_ADDR, DP_ADDR);
     printf("3. Connect PROFIBUS cable and activate communication\r\n");
     printf("================================================================\r\n");

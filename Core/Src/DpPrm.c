@@ -41,6 +41,8 @@
 #include <string.h>
 #include "platform.h"
 #include "DpAppl.h"
+#include <stdio.h>
+#include "debug_config.h"
 
 /*---------------------------------------------------------------------------*/
 /* function prototypes                                                       */
@@ -157,32 +159,42 @@ DP_ERROR_CODE DpPrm_ChkNewPrmData( MEM_UNSIGNED8_PTR pbPrmData, uint8_t bPrmLeng
 MEM_STRUC_PRM_PTR psToPrmData;
 DP_ERROR_CODE     eRetValue;
 
-   /* Imprimir la trama recibida ANTES de cualquier validación para depuración */
-   printf(" [DpPrm] -> Recibida trama de parametros. Longitud: %d bytes. Contenido: ", bPrmLength);
-   for(int i=0; i<bPrmLength; i++) { printf("0x%02X ", pbPrmData[i]); }
-   printf("\r\n");
+   /* Log de la trama recibida usando ISR-safe logging */
+   // NOTA: printf() eliminado para evitar bloqueo en ISR
+   // Los logs se manejan en el ISR principal
 
    DpPrm_Init();
 
    eRetValue = DP_OK;
 
+   // *** VALIDACIÓN MEJORADA: Aceptar tanto DP-V0 (7 bytes) como DP-V1 (19 bytes) ***
    if( ( bPrmLength == 0x13 ) || ( bPrmLength == 7 ) )
    {
       psToPrmData = ( MEM_STRUC_PRM_PTR )pbPrmData;
 
-      //DPV1 Statusbyte 1
-      pDpSystem->eDPV1 = ( psToPrmData->bDpv1Status1 & DPV1_STATUS_1_DPV1_ENABLE )? DPV1_MODE : DPV0_MODE;
+      // *** VALIDACIÓN CRÍTICA: Verificar IdentNumber (0xADAC) ***
+      uint16_t receivedIdent = (psToPrmData->bIdentHigh << 8) | psToPrmData->bIdentLow;
+      if (receivedIdent != 0xADAC) {
+          // IdentNumber no coincide - rechazar
+          eRetValue = DP_PRM_LEN_ERROR;  // Usar constante válida
+      } else {
+          // IdentNumber correcto - continuar validación
+          
+          //DPV1 Statusbyte 1
+          pDpSystem->eDPV1 = ( psToPrmData->bDpv1Status1 & DPV1_STATUS_1_DPV1_ENABLE )? DPV1_MODE : DPV0_MODE;
 
-      eRetValue = DpPrm_ChkDpv1StatusBytes( psToPrmData->bDpv1Status1, psToPrmData->bDpv1Status2, psToPrmData->bDpv1Status3 );
+          eRetValue = DpPrm_ChkDpv1StatusBytes( psToPrmData->bDpv1Status1, psToPrmData->bDpv1Status2, psToPrmData->bDpv1Status3 );
 
-      if( ( eRetValue == DP_OK ) && ( bPrmLength == 0x13 ) )
-      {
-         //user parameter data
-         eRetValue = DpPrm_ChkPrmCounterModulePrm( (MEM_STRUC_MODULE_PRM_BLOCK_PTR)&psToPrmData->bUserPrmData );
-      }//if( eRetValue == DP_OK )
+          if( ( eRetValue == DP_OK ) && ( bPrmLength == 0x13 ) )
+          {
+             //user parameter data
+             eRetValue = DpPrm_ChkPrmCounterModulePrm( (MEM_STRUC_MODULE_PRM_BLOCK_PTR)&psToPrmData->bUserPrmData );
+          }//if( eRetValue == DP_OK )
+      }
    }//if( bPrmLength == 0x13 )
    else
    {
+      // *** LONGITUD INCORRECTA: Solo aceptar 7 bytes (DP-V0) o 19 bytes (DP-V1) ***
       eRetValue = DP_PRM_LEN_ERROR;
    }//else of if( bPrmLength == 0x13 )
 

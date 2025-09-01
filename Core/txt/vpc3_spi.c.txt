@@ -1,13 +1,12 @@
-#include <string.h>
-#include <stdio.h>
 #include "platform.h"
 #include "dp_inc.h"
 #include "main.h"
-#include "debug_config.h"  /* Para controlar printf() en el ISR */
 
 // --- Declaraciones de funciones de logging ---
 static void VPC3_LogMemoryAccess(VPC3_ADR address, const char* operation, const char* function_name);
 static void VPC3_LogDiagnosticAccess(VPC3_ADR address, const char* operation);
+#include <string.h>
+#include <stdio.h>
 #include "stm32f4xx_hal.h"
 
 /* External SPI handle declaration */

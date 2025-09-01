@@ -1,0 +1,817 @@
+See discussions, stats, and author profiles for this publication at: https://www.researchgate.net/publication/268507901
+
+Programación de la trama de PROFIBUS DP utilizando RS485, en un micro
+controlador Microchip
+Conference Paper · May 2013
+DOI: 10.13140/2.1.4587.4883
+
+CITATIONS
+
+READS
+
+2
+
+10,256
+
+3 authors, including:
+Alfredo De la Barrera Gonzalez
+
+Omar Jimenez-Ramirez
+
+National Polytechnic Institute
+
+National Polytechnic Institute
+
+14 PUBLICATIONS 9 CITATIONS
+
+37 PUBLICATIONS 240 CITATIONS
+
+SEE PROFILE
+
+All content following this page was uploaded by Alfredo De la Barrera Gonzalez on 20 November 2014.
+The user has requested enhancement of the downloaded file.
+
+SEE PROFILE
+
+CIIA 2013
+Congreso Internacional de Informática Aplicada,
+2 al 4 de mayo del 2013, Misantla Veracruz, México
+________________________________________________________________________________
+
+Programación de la trama de PROFIBUS DP utilizando RS485,
+en un micro controlador Microchip.
+A. De la Barrera González, O. Jiménez Ramírez, J.C. Sánchez García.
+Resumen: En este artículo, se muestra el frame del
+protocolo de comunicación industrial PROFIBUS DP,
+su programación utilizando micro controladores
+Microchip, la parte que envía el maestro a los esclavos
+y si es correcta la información lo almacena en la base
+de datos de esclavos; por otro lado la programación de
+respuesta de los esclavos que le envían al maestro la
+información que se les ha requerido, con diferentes
+direcciones dentro de la red digital de comunicación
+para control. En este trabajo se ha utilizado el estándar
+de interface RS485, como medio físico de transmisión
+de señales eléctricas.
+Palabras Clave: PROFIBUS, frame, trama.
+Abstract: In this paper, shows the frame of industrial
+communication PROFIBUS Protocol, programming
+using Microchip micro controllers, the part that the
+master sends to the slaves and if the information is
+correct, stores it in the database of slaves; on the other
+hand programming of slaves that sent to the master the
+information that is required them, with different
+addresses within the digital communication network
+for control. In this paper has been used standard
+interface RS485, as physical medium for transmission
+of electrical signals.
+Keywords: PROFIBUS, frame.
+Introducción: Los sistemas de control distribuido
+emplean extensivamente las redes de sistemas de
+comunicación digital en forma serial, para medición de
+variables físicas, estado de sensores, así como el
+control de actuadores; control que puede ser ejecutado
+por uno o varios sistemas de control central llamados
+maestros. En este sentido, el estándar PROFIBUS,
+________________________________________________________
+
+
+Alfredo De la Barrera González alfredogz1@hotmail.com, Omar
+Jiménez Ramírez cuauhpitzote@hotmail.com, Juan Carlos Sánchez
+García jcsanchez@ipn.mx. Instituto Politécnico Nacional, ESIME
+Culhuacán Av. Santa Ana No 1000, Col San Francisco Culhuacán,
+México D.F.
+Se agradece al IPN, al ICYTDF convenio 244-2010 y al CONACYT,
+las facilidades otorgadas para la elaboración de este trabajo.
+
+tiene un gran auge como protocolo de comunicación
+implementado con la interface de medio físico el
+estándar RS485, este artículo muestra la programación
+del frame de PROFIBUS para el maestro así como de
+las estaciones de esclavo, siendo un total de hasta 32
+identificadores de red diferentes por segmento,
+pudiendo ser hasta 5 segmentos formando una red, con
+hasta 127 direcciones diferentes, los que pueden ser
+maestros, esclavos, repetidores o dispositivos de
+comunicación con otros tipos de interfaces. Se ha
+utilizado el compilador PIC-C y el simulador ISIS de
+Proteus, para hacer la depuración y prueba, para
+posteriormente armarlos físicamente.
+Antecedentes:
+Las
+comunicaciones
+digitales
+industriales son por lo general de forma serial, por la
+economía del cableado, conocidos como buses de
+campo; uno de los protocolos para estas redes
+industriales que se han desarrollado es PROFIBUS, sin
+duda uno de los más ampliamente utilizados para fines
+de medición y control en instalaciones industriales
+amplias, para el control de procesos y de manufactura.
+Sistemas de tiempo real (STR): Un sistema de
+tiempo real debe cumplir tres condiciones básicas:
+1.- Un proceso físico que interactúa con el mundo real,
+estado de sensores o mediciones de entrada;
+2.- En base al estado del proceso físico emite las
+respuestas más acertadas, en base a un patrón;
+3.- Cumple con restricciones de tiempo en el que se
+debe emitir la respuesta.
+Por lo que un STR, es aquel que interactúa activamente
+con un entorno de dinámica conocida, en relación con
+sus entradas, salidas y restricciones temporales, para
+proporcionar un correcto funcionamiento de acuerdo a
+la estabilidad, controlabilidad y alcanzabilidad del
+sistema de que se trate.
+Una red de campo para automatización y control de
+procesos, es un STR, ya que debe emitir respuestas
+correctas en base a un programa previamente
+
+1
+ARTÍCULO NÜMERO 11 DEL CIIA 2013
+
+CIIA 2013
+Congreso Internacional de Informática Aplicada,
+2 al 4 de mayo del 2013, Misantla Veracruz, México
+________________________________________________________________________________
+establecido en un tiempo acorde al proceso de que se
+trate.
+Las redes industriales requieren de un medio físico
+para el intercambio de información y las respuestas de
+control, lo que se hace por cables de cobre, fibra óptica
+o Radio Frecuencia ()R.F.)., en este artículo se ha
+utilizado la interface de cable de cobre con el estándar
+RS485.
+Interface RS485: En este caso se ha seleccionado el
+estándar RS485, como medio físico por el cual se
+emiten y reciben las señales de datos, emitido por la
+EIA/TIA, con velocidades desde 9,600 bps (bits por
+segundo) hasta 10Mbps, utilizando en nuestro caso
+93,750 bps (bauds). Sus características principales son:
+Transmisión síncrona NRZ, emplea una topología de
+red de bus con manejo diferencial balanceado, que
+requiere de terminadores en los dispositivos
+conectados en los extremos del bus, para asegurar
+acoplamiento y desacoplamiento de estaciones durante
+operación normal, sin afectar el resto, los terminadores
+son resistivos de 104Ω teóricos en los extremos,
+utilizando el valor comercial que se ha instalado con
+éxito de 120Ω cada uno. En esta red se utiliza cable
+apantallado de par trenzado calibre 24 AWG nivel 5,
+se pueden manejar 32 estaciones por segmento y un
+máximo de 127 estaciones por red, contando maestros,
+repetidores y esclavos, utiliza conector tipo DB9 que
+opcionalmente puede ser alimentado con +24V para
+alimentación de los dispositivos con corriente máxima
+de 100mA, la distancia máxima de cobertura
+dependiendo de la velocidad de transferencia, tal
+como se muestra en la figura 1, pudiendo extender la
+distancia por la utilización de repetidores, configurados
+a la misma o diferente velocidad.
+En una red RS485 se deben observar las siguientes
+restricciones:
+1.- Hay únicamente un elemento activo (fuente de
+señal y alimentación) en el bus de campo, situado en
+un área clasificada como “sin riesgo”;
+b) Los otros equipos en la zona se clasifican como
+pasivos (esclavos, repetidores, etc.);
+c) Cada equipo de campo debe tener un consumo
+mínimo de 100mA, si es alimentado por el bus;
+d) En áreas exteriores, la longitud máxima del bus
+debe ser de 1000 m;
+
+e) Las conexiones del bus principal a los dispositivos
+deben ser inferiores a 30 metros;
+f) Utilización de terminadores activos o pasivos en el
+bus principal, al principio y al final del cable;
+
+Figura 1.- Velocidad de la señal contra longitud de cable para
+interfaces de cable de par torcido usando alambre calibre 24 AWG,
+EIA.
+
+g) Los cables de longitud menor a 1000 metros, deben
+tener los siguientes parámetros:
+
+Que corresponden al cable tipo A de 0.8 mm² (AWG
+calibre 18)
+h) cada transmisor debe tener:
+-voltaje limitado: Vo< Vi;
+-corriente limitada: Io<Ii;
+-energía limitada: Po < Pi;
+i) Los terminadores del bus deben tener los siguientes
+parámetros:
+-R = 90 a 110 Ω;
+-C = 0 a 2,2 uF.
+Conectando R y C en serie y estos a su vez en paralelo
+con el ultimo dispositivo. El capacitor se seleccionara
+de tal forma que permita el paso de la frecuencia de
+transmisión, en este caso para frecuencia de 93,750
+Bauds.
+
+2
+ARTÍCULO NÜMERO 11 DEL CIIA 2013
+
+CIIA 2013
+Congreso Internacional de Informática Aplicada,
+2 al 4 de mayo del 2013, Misantla Veracruz, México
+________________________________________________________________________________
+Las principales características eléctricas del estándar
+recomendado RS485 se muestran en la tabla 1.
+Tabla 1.- Principales características del RS485.
+
+PROFIBUS (Process Field Bus). Este protocolo se ha
+estandarizado por la EIA/TIA, como EN 50170, EN
+50254 y DIN 19245, donde se cubren las diferencias
+de las variantes como PROFIBUS DP, el cual se ha
+desarrollado
+para
+procesos
+distribuidos
+en
+automatización de maquinaria y de procesos de
+manufactura en fábricas, es eficiente, rápido y
+económico; PROFIBUS FMS para automatización de
+propósito
+general;
+PROFIBUS
+PA,
+para
+automatización de procesos en ambientes especiales;
+pudiendo tener opcionalmente, alimentación a través
+del bus; es un protocolo abierto, e independiente de la
+red de proveedores, cuya interfaz entre ellos permite
+una amplia aplicación en procesos y fabricación.
+Este protocolo y sus variantes, puede comunicar con
+esclavos y configuraciones multi maestros; se utiliza
+con diferentes interfaces o medios físicos, tiene un
+ciclo de bus menor de 10mS, la gran mayoría de
+aplicaciones de control para bus de campo europeas,
+están basadas en este protocolo. Los dispositivos que
+se pueden comunicar son controladores lógicos
+
+programables
+(PLC´s),
+sensores,
+actuadores,
+manejadores para motores, válvulas, dispositivos para
+red, herramientas para desarrollo. Los productos deben
+ser certificados para asegurar interoperabilidad, lo que
+se hace en laboratorios específicos.
+PROFIBUS permite una integración completa y
+uniforme entre la automatización y los niveles de
+control de proceso en áreas de planta. Esto significa
+que se puede lograr la integración de todas las áreas de
+la planta con un solo protocolo de comunicación con
+las diversas variantes. Puede utilizar cuatro medios
+físicos principales; para DP se utiliza RS422, RS485,
+Ethernet y Fibra Óptica; para PA se utiliza RS485 e
+IEC 1158-2; para FMS se usa RS485 y Ethernet.
+PROFIBUS DP. Esta es la solución de alta velocidad
+del PROFIBUS, funciona principalmente a 31,250,
+93,750, 281,250, 500,000 y 843,750 Bauds. Su
+desarrollo fue perfeccionado principalmente para
+comunicación entre los sistemas de automatización con
+los equipos o dispositivos descentralizados que hacen
+énfasis en el acceso a dispositivos distribuidos. Es
+aplicable en los sistemas de control, donde se destaca
+el acceso a los dispositivos distribuidos de I/O. Es
+utilizado en sustitución a los sistemas convencionales
+conocidos como 4 a 20 mA, HART o en transmisiones
+de 24 Volts, en medio físico RS-485 o fibra óptica. Se
+utiliza ampliamente en controles con tiempo crítico.
+Actualmente, 90% de las aplicaciones relativas a
+esclavos PROFIBUS utilizan el PROFIBUS DP. Esta
+variedad está disponible en tres versiones: DP-V0
+(1993), DP-V1 (1997) e DP-V2 (2002). Cada versión
+tuvo su origen según el adelanto de la tecnología y la
+búsqueda de nuevas aplicaciones a lo largo del tiempo.
+SYN
+
+SD
+
+LE
+
+LEr
+
+SD
+
+DA
+
+SA
+
+[0-2]
+
+[3]
+
+[4]
+
+[5]
+
+[6]
+
+[7]
+
+[8]
+
+3B
+
+1B
+
+1B
+
+1B
+
+1B
+
+1B
+
+1B
+
+AAH
+
+68H
+
+FC
+[9]
+1B
+
+DSAP
+[10]
+1B
+
+FCS
+[24-25]
+2B
+
+ED
+[26]
+1B
+16H
+
+68H
+SSAP
+[11]
+1B
+
+DU
+[12-23]
+0-244B
+
+Figura 2- Trama de PROFIBUS DP.
+
+3
+ARTÍCULO NÜMERO 11 DEL CIIA 2013
+
+CIIA 2013
+Congreso Internacional de Informática Aplicada,
+2 al 4 de mayo del 2013, Misantla Veracruz, México
+________________________________________________________________________________
+La trama o frame del protocolo es el orden o secuencia
+de los datos del mensaje que deben enviarse y
+recibirse; en este documento se desarrolla la
+programación de PROFIBUS DP, la figura 2 muestra
+su trama. El significado de las abreviaturas de cada
+campo son las siguientes:
+SYN Sincronía 0, campos 0-2, tiempo de 33 bits.
+SD (Start Delimiter) delimitador inicial “:”, 0x68,
+campos 3 y 6.
+LE (Frame LEngth) longitud de trama, numero de
+bytes, campo 4.
+LEr (repetition of Frame LEngth) Repetición de la
+longitud de trama, campo 5.
+DA (Destination Address) dirección de destino del
+mensaje, campo 7.
+SA (Source Address) dirección de origen o fuente del
+mensaje, campo 8.
+FC (Function Code) código de función, campo 9.
+DSAP (Destination Service Access Point) punto de
+acceso para el servicio de destino, campo 10.
+SSAP (Source Service Access Point) punto de acceso
+para el servicio de origen, campo 11.
+DU (Data Unit) block de datos útiles del dispositivo,
+campos 12 al 23.
+FCS (Frame Check Sequence) secuencia de
+comprobación de trama, CRC de 16 bits, campos 24 y
+25.
+ED (End Delimiter) delimitador final, campo 26.
+Para este artículo se han omitido los campos DSAP y
+SSAP, por lo que el frame que se programa es el que se
+muestra en la figura 3, esto es permitido en los casos
+en que no se instalan puntos de acceso para una red
+menor de 127 dispositivos, como es nuestro caso.
+SYN
+[0-2]
+1B
+AAH
+
+SD
+[3]
+1B
+68H
+
+LE
+[4]
+1B
+
+FC
+[9]
+1B
+
+DU
+[10-21]
+0-244B
+
+LEr
+[5]
+1B
+
+SD
+[6]
+1B
+68H
+
+DA
+[7]
+1B
+
+FCS
+[22-23]
+2B
+
+ED
+[24]
+1B
+16H
+
+SA
+[8]
+1B
+
+Figura 3- Trama de PROFIBUS DP, que se programa en este
+documento.
+
+En el caso de las tramas enviadas por el maestro, el
+campo de dirección de destino (DA) o número de
+esclavo indica la dirección del destinatario de esta
+
+trama. Permite direccionar hasta 127 esclavos, con las
+direcciones de 1 a 127. La dirección 0x00 es para los
+mensajes de Broadcast, por lo que el primer dispositivo
+en la red comienza con la dirección 1, que
+normalmente se le asigna al servidor, así como también
+se le asigna el número 2. En el caso de las tramas
+enviadas por los esclavos, este byte sirve para indicar
+al maestro a quién pertenece la respuesta; es decir,
+cada vez que un esclavo responde, sitúa su propia
+dirección en el byte de dirección origen (SA) lo que
+permite saber al maestro a que equipo o dispositivo
+corresponde cada respuesta. Las tramas broadcast, no
+tienen respuesta asociada, sirven para sincronización
+de relojes de inicio de todos los esclavos que manejan
+reloj de tiempo real.
+Cada sistema DP puede contener tres tipos diferentes
+de dispositivos:
+1.- Maestro DP CLASE 1 (DPM1). Es un controlador
+principal que intercambia informaciones cíclicamente
+con los esclavos. Los controladores lógicos
+programables (PLC’s) son ejemplos de estos
+dispositivos.
+2.- Maestro DP CLASE 2 (DPM2). Son estaciones de
+ingeniería utilizadas para configuración, monitoreo o
+sistemas de supervisión como por ejemplo, Simatic
+PDM, Commuwin II, Pactware, etc.
+3.- Esclavo. Un esclavo DP es un dispositivo
+periférico, tal como: dispositivos de I/O, actuadores
+eléctricos, neumáticos o hidráulicos, válvulas,
+transductores, sensores, etc. Existen aún dispositivos
+con una sola entrada, una sola salida o una
+combinación de entradas y salidas.
+La cantidad de informaciones de entrada y salida (I/O)
+depende del tipo de dispositivo, permitiéndose hasta
+244 bytes de entrada y 244 bytes de salida, en este
+artículo se hace la programación para 12 bytes para
+cada campo de la unidad de datos, de acuerdo al
+código de función (FC), que se ha limitado a 4.
+Desarrollo.- Programación del maestro. Se requiere
+que el micro controlador que funcione en el dispositivo
+designado como maestro contenga una UART, ya que
+esta sirve para la transmisión de datos por la interface
+RS485, para este caso se pueden seleccionar los
+PIC18F4550 o PIC18F4685, por mencionar algunos
+ejemplos.
+
+4
+ARTÍCULO NÜMERO 11 DEL CIIA 2013
+
+CIIA 2013
+Congreso Internacional de Informática Aplicada,
+2 al 4 de mayo del 2013, Misantla Veracruz, México
+________________________________________________________________________________
+Como se pretenden manejar 30 esclavos, cada uno con
+4 códigos de función y datos del dispositivo de 12
+bytes, se requiere que la memoria RAM donde se
+almacenarán dichos datos sea de al menos 2KB; los
+códigos de función especifican si el dato es de lectura
+de un dato en el esclavo o de escritura de datos al
+esclavo; el campo de datos del dispositivo a su vez se
+divide en 4 bytes de datos binarios y 2 datos en
+hexadecimal de variables analógicas en formato
+flotante, ambos de entrada o salida, el mapa de
+memoria de datos se muestra en la figura 4, que son los
+datos que estarán almacenados en la memoria del
+maestro. La dirección destino (DA) corresponde al
+número de esclavo, este mapa de memoria se repite
+para cada uno de los esclavos.
+La secuencia en que se deben transmitir los datos de la
+trama de PROFIBUS DP, se muestran en la figura 5,
+como ya se mencionó, en este artículo los campos
+DSAP y SSAP, se han omitido.
+
+tiempo equivalente a 1.2 veces la duración de la
+transmisión del frame.
+
+Figura 5.- Principio de la secuencia para la transferencia de datos de
+PROFIBUS DP.
+
+La recepción de datos de cada esclavo se hace
+permitiendo la interrupción de la UART, la que captura
+el total del frame de respuesta, como se muestra en la
+figura 7.
+
+Figura 4.- Mapa de datos de cada esclavo, que contiene el maestro.
+
+El programa para el maestro sigue la secuencia que se
+muestra en el diagrama de flujo de la figura 6, la
+inicialización configura las variables y funciones del
+PIC, a cada esclavo se le envía el frame de
+interrogación de estado, escritura de datos o petición
+de datos, habilitando la interrupción de recepción de
+datos de la UART, si el esclavo no contesta se le re
+envía el frame, si después de 2 intentos no responde, se
+pone a 0 el bit más significativo del campo FC que
+corresponde al bit STATUS,
+se deshabilita
+temporalmente ese FC y si los 4 campos de STATUS
+de ese esclavo son 0, se deshabilita el esclavo
+poniendo el bit de STATUS en 0, si se obtiene
+respuesta se pone el bit de STATUS en 1.
+Este ciclo se repite para el número total de esclavos,
+esta operación se hace de forma continua, durante 200
+ocasiones interrogando solamente a los esclavos que
+han respondido; después de esta cuenta se vuelve a
+interrogar al total de los esclavos para saber si siguen
+conectados o se han adicionado dispositivos. Para
+conocer la respuesta de cada esclavo, se habilita
+temporalmente la interrupción del UART, por un
+
+Figura 7.- Diagrama de flujo de la interrupción en el maestro, que
+recibe la respuesta del esclavo.
+
+5
+ARTÍCULO NÜMERO 11 DEL CIIA 2013
+
+CIIA 2013
+Congreso Internacional de Informática Aplicada,
+2 al 4 de mayo del 2013, Misantla Veracruz, México
+________________________________________________________________________________
+Si se recibe información como respuesta, se checa el
+CRC, si es correcta se almacena en la variable de
+número de esclavo identificado y se habilita el bit de
+STATUS.
+Programación de un esclavo.
+Cada esclavo tiene una dirección única dentro de la
+red, cada uno con 4 códigos de función (FC) los que
+se almacenan en una parte de memoria no volátil ni
+borrable, ya que son los códigos que aceptará del
+maestro, los códigos de función especifican si el dato
+es de lectura de un dato en el esclavo o de escritura de
+datos al esclavo; y datos del dispositivo de 12 bytes
+por cada FC, que se almacenan en una memoria tipo
+RAM, ya que pueden variar en el curso del proceso a
+controlar, requiriéndose solamente de 48 bytes de
+RAM, este campo de datos del dispositivo a su vez se
+divide en 4 bytes de datos binarios y 2 datos en
+hexadecimal de variables analógicas en formato
+flotante, ambos de entrada o salida, el mapa de
+memoria de datos se muestra en la figura 8, que son
+los datos que se recibieron o se enviaran al maestro.
+
+Figura 8.- Mapa de datos de cada esclavo, que serán enviados al
+maestro.
+
+Figura 6.- Diagrama de flujo de transmisión del frame del maestro.
+
+La programación consiste de una función principal y
+una función de interrupción que recibe la petición del
+maestro; la función principal realiza su proceso
+distribuido de forma continua de tal forma que siempre
+tiene su información disponible, prepara el frame que
+será enviado al maestro; la función de interrupción del
+UART está siempre habilitada y solo se deshabilita
+durante la transmisión del frame del esclavo al
+maestro.
+La figura 9 muestra el diagrama de flujo de la función
+principal de un esclavo, inicialmente se configuran las
+características del microcontrolador, variables del
+proceso propio y de uso para PROFIBUS DP, así como
+el uso de la UART.
+
+6
+ARTÍCULO NÜMERO 11 DEL CIIA 2013
+
+CIIA 2013
+Congreso Internacional de Informática Aplicada,
+2 al 4 de mayo del 2013, Misantla Veracruz, México
+________________________________________________________________________________
+
+Figura 9.- Diagrama de flujo de actividad del esclavo.
+
+La figura 10 muestra el diagrama de flujo de
+interrupción dela UART, la que captura el frame que
+envió el servidor, checa la dirección de destino que
+envió el maestro, si es la dirección del esclavo,
+entonces checa el CRC del block de datos, y si son
+correctas habilita en la función principal el segmento
+de transmisión de respuesta, para que la envíe al
+maestro.
+Como se mencionó previamente, se utiliza la interface
+RS485, en la figura 10 se muestra el diagrama del
+circuito electrónico que se ha utilizado para hacer las
+pruebas de funcionamiento del maestro.
+El circuito electrónico que se ha utilizado para el
+esclavo se muestra en la figura 11, así como una
+conexión para monitoreo de flujo de datos por el bus
+de información del RS485.
+
+Figura 10.- Diagrama de flujo para la función de interrupción del
+UART, dentro del esclavo.
+
+El diagrama electrónico mostrado en la figura 11, es la
+implementación del hardware que funciona como
+maestro, para manejar el bus de interface se ha
+utilizado un circuito MAX487, el que en su entrada
+recibe las señales provenientes del micro controlador
+que son EnTX que es la que habilita la transmisión de
+datos hacia el bus; la señal TX, que son los datos en
+formato serial que enviará el microcontrolador hacia
+los esclavo; y la señal RX, que es la señal que se recibe
+del bus de interface y se envía al micro controlador
+hacia la USART interna. El conector J1, es del tipo
+DB9, por el que se conecta al bus de RS-485, así como
+la fuente de alimentación de +24 volts de CD, además
+del terminador o acoplador de impedancia del bus.
+La figura 12 muestra el circuito electrónico que se ha
+empleado para que funcione como dispositivo esclavo,
+se han implementado dos señales analógicas con
+7
+
+ARTÍCULO NÜMERO 11 DEL CIIA 2013
+
+CIIA 2013
+Congreso Internacional de Informática Aplicada,
+2 al 4 de mayo del 2013, Misantla Veracruz, México
+________________________________________________________________________________
+potenciómetros que simulan entradas analógicas, cuyos
+valores se envían al maestro solamente bajo
+requerimiento.
+
+programa pueda configurar cada uno de los
+dispositivos conectados al bus, así como también se
+pueda monitorear y almacenar la actividad de cada
+uno de los dispositivos, en un archivo o archivos que
+puedan servir con fines estadísticos y de operación de
+los dispositivos conectados al bus.
+
+Figura 12.- Diagrama electrónico del esclavo
+
+Figura 11.- Diagrama electrónico de maestro.
+
+Los micro interruptores DSW1, configuran la dirección
+del esclavo con la única que responderá al maestro.
+El bus RS-485, está formado por las terminales A+ y
+B-, por el que se conectan los 30 dispositivos de la red.
+Con el circuito U4 se ha implementado una conexión a
+una computadora personal que puede monitorear la
+actividad del bus, conectado al puerto serial tipo
+RS232C.
+Trabajo futuro.- Consiste en el diseño de un
+programa escrito en lenguaje de alto nivel como Visual
+Basic, Visual C, o alguno similar, instalado en una
+computadora personal con puerto RS232, para que este
+
+Conclusiones: En el presente trabajo se ha
+desarrollado un algoritmo que al ser programado en un
+microcontrolador, permite la creación de un maestro
+de PROFIBUS DP, cumpliendo las normas
+especificadas; los resultados del funcionamiento se
+pueden monitorear utilizando una computadora con
+puerto serial tipo RS232, por donde se observa la
+totalidad de la actividad del bus RS485, tanto del
+maestro como de todos los esclavos conectados.
+También se muestra el algoritmo, y circuito de un
+esclavo con 2 entradas analógicas, el cual sirve como
+base para diseñar cualquier tipo de esclavo que se
+necesite conectar al maestro para que proporcione
+información del estado del proceso distribuido. Al
+hacer pruebas de funcionamiento del protocolo con la
+interface, se ha encontrado el correcto funcionamiento
+8
+
+ARTÍCULO NÜMERO 11 DEL CIIA 2013
+
+CIIA 2013
+Congreso Internacional de Informática Aplicada,
+2 al 4 de mayo del 2013, Misantla Veracruz, México
+________________________________________________________________________________
+que se diseñó y que se esperaba obtener. Con este
+desarrollo es posible que se diseñen un gran número de
+aplicaciones, con la finalidad de que se mejore el
+desarrollo tecnológico e industrial así como aumentar
+el número de empleos del país.
+Referencias
+[1] Medel, Guevara, Cruz, Temas selectos de
+Sistemas de Tiempo Real, México D.F:
+Instituto Politécnico Nacional, 2007.
+[2] E. García, Compilador C CCS y Simulador
+Proteus para microcontroladores PIC, México
+D.F.: Alfaomega Grupo Editor, 2008
+[3] G. Trojeiro, Proteus Simulación de Circuitos
+electrónicos y microcontroladores a través de
+ejemplos, España: Grupo Editorial Marcombo
+S.A., 2009.
+[4] TRAN DuyKhanh, Pavel PISA, PetrSmolik,
+An open implementation on Profibus DP
+www.pbmaster.orgEnero del 2013.
+[5] Stone J. Greenwald M. Patridge Craig,
+Performance checksums CRCs over real data,
+http://dsg.stanford.edu
+[6] J. Domingo Peña, Comunicaciones en el
+entorno industrial, Ed. UOC Aragon 2003,
+http://books.google.com.mx/books?id=IAAK
+4pQpaK0C&pg=PA147&lpg=PA147&dq=dis
+tancia+hamming+HD%3D4&source=bl&ots=
+NBEyqgCIke&sig=Wpw5YuoFnhOs82Zg21
+vWKTbnq4s&hl=es419&sa=X&ei=dyouUbuYOseSrQG4toGAC
+g&ved=0CEAQ6AEwAw#v=onepage&q=dis
+tancia%20hamming%20HD%3D4&f=false
+
+Currículo corto de los autores
+Alfredo De la Barrera González. Ingeniero en
+Comunicaciones y Electrónica egresado del IPN,
+estudiante
+de
+Maestría
+en
+Ingeniería
+en
+Microelectrónica en la ESIME del IPN. Investigador
+en la ESIME del IPN, para diseño de prototipos para el
+Reciclado de Aguas Residuales con apoyo del
+ICyTDF. Titular de varias patentes registradas en el
+IMPI. Sus áreas de interés son en Sistemas de control
+analógico, digital e instrumentación utilizando micro
+controladores, energías Alternativas y tecnologías
+sustentables.
+Omar Jiménez Ramírez. Doctor en Ciencias por el
+Instituto Politécnico Nacional, Profesor de tiempo
+completo, Sección de Estudios de Posgrado e
+Investigación,
+ESIME
+Culhuacán,
+área
+de
+investigación en sistemas de control lineal y digital en
+sistemas con retardo
+Juan Carlos Sánchez García, Doctor en Ciencias por
+la Universidad Autónoma Metropolitana e Ingeniero
+en Comunicaciones y Electrónica. Profesor Titular C,
+Tiempo Completo, Sección de Estudios de Posgrado e
+Investigación, ESIME Culhuacán, Investigador
+Nacional Nivel 1. Línea de Investigación: Diseño
+microelectrónico (VLSI) para las comunicaciones,
+tecnología de las comunicaciones y procesamiento de
+señales
+
+[7] http://uhu.es/antonio.barragan/descargas/aai/P
+rofibus_Domingo_Diez_Barrero.pdf
+[8] http://www.profibus.com
+[9] DS39761B, PIC18F4682/4685 Data Sheet,
+Microchip
+technology
+Inc.
+2007,
+http://www.microchip.com
+[10] DS41291F, PIC16F886/887, Data
+Microchip
+technology
+Inc.
+http://www.microchip.com
+
+Sheet,
+2009,
+
+9
+ARTÍCULO NÜMERO 11 DEL CIIA 2013
+
+View publication stats
+
+
