@@ -61,7 +61,9 @@ Max_Diag_Data_Len    = 6
 ; y evitar que el maestro intente usar funciones de DPV1 no implementadas.
 ; Max_User_Prm_Data_Len = 3
 ; Ext_User_Prm_Data_Const(0) = 0x00,0x00,0x00
-Max_User_Prm_Data_Len = 0
+; Se habilita User Prm Data para configuracion modular (compatible con DPV0).
+Max_User_Prm_Data_Len = 20 ; Coincide con Max_Module
+;Ext_User_Prm_Data_Const(0) = 0x00
 
 ;==================== DIAGNÓSTICO ========================
 Slave_Family        = 1

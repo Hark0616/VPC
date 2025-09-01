@@ -154,60 +154,49 @@ DP_ERROR_CODE bRetValue;
  * @return DP_OK - The transferred parameterization is OK.
  * @return DP_NOK - The transferred parameterization isn't OK.
  */
-DP_ERROR_CODE DpPrm_ChkNewPrmData( MEM_UNSIGNED8_PTR pbPrmData, uint8_t bPrmLength )
+DP_ERROR_CODE DpPrm_ChkNewPrmData(MEM_UNSIGNED8_PTR pbPrmData, uint8_t bPrmLength)
 {
-MEM_STRUC_PRM_PTR psToPrmData;
-DP_ERROR_CODE     eRetValue;
+    MEM_STRUC_PRM_PTR psToPrmData;
+    DP_ERROR_CODE     eRetValue = DP_OK;
 
-   /* Log de la trama recibida usando ISR-safe logging */
-   // NOTA: printf() eliminado para evitar bloqueo en ISR
-   // Los logs se manejan en el ISR principal
+    DpPrm_Init();
 
-   DpPrm_Init();
+    /* 1. Validación de Longitud Mínima */
+    if (bPrmLength < 7)
+    {
+        return DpDiag_SetPrmNotOk(DP_PRM_LEN_ERROR);
+    }
 
-   eRetValue = DP_OK;
+    psToPrmData = (MEM_STRUC_PRM_PTR)pbPrmData;
 
-   // *** VALIDACIÓN MEJORADA: Aceptar tanto DP-V0 (7 bytes) como DP-V1 (19 bytes) ***
-   if( ( bPrmLength == 0x13 ) || ( bPrmLength == 7 ) )
-   {
-      psToPrmData = ( MEM_STRUC_PRM_PTR )pbPrmData;
+    /* 2. Validación del Ident_Number */
+    uint16_t receivedIdent = (psToPrmData->bIdentHigh << 8) | psToPrmData->bIdentLow;
+    uint16_t expectedIdent = 0xADAC;  // IdentNumber esperado del GSD
+    if (receivedIdent != expectedIdent)
+    {
+        return DpDiag_SetPrmNotOk(DP_PRM_LEN_ERROR);
+    }
 
-      // *** VALIDACIÓN CRÍTICA: Verificar IdentNumber (0xADAC) ***
-      uint16_t receivedIdent = (psToPrmData->bIdentHigh << 8) | psToPrmData->bIdentLow;
-      if (receivedIdent != 0xADAC) {
-          // IdentNumber no coincide - rechazar
-          eRetValue = DP_PRM_LEN_ERROR;  // Usar constante válida
-      } else {
-          // IdentNumber correcto - continuar validación
-          
-          //DPV1 Statusbyte 1
-          pDpSystem->eDPV1 = ( psToPrmData->bDpv1Status1 & DPV1_STATUS_1_DPV1_ENABLE )? DPV1_MODE : DPV0_MODE;
+    /* 3. Validación de los bytes de estado DP-V1 */
+    pDpSystem->eDPV1 = (psToPrmData->bDpv1Status1 & DPV1_STATUS_1_DPV1_ENABLE) ? DPV1_MODE : DPV0_MODE;
+    eRetValue = DpPrm_ChkDpv1StatusBytes(psToPrmData->bDpv1Status1, psToPrmData->bDpv1Status2, psToPrmData->bDpv1Status3);
+    if (eRetValue != DP_OK)
+    {
+        return DpDiag_SetPrmNotOk(eRetValue);
+    }
 
-          eRetValue = DpPrm_ChkDpv1StatusBytes( psToPrmData->bDpv1Status1, psToPrmData->bDpv1Status2, psToPrmData->bDpv1Status3 );
+    /* 4. Procesamiento de los Parámetros de Usuario (configuración modular) */
+    if (bPrmLength > 7)
+    {
+        // En DP-V0, bUserPrmData es un solo byte, no un array
+        uint8_t userPrmLen = psToPrmData->bUserPrmData;
+        if (bPrmLength != (7 + userPrmLen))
+        {
+            return DpDiag_SetPrmNotOk(DP_PRM_LEN_ERROR);
+        }
+    }
 
-          if( ( eRetValue == DP_OK ) && ( bPrmLength == 0x13 ) )
-          {
-             //user parameter data
-             eRetValue = DpPrm_ChkPrmCounterModulePrm( (MEM_STRUC_MODULE_PRM_BLOCK_PTR)&psToPrmData->bUserPrmData );
-          }//if( eRetValue == DP_OK )
-      }
-   }//if( bPrmLength == 0x13 )
-   else
-   {
-      // *** LONGITUD INCORRECTA: Solo aceptar 7 bytes (DP-V0) o 19 bytes (DP-V1) ***
-      eRetValue = DP_PRM_LEN_ERROR;
-   }//else of if( bPrmLength == 0x13 )
-
-   if( ( VPC3_GET_DP_STATE() == DATA_EX ) && ( eRetValue == DP_OK ) )
-   {
-      //don't send diagnostic here
-   }//if( ( VPC3_GET_DP_STATE() == DATA_EX ) && ( eRetValue == DP_OK ) )
-   else
-   {
-      eRetValue = ( eRetValue == DP_OK ) ? DpDiag_SetPrmOk( eRetValue ) : DpDiag_SetPrmNotOk( eRetValue );
-   }//else of if( ( VPC3_GET_DP_STATE() == DATA_EX ) && ( eRetValue == DP_OK ) )
-
-   return eRetValue;
+    return DpDiag_SetPrmOk(DP_OK);
 }//DP_ERROR_CODE DpPrm_ChkNewPrmData( MEM_UNSIGNED8_PTR pbPrmData, uint8_t bPrmLength )
 
 
