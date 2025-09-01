@@ -54,7 +54,7 @@ static uint8_t dp_isr_process_extended_cfg(uint8_t bCfgLength, uint8_t* pbCfgDat
 #define MAX_DEBUG_PRINT_BYTES   ((uint8_t)50)      // Maximum bytes to print in debug messages
 
 // Ring buffer para logging del ISR (sin printf)
-#define ISR_LOG_BUFFER_SIZE     256
+#define ISR_LOG_BUFFER_SIZE     128  // Reducido para evitar overflow en uint8_t
 #define ISR_LOG_ENTRY_SIZE      64
 
 // Constantes para el buffer de diagnóstico del VPC3+
@@ -107,6 +107,75 @@ static inline void isr_log_add(const char* prefix, const char* message, uint32_t
     } else {
         isr_log_buffer.overflow = 1;
     }
+}
+
+/*---------------------------------------------------------------------------*/
+/* Funciones para acceder al buffer de log desde el main loop               */
+/*---------------------------------------------------------------------------*/
+
+/**
+ * @brief Obtiene el número de entradas disponibles en el buffer de log
+ * @return Número de entradas disponibles para leer
+ */
+uint8_t isr_log_get_available_entries(void) {
+    if (isr_log_buffer.head >= isr_log_buffer.tail) {
+        return isr_log_buffer.head - isr_log_buffer.tail;
+    } else {
+        return ISR_LOG_BUFFER_SIZE - isr_log_buffer.tail + isr_log_buffer.head;
+    }
+}
+
+/**
+ * @brief Lee la siguiente entrada del buffer de log
+ * @param buffer Buffer de destino para la entrada
+ * @param buffer_size Tamaño del buffer de destino
+ * @return 1 si se leyó una entrada, 0 si no hay entradas disponibles
+ */
+uint8_t isr_log_read_entry(char* buffer, uint8_t buffer_size) {
+    if (isr_log_buffer.tail == isr_log_buffer.head) {
+        return 0; // No hay entradas disponibles
+    }
+    
+    uint8_t* entry = isr_log_buffer.buffer[isr_log_buffer.tail];
+    uint8_t len = 0;
+    
+    // Copiar entrada al buffer de destino
+    while (*entry && len < buffer_size - 1) {
+        buffer[len++] = *entry++;
+    }
+    buffer[len] = '\0';
+    
+    // Avanzar el tail
+    isr_log_buffer.tail = (isr_log_buffer.tail + 1) % ISR_LOG_BUFFER_SIZE;
+    
+    return 1;
+}
+
+/**
+ * @brief Verifica si hay overflow en el buffer de log
+ * @return 1 si hubo overflow, 0 en caso contrario
+ */
+uint8_t isr_log_has_overflow(void) {
+    return isr_log_buffer.overflow;
+}
+
+/**
+ * @brief Limpia el flag de overflow del buffer de log
+ */
+void isr_log_clear_overflow(void) {
+    isr_log_buffer.overflow = 0;
+}
+
+/**
+ * @brief Obtiene estadísticas del buffer de log
+ * @param total_entries Puntero para almacenar el total de entradas
+ * @param available_entries Puntero para almacenar entradas disponibles
+ * @param overflow Puntero para almacenar estado de overflow
+ */
+void isr_log_get_stats(uint8_t* total_entries, uint8_t* available_entries, uint8_t* overflow) {
+    if (total_entries) *total_entries = ISR_LOG_BUFFER_SIZE;
+    if (available_entries) *available_entries = isr_log_get_available_entries();
+    if (overflow) *overflow = isr_log_buffer.overflow;
 }
 
 // Macros para logging del ISR
@@ -901,6 +970,49 @@ void dp_cfg_log_hex_dump(const char* prefix, const char* message, const uint8_t*
     isr_log_add(log_entry, "", 0xFFFFFFFF);
 }
 
+/*---------------------------------------------------------------------------*/
+/* Función para leer el estado real del ASIC sin máscaras                    */
+/*---------------------------------------------------------------------------*/
+static uint8_t dp_isr_get_real_state(void)
+{
+    uint8_t status_l = VPC3_GET_STATUS_L();
+    uint8_t real_state;
+    
+    // Mapeo directo según manual VPC3+ (sin máscaras)
+    switch (status_l) {
+        case 0x00:
+            real_state = 0x00; // OFFLINE
+            break;
+        case 0x91:
+            real_state = 0x01; // PASSIVE_IDLE
+            break;
+        case 0x04:
+            real_state = 0x02; // WAIT_PRM
+            break;
+        case 0x08:
+            real_state = 0x03; // WAIT_CFG
+            break;
+        case 0x0C:
+            real_state = 0x04; // WAIT_CFG
+            break;
+        case 0x10:
+            real_state = 0x05; // DATA_EX
+            break;
+        default:
+            real_state = 0xFF; // DESCONOCIDO
+            break;
+    }
+    
+    ISR_LOG_VAL("[dp_isr]", "Estado real del ASIC (STATUS_L directo)", status_l);
+    ISR_LOG_VAL("[dp_isr]", "Estado mapeado", real_state);
+    
+    return real_state;
+}
+
+/*---------------------------------------------------------------------------*/
+/* function: dp_isr                                                           */
+/*---------------------------------------------------------------------------*/
+
 
 /*****************************************************************************/
 /*  Copyright (C) profichip GmbH 2009. Confidential.                         */
@@ -922,6 +1034,7 @@ void dp_isr(void)
    ISR_LOG("[dp_isr]", "- Función: dp_isr");
    ISR_LOG("[dp_isr]", "- Archivo: ../Core/Src/dp_isr.c");
    ISR_LOG_VAL("[dp_isr]", "- Línea", __LINE__);
+   
    // Verificar si es llamada por polling o interrupción
    #if (VPC3_SERIAL_MODE == 0)
       ISR_LOG("[dp_isr]", "MODO: INTERRUPCIÓN (VPC3_Isr)");
@@ -929,11 +1042,71 @@ void dp_isr(void)
       ISR_LOG("[dp_isr]", "MODO: POLLING (VPC3_Poll)");
    #endif
    
-   ISR_LOG_VAL("[dp_isr]", "INICIO - STATUS_L", VPC3_GET_STATUS_L());
-   ISR_LOG_VAL("[dp_isr]", "INICIO - STATUS_H", VPC3_GET_STATUS_H());
-   ISR_LOG_VAL("[dp_isr]", "INICIO - DP_STATE", VPC3_GET_DP_STATE());
-   ISR_LOG("[dp_isr]", "INICIO - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3");
-   ISR_LOG_VAL("[dp_isr]", "ESTADO ACTUAL DEL ESCLAVO", VPC3_GET_DP_STATE());
+   // *** MONITOREO COMPLETO DE ESTADO INICIAL ***
+   uint8_t initial_status_l = VPC3_GET_STATUS_L();
+   uint8_t initial_status_h = VPC3_GET_STATUS_H();
+   uint8_t initial_dp_state = VPC3_GET_DP_STATE();
+   
+   ISR_LOG_VAL("[dp_isr]", "INICIO - STATUS_L", initial_status_l);
+   ISR_LOG_VAL("[dp_isr]", "INICIO - STATUS_H", initial_status_h);
+   ISR_LOG_VAL("[dp_isr]", "INICIO - DP_STATE", initial_dp_state);
+   
+   // *** MONITOREO DE TODAS LAS INTERRUPCIONES ACTIVAS ***
+   ISR_LOG("[dp_isr]", "=== VERIFICACIÓN DE INTERRUPCIONES ACTIVAS ===");
+   
+   // Verificar interrupciones de diagnóstico
+   if (VPC3_POLL_IND_DIAG_BUFFER_CHANGED()) {
+      ISR_LOG("[dp_isr]", "✓ IND_DIAG_BUFFER_CHANGED ACTIVO");
+   }
+   
+   // Verificar interrupciones de parámetros
+   if (VPC3_POLL_IND_NEW_PRM_DATA()) {
+      ISR_LOG("[dp_isr]", "✓ IND_NEW_PRM_DATA ACTIVO - ¡SET_PRM RECIBIDO!");
+   }
+   
+   // Verificar interrupciones de configuración
+   if (VPC3_POLL_IND_NEW_CFG_DATA()) {
+      ISR_LOG("[dp_isr]", "✓ IND_NEW_CFG_DATA ACTIVO - ¡CHECK_CFG RECIBIDO!");
+   }
+   
+   // Verificar interrupciones de watchdog
+   if (VPC3_POLL_IND_WD_DP_MODE_TIMEOUT()) {
+      ISR_LOG("[dp_isr]", "✓ IND_WD_DP_MODE_TIMEOUT ACTIVO");
+   }
+   
+   // Verificar interrupciones de cambio de estado
+   if (VPC3_POLL_IND_GO_LEAVE_DATA_EX()) {
+      ISR_LOG("[dp_isr]", "✓ IND_GO_LEAVE_DATA_EX ACTIVO");
+   }
+   
+       // Verificar interrupciones de datos de salida (comentado - función no disponible)
+    // if (VPC3_POLL_IND_NEW_DOUT_DATA()) {
+    //    ISR_LOG("[dp_isr]", "✓ IND_NEW_DOUT_DATA ACTIVO");
+    // }
+    
+    // Verificar interrupciones de datos de entrada (comentado - función no disponible)
+    // if (VPC3_POLL_IND_NEW_DIN_DATA()) {
+    //    ISR_LOG("[dp_isr]", "✓ IND_NEW_DIN_DATA ACTIVO");
+    // }
+   
+   // Verificar interrupciones de SSA
+   if (VPC3_POLL_IND_NEW_SSA_DATA()) {
+      ISR_LOG("[dp_isr]", "✓ IND_NEW_SSA_DATA ACTIVO");
+   }
+   
+       // Verificar si no hay interrupciones activas
+    if (!VPC3_POLL_IND_DIAG_BUFFER_CHANGED() && 
+        !VPC3_POLL_IND_NEW_PRM_DATA() && 
+        !VPC3_POLL_IND_NEW_CFG_DATA() && 
+        !VPC3_POLL_IND_WD_DP_MODE_TIMEOUT() && 
+        !VPC3_POLL_IND_GO_LEAVE_DATA_EX() && 
+        // !VPC3_POLL_IND_NEW_DOUT_DATA() &&  // Comentado - función no disponible
+        // !VPC3_POLL_IND_NEW_DIN_DATA() &&  // Comentado - función no disponible
+        !VPC3_POLL_IND_NEW_SSA_DATA()) {
+       ISR_LOG("[dp_isr]", "⚠ NINGUNA INTERRUPCIÓN ACTIVA DETECTADA");
+    }
+   
+   ISR_LOG("[dp_isr]", "=== FIN VERIFICACIÓN DE INTERRUPCIONES ===");
    
    // --- CRITICAL: Check for MODE_REG_2 corruption during interrupt ---
   uint8_t mode_reg2 = VPC3_GetModeReg2Shadow();
@@ -981,13 +1154,45 @@ void dp_isr(void)
     VPC3_Poll();
 #endif
 
-   ISR_LOG_VAL("[dp_isr]", "DESPUÉS de procesar eventos - STATUS_L", VPC3_GET_STATUS_L());
-   ISR_LOG_VAL("[dp_isr]", "DESPUÉS de procesar eventos - STATUS_H", VPC3_GET_STATUS_H());
-   ISR_LOG_VAL("[dp_isr]", "DESPUÉS de procesar eventos - DP_STATE", VPC3_GET_DP_STATE());
-         ISR_LOG_VAL("[dp_isr]", "FIN - STATUS_L", VPC3_GET_STATUS_L());
-     ISR_LOG_VAL("[dp_isr]", "FIN - STATUS_H", VPC3_GET_STATUS_H());
-     ISR_LOG_VAL("[dp_isr]", "FIN - DP_STATE", VPC3_GET_DP_STATE());
-    ISR_LOG("[dp_isr]", "FIN - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3");
+      // *** MONITOREO COMPLETO DE ESTADO FINAL ***
+   uint8_t final_status_l = VPC3_GET_STATUS_L();
+   uint8_t final_status_h = VPC3_GET_STATUS_H();
+   uint8_t final_dp_state = VPC3_GET_DP_STATE();
+   
+   ISR_LOG_VAL("[dp_isr]", "DESPUÉS de procesar eventos - STATUS_L", final_status_l);
+   ISR_LOG_VAL("[dp_isr]", "DESPUÉS de procesar eventos - STATUS_H", final_status_h);
+   ISR_LOG_VAL("[dp_isr]", "DESPUÉS de procesar eventos - DP_STATE", final_dp_state);
+   
+   // *** ANÁLISIS DE CAMBIOS DE ESTADO ***
+   if (initial_status_l != final_status_l || initial_status_h != final_status_h) {
+      ISR_LOG("[dp_isr]", "=== CAMBIO DE ESTADO DETECTADO ===");
+             // Log de cambios de estado usando formato simple
+       ISR_LOG("[dp_isr]", "✓ TRANSICIÓN DETECTADA:");
+       ISR_LOG_VAL("[dp_isr]", "STATUS_L cambio", initial_status_l);
+       ISR_LOG_VAL("[dp_isr]", "STATUS_L nuevo", final_status_l);
+       ISR_LOG_VAL("[dp_isr]", "STATUS_H cambio", initial_status_h);
+       ISR_LOG_VAL("[dp_isr]", "STATUS_H nuevo", final_status_h);
+       ISR_LOG_VAL("[dp_isr]", "DP_STATE cambio", initial_dp_state);
+       ISR_LOG_VAL("[dp_isr]", "DP_STATE nuevo", final_dp_state);
+      
+      // Interpretar el cambio de estado
+      if (initial_status_l == 0x45 && final_status_l == 0x08) {
+         ISR_LOG("[dp_isr]", "✓ TRANSICIÓN EXITOSA: WAIT_PRM -> WAIT_CFG");
+      } else if (initial_status_l == 0x08 && final_status_l == 0x10) {
+         ISR_LOG("[dp_isr]", "✓ TRANSICIÓN EXITOSA: WAIT_CFG -> DATA_EX");
+      } else if (initial_status_l == 0x45 && final_status_l == 0x45) {
+         ISR_LOG("[dp_isr]", "⚠ ESTADO SIN CAMBIOS: Sigue en WAIT_PRM");
+      } else {
+         ISR_LOG("[dp_isr]", "? TRANSICIÓN DESCONOCIDA");
+      }
+   } else {
+      ISR_LOG("[dp_isr]", "✓ ESTADO ESTABLE - Sin cambios");
+   }
+   
+   ISR_LOG_VAL("[dp_isr]", "FIN - STATUS_L", final_status_l);
+   ISR_LOG_VAL("[dp_isr]", "FIN - STATUS_H", final_status_h);
+   ISR_LOG_VAL("[dp_isr]", "FIN - DP_STATE", final_dp_state);
+   ISR_LOG("[dp_isr]", "FIN - Verificando si STATUS_L=0x45 (DATA_EX) y STATUS_H=0xE3");
    
        // *** CRÍTICO: Cerrar correctamente la interrupción ***
     // En modo polling no es estrictamente necesario, pero no hace daño si el macro es "no-op" seguro

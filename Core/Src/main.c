@@ -344,10 +344,38 @@ int main(void)
         if (HAL_GetTick() - last_heartbeat > 2000) {
             printf("[HEARTBEAT] El sistema está vivo. STATUS_L: 0x%02X\r\n", current_status_l);
             if (app_state == APP_WAITING_CFG) {
-                printf("[INFO] State: Waiting for Chk_Cfg from master...\r\n");
+                printf("[INFO] State: Waiting for Set_Prm from master...\r\n");
             } else {
                 printf("[INFO] State: DATA_EXCHANGE active.\r\n");
             }
+            
+            // *** MONITOREO DEL BUFFER DE LOG DEL ISR ***
+            uint8_t available_entries = isr_log_get_available_entries();
+            uint8_t overflow_flag = isr_log_has_overflow();
+            
+            if (available_entries > 0) {
+                printf("[ISR_LOG] %d entradas disponibles en buffer de log\r\n", available_entries);
+                
+                // Leer y mostrar las últimas entradas del ISR
+                char log_buffer[64];
+                uint8_t entries_to_show = (available_entries > 5) ? 5 : available_entries;
+                
+                printf("[ISR_LOG] Últimas %d entradas del ISR:\r\n", entries_to_show);
+                for (int i = 0; i < entries_to_show; i++) {
+                    if (isr_log_read_entry(log_buffer, sizeof(log_buffer))) {
+                        printf("[ISR_LOG] %s\r\n", log_buffer);
+                    }
+                }
+                
+                // Limpiar overflow si ocurrió
+                if (overflow_flag) {
+                    printf("[ISR_LOG] ⚠️ OVERFLOW detectado - limpiando flag\r\n");
+                    isr_log_clear_overflow();
+                }
+            } else {
+                printf("[ISR_LOG] No hay entradas en buffer de log\r\n");
+            }
+            
             last_heartbeat = HAL_GetTick();
         }
 	}

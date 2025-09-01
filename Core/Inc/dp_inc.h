@@ -98,7 +98,43 @@ typedef struct
    uint8_t     bDetail1;
    uint8_t     bDetail2;
 } sDP_DEBUG_BUFFER_ITEM;
-#define psDP_BUFFER_ITEM   sDP_DEBUG_BUFFER_ITEM  PTR_ATTR *
+
+/*------------------------------------------------------------------------*/
+/* ISR Log Buffer Functions                                               */
+/*------------------------------------------------------------------------*/
+
+/**
+ * @brief Obtiene el número de entradas disponibles en el buffer de log del ISR
+ * @return Número de entradas disponibles para leer
+ */
+uint8_t isr_log_get_available_entries(void);
+
+/**
+ * @brief Lee la siguiente entrada del buffer de log del ISR
+ * @param buffer Buffer de destino para la entrada
+ * @param buffer_size Tamaño del buffer de destino
+ * @return 1 si se leyó una entrada, 0 si no hay entradas disponibles
+ */
+uint8_t isr_log_read_entry(char* buffer, uint8_t buffer_size);
+
+/**
+ * @brief Verifica si hay overflow en el buffer de log del ISR
+ * @return 1 si hubo overflow, 0 en caso contrario
+ */
+uint8_t isr_log_has_overflow(void);
+
+/**
+ * @brief Limpia el flag de overflow del buffer de log del ISR
+ */
+void isr_log_clear_overflow(void);
+
+/**
+ * @brief Obtiene estadísticas del buffer de log del ISR
+ * @param total_entries Puntero para almacenar el total de entradas
+ * @param available_entries Puntero para almacenar entradas disponibles
+ * @param overflow Puntero para almacenar estado de overflow
+ */
+void isr_log_get_stats(uint8_t* total_entries, uint8_t* available_entries, uint8_t* overflow);
 
 /*------------------------------------------------------------------------*/
 /* Debug function, external defines                                       */

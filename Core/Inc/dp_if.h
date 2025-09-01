@@ -805,12 +805,12 @@
 /*---------------------------------------------------------------------------*/
 #define VPC3_PASS_IDLE                 ((uint8_t)0x01)
 #define VPC3_DIAG_FLAG                 ((uint8_t)0x04)
-#define MASK_DP_STATE                  ((uint8_t)0x60) //funcionaba con 0x60 pero no deberia ser asi segun el datasheet (0X30)  //Cambio a corrido de 5 bits para que funcione correctamente con la modificacion de dp_if.h del 31/07/2025
+#define MASK_DP_STATE                  ((uint8_t)0x30) //✅ CORRECTO según datasheet VPC3+
 #define MASK_WD_STATE                  ((uint8_t)0xC0)
-#define WAIT_PRM                       ((uint8_t)0x00)
-#define WAIT_CFG                       ((uint8_t)0x01) //funcionaba con 0x01 pero no deberia ser asi segun el datasheet (0x10)  //Cambio a corrido de 5 bits para que funcione correctamente con la modificacion de dp_if.h del 31/07/2025
-#define DATA_EX                        ((uint8_t)0x02) //funcionaba con 0x02 pero no deberia ser asi segun el datasheet (0x20)  //Cambio a corrido de 5 bits para que funcione correctamente con la modificacion de dp_if.h del 31/07/2025
-#define DP_ERROR                       ((uint8_t)0x03) //funcionaba con 0x03 pero no deberia ser asi segun el datasheet (0x30)  //Cambio a corrido de 5 bits para que funcione correctamente con la modificacion de dp_if.h del 31/07/2025
+#define WAIT_PRM                       ((uint8_t)0x02) //✅ CORRECTO - WAIT_PRM
+#define WAIT_CFG                       ((uint8_t)0x03) //✅ CORRECTO - WAIT_CFG
+#define DATA_EX                        ((uint8_t)0x04) //✅ CORRECTO - DATA_EX
+#define DP_ERROR                       ((uint8_t)0x05) //✅ CORRECTO - ERROR
 #define BAUD_SEARCH                    ((uint8_t)0x00)
 #define BAUD_CONTROL                   ((uint8_t)0x40)
 #define DP_MODE                        ((uint8_t)0x80)
@@ -932,7 +932,7 @@
    #define VPC3_GET_STATUS_L()                        Vpc3Read( bVpc3RoStatus_L )
    #define VPC3_GET_STATUS_H()                        Vpc3Read( bVpc3RoStatus_H )
    /* -- read State of DP-State Machine ------------------------------------------ */
-   #define VPC3_GET_DP_STATE()                        ( Vpc3Read( bVpc3RoStatus_L ) & MASK_DP_STATE )
+   #define VPC3_GET_DP_STATE()                        ( ( Vpc3Read( bVpc3RoStatus_L ) & MASK_DP_STATE ) >> 5 )
    /* -- read WD-State Machine --------------------------------------------------- */
    #define VPC3_GET_WD_STATE()                        ( Vpc3Read( bVpc3RoStatus_L ) & MASK_WD_STATE )
    /* -- read Baud-Rate ---------------------------------------------------------- */
@@ -1034,7 +1034,7 @@
       \retval DATA_EX - Data Exchange
       \retval DP_ERROR - Error
    */
-   #define VPC3_GET_DP_STATE()                        (pVpc3->sReg.sRead.bStatus_L VPC3_EXTENSION & MASK_DP_STATE)
+   #define VPC3_GET_DP_STATE()                        ( (pVpc3->sReg.sRead.bStatus_L VPC3_EXTENSION & MASK_DP_STATE) >> 5 )
    /* -- read WD-State Machine --------------------------------------------------- */
    /*!
       \def VPC3_GET_WD_STATE()
