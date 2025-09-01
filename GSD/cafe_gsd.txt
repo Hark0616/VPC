@@ -12,7 +12,7 @@ Station_Type         = 0          ; Slave
 FMS_supp             = 0
 Hardware_Release     = "1.0"
 Software_Release     = "1.0"
-OrderNumber          = "333"
+OrderNumber          = "CAFE"
 Implementation_Type  = "SPI"
 Bitmap_Device        = "EASY_1N"
 
@@ -48,7 +48,7 @@ MaxTsdr_6M    = 450
 12M_supp   = 1
 MaxTsdr_12M   = 800
 
-;==================== ESTACI�N MODULAR ===================
+;==================== ESTACIÓN MODULAR ===================
 Modular_Station      = 1
 Max_Module           = 20
 Max_Input_Len        = 244
@@ -56,18 +56,21 @@ Max_Output_Len       = 244
 Max_Data_Len         = 244
 Max_Diag_Data_Len    = 6
 
-;==================== PAR�METROS USUARIO =================
-Max_User_Prm_Data_Len = 3
-Ext_User_Prm_Data_Const(0) = 0x00,0x00,0x00
+;==================== PARÁMETROS USUARIO =================
+; Se deshabilita User Prm Data para asegurar compatibilidad con DP V0
+; y evitar que el maestro intente usar funciones de DPV1 no implementadas.
+; Max_User_Prm_Data_Len = 3
+; Ext_User_Prm_Data_Const(0) = 0x00,0x00,0x00
+Max_User_Prm_Data_Len = 0
 
-;==================== DIAGN�STICO ========================
+;==================== DIAGNÓSTICO ========================
 Slave_Family        = 1
 Slave_Redundancy    = 0
 Diag_Update_Delay   = 1
 Diag_With_Data      = 1
 
 ;=========================================================
-;                 DEFINICI�N DE M�DULOS
+;                 DEFINICIÓN DE MÓDULOS
 ;   Sintaxis:  Module = "Texto" Ident[,Ident2...]
 ;              <Module_Reference>
 ;=========================================================

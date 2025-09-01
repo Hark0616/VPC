@@ -38,9 +38,10 @@
 
 /* include hierarchy */
 #include <string.h>
+#include <stdio.h>
 #include "platform.h"
 #include "DpAppl.h"
-#include <stdio.h>
+#include "debug_config.h"  /* Para controlar printf() en el ISR */
 
 /*---------------------------------------------------------------------------*/
 /* defines, structures                                                       */
@@ -243,9 +244,13 @@ uint8_t i;
 static uint8_t DpDiag_AddIdentRelDiagBlock( MEM_UNSIGNED8_PTR pbToDiagBuffer )
 {
    memcpy( pbToDiagBuffer, &sIdentRelDiag, cSizeOfIdentifierDiagnosis );
-   printf("DEBUG: [DpDiag_AddIdentRelDiagBlock] Copiando %d bytes: ", cSizeOfIdentifierDiagnosis);
+   #ifdef DEBUG_ISR_NO_BLOCK
+printf("DEBUG: [DpDiag_AddIdentRelDiagBlock] Copiando %d bytes: ", cSizeOfIdentifierDiagnosis);
+#endif
    for (uint8_t i = 0; i < cSizeOfIdentifierDiagnosis; i++) {
-       printf("0x%02X ", ((uint8_t*)&sIdentRelDiag)[i]);
+               #ifdef DEBUG_ISR_NO_BLOCK
+        printf("0x%02X ", ((uint8_t*)&sIdentRelDiag)[i]);
+        #endif
    }
    printf("\n");
    return cSizeOfIdentifierDiagnosis;
@@ -264,9 +269,13 @@ static uint8_t DpDiag_AddIdentRelDiagBlock( MEM_UNSIGNED8_PTR pbToDiagBuffer )
 static uint8_t DpDiag_AddModuleStatDiagBlock( MEM_UNSIGNED8_PTR pbToDiagBuffer )
 {
    memcpy( pbToDiagBuffer, &sModuleStatDiag, cSizeOfModuleStatusDiagnosis );
-   printf("DEBUG: [DpDiag_AddModuleStatDiagBlock] Copiando %d bytes: ", cSizeOfModuleStatusDiagnosis);
+       #ifdef DEBUG_ISR_NO_BLOCK
+    printf("DEBUG: [DpDiag_AddModuleStatDiagBlock] Copiando %d bytes: ", cSizeOfModuleStatusDiagnosis);
+    #endif
    for (uint8_t i = 0; i < cSizeOfModuleStatusDiagnosis; i++) {
-       printf("0x%02X ", ((uint8_t*)&sModuleStatDiag)[i]);
+               #ifdef DEBUG_ISR_NO_BLOCK
+        printf("0x%02X ", ((uint8_t*)&sModuleStatDiag)[i]);
+        #endif
    }
    printf("\n");
    return cSizeOfModuleStatusDiagnosis;
@@ -415,18 +424,28 @@ uint16_t          wDiagEvent;
 
    bRetValue = DP_NOK;
    
-   printf("DEBUG: [DpDiag_Alarm] INICIO - bAlarmType=0x%02X, bSeqNr=0x%02X, bCheckDiagFlag=%d\n", bAlarmType, bSeqNr, bCheckDiagFlag);
+       #ifdef DEBUG_ISR_NO_BLOCK
+    printf("DEBUG: [DpDiag_Alarm] INICIO - bAlarmType=0x%02X, bSeqNr=0x%02X, bCheckDiagFlag=%d\n", bAlarmType, bSeqNr, bCheckDiagFlag);
+    #endif
+   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [DpDiag_Alarm] Constantes: USER_TYPE_CFG_OK=0x%02X, STAT_DIAG_SET=0x%02X, EXT_DIAG_SET=0x%02X\n", USER_TYPE_CFG_OK, STAT_DIAG_SET, EXT_DIAG_SET);
+   #endif
 
    psAlarm = psAlarm; //avoid warning
    wDiagEvent = ( (uint16_t)(bAlarmType << 8) | ((uint16_t)bSeqNr) );
+   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [DpDiag_Alarm] wDiagEvent calculado: 0x%04X\n", wDiagEvent);
+   #endif
 
    VPC3_CheckDiagBufferChanged();
+   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [DpDiag_Alarm] VPC3_CheckDiagBufferChanged() completado\n");
+   #endif
 
    //don't send diagnostic twice! 0x10
+   #ifdef DEBUG_ISR_NO_BLOCK
    printf("DEBUG: [DpDiag_Alarm] Comparando wDiagEvent (0x%04X) con pDpSystem->wOldDiag (0x%04X)\n", wDiagEvent, pDpSystem->wOldDiag);
+   #endif
    if( wDiagEvent != pDpSystem->wOldDiag )
    {
       printf("DEBUG: [DpDiag_Alarm] wDiagEvent != wOldDiag, continuando...\n");

@@ -2736,26 +2736,9 @@ uint8_t           bDpState;
 
          if( bRetValue == DP_OK )
          {
-            printf("DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...\n");
-            if( pDpSystem->pDiagBuffer != VPC3_NULL_PTR )
-            {
-               if( VPC3_GET_DP_STATE() != WAIT_PRM )
-               {
-                  printf("DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...\n");
-                  pDpSystem->pDiagBuffer = VPC3_UpdateDiagnosis( bDiagControl, pbToUserDiagData, bUserDiagLength );
-                  printf("DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado\n");
-               }
-               else
-               {
-                  printf("DEBUG: [VPC3_SetDiagnosis] ERROR: Estado WAIT_PRM, no se actualiza diagnóstico\n");
-                  bRetValue = DP_DIAG_SEQUENCE_ERROR;
-               }
-            }
-            else
-            {
-               printf("DEBUG: [VPC3_SetDiagnosis] ERROR: pDiagBuffer es NULL\n");
-               bRetValue = DP_DIAG_NO_BUFFER_ERROR;
-            }
+            printf("DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...\n");
+            pDpSystem->pDiagBuffer = VPC3_UpdateDiagnosis( bDiagControl, pbToUserDiagData, bUserDiagLength );
+            printf("DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado\n");
          } /* if( bRetValue == DP_OK ) */
       } /* if( bRetValue == DP_OK ) */
    } /* if( VPC3_CheckDiagBufPtr() != VPC3_NULL_PTR ) */

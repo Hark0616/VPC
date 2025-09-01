@@ -169,30 +169,6 @@
 
    extern VPC3_ADR   Vpc3AsicAddress;                                         /**< VPC3+ base address */
 
-   /* ISR Logging functions (non-ISR safe) */
-   #if VPC3_SERIAL_MODE
-      extern uint8_t dp_isr_read_log     ( char* buffer, uint8_t max_length );
-      extern void    dp_isr_clear_log    ( void );
-      extern uint8_t dp_isr_log_overflow ( void );
-   #else
-      /* No-op macros cuando el logger no está activo */
-      #define dp_isr_read_log(buffer, max_len)     (0)
-      #define dp_isr_clear_log()                   ((void)0)
-      #define dp_isr_log_overflow()                (0)
-   #endif
-
-   /* DpCfg Logging functions (ISR-safe, integradas con ring buffer del ISR) */
-   #if VPC3_SERIAL_MODE
-      extern void    dp_cfg_log_message  ( const char* prefix, const char* message );
-      extern void    dp_cfg_log_value    ( const char* prefix, const char* message, uint32_t value );
-      extern void    dp_cfg_log_hex_dump ( const char* prefix, const char* message, const uint8_t* data, uint8_t length );
-   #else
-      /* No-op macros cuando el logger no está activo */
-      #define dp_cfg_log_message(prefix, message)     ((void)0)
-      #define dp_cfg_log_value(prefix, message, val)  ((void)0)
-      #define dp_cfg_log_hex_dump(prefix, msg, data, len) ((void)0)
-   #endif
-
    #if MOTOROLA_MODE
       #define bVpc3RwIntReqReg_H       (VPC3_ADR)( Vpc3AsicAddress + 0x00 )   /**<(000H) Interrupt request register high */
       #define bVpc3RwIntReqReg_L       (VPC3_ADR)( Vpc3AsicAddress + 0x01 )   /**<(001H) Interrupt request register low */

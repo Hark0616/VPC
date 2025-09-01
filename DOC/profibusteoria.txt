@@ -1,0 +1,1502 @@
+Comunicaciones Industriales
+
+TEMA 8
+
+PROFIBUS
+(PA/DP/FMS)
+
+Universidad Politécnica de Cartagena
+ETS de Ingenieros Industriales
+Dpto. de Tecnología Electrónica
+Asignatura: Comunicaciones Ind ustriales
+
+PROFIBUS
+
+1
+
+Comunicaciones Industriales
+
+1.- Índice.
+Página
+1.- Índice.- ................................................................................................................... 2
+2.- Introducción. ¿Por qué son tan usados actualmente los buses de campo?.- ........ 4
+3.- La familia Profibus.- ............................................................................................. 5
+3.1.- Comienzos.- ............................................................................................ 5
+3.2.- Situación actual.- .................................................................................... 5
+3.3.- Versiones compatibles.- ......................................................................... 6
+4.- Estructura de la red.- ............................................................................................ 8
+4.1.- Medio físico.- ......................................................................................... 8
+4.2.- Elementos del bus.- ................................................................................ 8
+4.3.- Topología.- ............................................................................................. 9
+4.4.- Estructura lógica.- ................................................................................. 10
+4.5.- Tecnología de transmisión.- .................................................................. 10
+5. – Protocolo.- ..........................................................................................................13
+5.1.- Arquitectura protocolar.- ........................................................................13
+5.2.- Trama.- ...................................................................................................15
+5.3.- Mensajes cíclicos y acíclicos.- .............................................................. 15
+6. – Versiones compatibles de la familia PROFIBUS.- .......................................... . 18
+6.1. – PROFIBUS PA.- ..................................................................................18
+6.1.1.- Protocolo de transmisión.- ..........................................19
+6.1.2.- Perfil de los dispositivos.- .......................................... 19
+6.2. – PROFIBUS DP.- ................................................................................. 21
+6.2.1.- Funciones básicas de PROFIBUS DP.- ................................. 21
+
+PROFIBUS
+
+2
+
+Comunicaciones Industriales
+
+6.2.2.- Funciones extendidas de PROFIBUS DP.- ........................... 25
+6.2.3.- Perfiles de PROFIBUS DP.- ................................................. 26
+6.3. – PROFIBUS FMS.- .............................................................................. 26
+6.3.1.- Capas de aplicación.- ............................................................. 27
+6.3.2.- Modelos de aplicación.- ......................................................... 27
+6.3.3.- Objetos de comunicación y diccionario de objetos.- ............. 28
+6.3.4.- Servicios.- .............................................................................. 29
+6.3.5.- Interface de la capa más baja.- .............................................. 30
+6.3.6.- Dirección de la red.- .............................................................. 31
+6.3.7.- Operación mixta de PROFIBUS FMS y PROFIBUS DP.- ... 32
+6.3.8.- Perfiles.- ................................................................................ 32
+7.- Aplicaciones y posibilidades de implementación.- ............................................. 34
+8.- La importancia actual de PROFIBUS.- ............................................................. 36
+9.- Ejemplos de productos de diversos fabricantes.- ............................................... 38
+10.- Bibliografía utilizada.- ..................................................................................... 40
+
+PROFIBUS
+
+3
+
+Comunicaciones Industriales
+
+2.- Introducción.
+¿Por qué son tan usados actualmente los buses de campo?
+Los buses de campo se usan en la actualidad de forma prioritaria como un
+sistema de comunicación para el intercambio de información entre sistemas de
+automatización y sistemas de campo distribuidos. Miles de pruebas satisfactorias han
+demostrado de manera impresionante que el uso de la tecnología de los buses de campo
+puede ahorrar un 40% en costes por cableado, mantenimiento, etc. si lo comparamos
+con las tecnologías tradicionales. Solamente se usan dos líneas para transmitir toda la
+información relevante (es decir, datos de entrada y salida, parámetros, diagnósticos,
+programas y modos de operación para distintos dispositivos de campo).
+En el pasado era muy normal la utilización de buses de campo incompatibles
+entre marcas. Afortunadamente en la actualidad todos los sistemas responden a unas
+características standards. Por tanto, el usuario no está “atado” a un único vendedor y es
+capaz de seleccionar el producto que mejor se adapte a sus necesidades dentro de una
+amplia gama.
+
+PROFIBUS
+
+4
+
+Comunicaciones Industriales
+
+3.- La familia PROFIBUS.
+3.1.- Comienzos.
+En el año 1987, las firmas alemanas Bosch, Klöckner Möeller y Siemens
+iniciaron un proyecto de desarrollo de una arquitectura de comunicaciones industriales
+que permitiera la interconexión de equipos de distintos fabricantes. Esta fue la base de
+un grupo de trabajo al que se integraron otras grandes empresas tales como ABB, AEG,
+Landis&Gir, etc., algunas universidades y organizaciones técnicas estatales, entre ellas
+la propia VDE y el Ministerio Federal de Investigación Alemán.
+Se formaron varios grupos de trabajo en distintas áreas, cuya tarea esencial fue
+la de desarrollar un sistema abierto de comunicaciones apto para integrar desde los
+sencillos transductores y elementos de campo, pasando por los autómatas y controles
+numéricos hasta llegar al nivel de los miniordenadores para diseño y gestión de la
+producción.
+El primer objetivo fue sólo el diseño de un bus de campo con una estructura
+abierta y un protocolo compatible que permitiera enlazar con una red adoptada como
+base en los niveles superiores (MAP), con lo que resultó el proyecto de normas y
+protocolos que se estudiarán com más profundidad en apartados posteriores.
+A partir del año 1990 se abrió la posibilidad para cualquier usuario o empresa de
+integrarse en un consorcio denominado PROFIBUS Nutzerorganisation, que a través de
+diversos comités sigue desarrollando y dando soporte al nivel de aplicación y
+certificación de productos.
+
+3.2.- Situación actual.
+PROFIBUS es actualmente el líder de los sistemas basados en buses de campo
+en Europa (1) y goza de una aceptación mundial. Sus áreas de aplicación incluyen
+manufacturación, automatización y generación de procesos. PROFIBUS es un bus de
+campo normalizado internacional que fue estandarizado bajo la norma EN 50 170. Esto
+asegura una protección óptima tanto a los clientes como a los vendedores y asegura la
+independencia de estos últimos.
+Hoy en día, todos los fabricantes líderes de tecnología de automatización ofrecen
+interfaces PROFIBUS para sus dispositivos. La variedad de productos existentes
+incluye más de 1500 elementos y servicios, de los cuales 400 están certificados,
+asegurando un funcionamiento sencillo y correcto incluso en redes de diferentes
+fabricantes. PROFIBUS ha sido usado satisfactoriamente en alrededor de 200000
+aplicaciones en todo el mundo y se han instalado más de 2000000 dispositivos.
+(1) Fuente: Estudio independiente de buses de campo por Consultic, 1996
+
+PROFIBUS
+
+5
+
+Comunicaciones Industriales
+
+3.3.- Versiones compatibles.
+PROFIBUS es un bus de campo standard que acoge un amplio rango de
+aplicaciones en fabricación, procesado y automatización. La independencia y franqueza
+de los vendedores está garantizada por la norma EN 50 170. Con PROFIBUS los
+componentes de distintos fabricantes pueden comunicarse sin necesidad de ajustes
+especiales de interfaces. PROFIBUS puede ser usado para transmisión crítica en el
+tiempo de datos a alta velocidad y para tareas de comunicación extensas y complejas.
+Esta versatilidad viene dada por las tres versiones compatibles que componen la familia
+PROFIBUS (ver figura 1):
+
+Figura 1: Áreas de aplicación
+
+Algunas de las características más sobresalientes de estas versiones se exponen a
+continuación:
+PROFIBUS PA:
+-
+
+Diseñado para automatización de procesos.
+Permite la conexión de sensores y actuadores a una línea de bus común
+incluso en áreas especialmente protegidas.
+Permite la comunicación de datos y energía en el bus mediante el uso de 2
+tecnologías (norma IEC 1158-2).
+
+PROFIBUS DP:
+-
+
+Optimizado para alta velocidad.
+Conexiones sencillas y baratas.
+Diseñada especialmente para la comunicación entre los sistemas de control
+de automatismos y las entradas/salidas distribuidas.
+
+PROFIBUS FMS:
+-
+
+PROFIBUS
+
+Solución general para tareas de comunicación a nivel de célula.
+Gran rango de aplicaciones y flexibilidad.
+Posibilidad de uso en tareas de comunicación complejas y extensas.
+
+6
+
+Comunicaciones Industriales
+
+Figura 2: La familia PROFIBUS
+
+Puede decirse sin lugar a dudas que PROFIBUS ha conseguido definir toda una
+red de comunicación industrial, desde el nivel físico hasta el de aplicación, integrando al
+máximo las técnicas de comunicación previamente definidas y consolidadas y habiendo
+superado la en un primer momento poca disponibilidad de información en inglés, lo que
+dificultaba su divulgación a nivel de fabricantes no germanos. En la actualidad la
+estructura es tal que los grupos de los 20 países más industrializados ofrecen un soporte
+en su idioma para el resto del mundo. Todos los grupos de usuarios se unen bajo la
+Organización PROFIBUS International (PI), que con más de 750 miembros es la
+organización de buses de campo más grande del mundo.
+
+PROFIBUS
+
+7
+
+Comunicaciones Industriales
+
+4. Estructura de la red.
+4.1.- Medio físico.
+La tecnología de transmisión más usada es la RS 485, conocida habitualmente
+como H2. Su área de aplicación comprende aquellas aplicaciones donde prima su
+simplicidad, la velocidad de transmisión y lo barato de la instalación. Se usa un par
+diferencial con cable trenzado, previsto para comunicación semi-duplex, aunque
+también puede implementarse con fibra óptica y enlaces con estaciones remotas vía
+módem o vía radio. La velocidad de transmisión varía entre 9.6Kbits/s y 12Mbits/s,
+dependiendo del medio físico, como se indica en la siguiente tabla:
+
+MEDIO
+FISICO
+9.6-93.75
+2
+RS 485 0.2
+1200m
+(24 AWG)
+RS 485 0.52
+2400m
+(20 AWG)
+F.Opt.Cuarzo 1400m
+62.5-125µm
+F.Opt.Plástico
+0-40ºC
+5-25m
+0-50ºC
+10-20m
+
+VELOCIDAD ( Kbits/s )
+167.5
+500
+1500
+600m
+200m
+100m
+
+2000
+50m
+
+1200m
+
+400m
+
+200m
+
+100m
+
+1400m
+
+1400m
+
+1400m
+
+1400m
+
+5-25m
+10-20m
+
+5-25m
+10-20m
+
+5-25m
+10-20m
+
+5-25m
+10-20m
+
+Tabla 1: Distancias máximas sin repetidor, según medio físico.
+
+Al conectar varias estaciones, hay que comprobar que el cable de las líneas de
+datos no sea trenzado. El uso de líneas apantalladas es absolutamente esencial para el
+logro de una alta inmunidad del sistema en ambientes con emisiones altas de
+electromagnetismo (como en la fabricación de automóviles). El apantallamiento se usa
+para mejorar la compatibilidad electromagnética (CEM).
+
+4.2.- Elementos del bus.
+El elemento esencial del bus es el nodo. PROFIBUS prevé la existencia de dos
+tipos de nodos:
+-
+
+Activos: son nodos que pueden actuar como maestro del bus, tomando
+enteramente el control del bus.
+
+-
+
+Pasivos: son nodos que únicamente pueden actuar como esclavos y, por
+tanto, no tienen capacidad para controlar el bus. Estos nodos pueden dialogar
+con los nodos activos mediante un simple mecanismo de pregunta-respuesta,
+pero no pueden dialogar directamente entre sí.
+
+PROFIBUS
+
+8
+
+Comunicaciones Industriales
+
+Aparte de estos dos tipos de nodos, existen otros dos bloques esenciales en la
+arquitectura del bus:
+-
+
+Expansiones E/S: este tipo de bloques constituyen la interfaz con las señales
+de proceso y pueden estar integrados tanto en un nodo activo como en un
+nodo pasivo.
+
+-
+
+Repetidores: los repetidores ejecutan el papel de simples transceptores
+bidireccionables para regenerar la señal. Su diferencia esencial con los
+estudiados en el caso del BITBUS es que no se requieren seña les de control
+(RTS+, RTS-) para conmutar el sentido de la línea de datos, ya que el
+sistema de codificación en PROFIBUS es del tipo NRZ (por niveles) y las
+velocidades son más bajas.
+
+4.3. Topología.
+La topología puede ser simplemente en forma de bus lineal o en forma de árbol,
+en el que los repetidores constituyen el nudo de partida de una expansión del bus (fig.
+3).
+
+Figura 3: Estructura física incluyendo repetidores para
+expansión del bus.
+
+En este caso, la estructura en árbol es puramente una impresión de dibujo, ya
+que, como se verá, el PROFIBUS admite una estructura lógica de maestro flotante y una
+estación activa, ejerciendo el papel de maestro, que puede estar físicamente conectada a
+lo que se pudiera considerar una expansión del bus. Por tanto, incluso en caso de
+ramificaciones debe considerarse como un bus único.
+El número máximo de nodos conectables a cada tramo del bus, sin necesidad de
+repetidores es de 32. A efectos de esta limitación los propios repetidores cuentan como
+un nodo. El número máximo de nodos del bus es de 127, de los cuales un máximo de 32
+pueden ser nodos activos.
+
+PROFIBUS
+
+9
+
+Comunicaciones Industriales
+
+No existe ninguna limitación en cuanto a poder configurar una estructura con
+buses anidados (un esclavo puede ser, a su vez, maestro de otro bus de nivel inferior),
+aunque deben considerarse como buses independientes, dado que el protocolo no
+permite direccionar desde arriba las estaciones de niveles inferiores.
+
+4.4. Estructura lógica.
+La estructura lógica es de tipo híbrido: las estaciones activas comparten una
+estructura de maestro flotante, relevándose en el papel de maestro mediante paso de
+testigo. Las estaciones pasivas sólo pueden ejercer el papel de esclavos, sea cual sea el
+maestro activo en cada momento. La figura 4 ilustra esta estructura.
+
+Figura 4: Estructura lógica.
+
+Naturalmente esta estructura admite la posibilidad de que exista un solo nodo
+activo en el bus, con lo que se convertiría en un bus con una estructura del tipo maestroesclavo.
+Cabe señalar que cuando una estación activa posee el testigo, considera a todas
+las demás como esclavos, incluyendo también al resto de estaciones activas que no
+poseen el testigo en aquel momento.
+
+4.5.- Tecnología de transmisión.
+El área de aplicación de un sistema de buses de campo está claramente
+determinada por la elección de la tecnología de transmisión. Aparte de los
+requerimientos generales (seguridad de transmisión, distancia de la misma, velocidad)
+cobran particular importancia los factores electromecánicos. Cuando se mezclan
+aplicaciones para automatización de procesos, los datos y la energía deben ser
+transmitidos en un cable común.
+Como es imposible satisfacer todos los requerimientos con una tecnología de
+transmisión sencilla, PROFIBUS aprovecha 3 variaciones:
+1.- RS 485 (Transmisión para DP/FMS).
+Es la transmisión más frecuentemente utilizada por PROFIBUS. Esta tecnología
+de transmisión es conocida como H2. Su área de aplicación incluye todas las áreas en
+las que se requieren alta velocidad de transmisión y una instalación sencilla. Tiene la
+ventaja de que posibles ampliaciones no influyen en las estaciones que se encuentran ya
+en operación.
+
+PROFIBUS
+
+10
+
+Comunicaciones Industriales
+
+Algunas de sus características son:
+-
+
+Velocidad de transmisión de 9.6 Kbit/seg. a 12 Mbit/seg. Se seleccionará una
+para todos los dispositivos.
+La estructura de la red es linear, con par trenzado.
+Conexión máxima de 32 estaciones sin repetidor (127 con repetidor).
+Longitud máxima del cable dependiente de la velocidad de transmisión.
+
+V.Baudios(kbit/sec)
+Dinstancia
+
+9.6
+1200m
+
+19.2
+1200m
+
+93.75
+1200m
+
+187.5
+1000m
+
+500
+400m
+
+1500
+200m
+
+2000
+100m
+
+Tabla 2 : Distancias basadas en la velocidad de transmisión.
+
+En la conexión, es conveniente tener en cuenta algunas precauciones, de las que
+son destacables:
+-
+
+Hay que asegurarse de no torcer las líneas de datos.
+Se recomienda el uso de líneas de datos escudadas para mejorar la
+compatibilidad electromagnética (EMC).
+Se recomienda mantener las líneas de datos separadas de los cables de alto
+voltaje.
+
+2.- IEC 1158-2 (Transmisión PROFIBUS PA).
+La tecnología de transmisión IEC 1158-2 cumple los requerimientos de las
+indusrias químicas y petroquímicas. Posee una seguridad intrínseca y permite a los
+dispositivos de campo ser conectados al bus. Es una tecnología principalmente usada
+por PROFIBUS PA y suele conocerse como H1.
+La transmisión se basa en los siguientes principios:
+-
+
+Cada segmento tiene sólo una fuente de energía.
+No se produce ningún tipo de alimentación cuando una estación está
+enviando datos.
+Los dispositivos actúan como sumideros pasivos de corriente.
+Se permiten redes con estructura linear, en árbol y estrella.
+Para incrementar la fiabilidad, se pueden diseñar segmentos de bus
+redundantes.
+
+Las características más importantes de este tipo de transmisión son:
+-
+
+PROFIBUS
+
+Transmisión de datos digital, asíncrona, codificación Manchester.
+Velocidad de transmisión 31.25 kbit/seg.
+Seguridad de los datos: prueba de error al principio y al final.
+Cable de dos líneas trenzadas.
+Opción de alimentación a distancia.
+Conexión de 32 estaciones por segmento (máximo de 126 con repetidor).
+Posibilidad de espansión hasta a 4 repetidores.
+La estructura de la red es linear, en árbol o una combinación de ambas.
+
+11
+
+Comunicaciones Industriales
+
+3.- Fibra óptica.
+Los conductores por fibra óptica pueden ser usados para aplicaciones
+PROFIBUS en ambientes con interferencias electromagnéticas muy altas y para
+incrementar la distancia máxima con velocidades elevadas. Hay disponibles dos tipos de
+conductores. Los conductores por fibra óptica (plástico) para distancias de 50m. o los
+conductores por fibra óptica (cuarzo) para distancias de 1Km. son muy baratos.
+Muchos fabricantes ofrecen conexiones especiales que posibilitan una
+conversión integrada de señales RS 485 para trabajar con conductores de fibra óptica y
+viceversa. Esto proporciona un método muy sencillo de intercambio entre transmisión
+RS 485 y transmisión por fibra óptica en un mismo sistema.
+
+PROFIBUS
+
+12
+
+Comunicaciones Industriales
+
+5.- Protocolo.
+PROFIBUS especifica las características técnicas y funcionales de un sistema de
+buses de campo serie con el cual controladores digitales descentralizados pueden
+trabajar juntos en red desde el nivel de campo hasta el nivel de célula. Esto lo hace
+distinguiendo entre elementos Maestro y elementos Esclavo.
+Los dispositivos Maestro determinan la comunicación de datos en el bus. Un
+Maestro puede enviar mensajes sin una petición externa cuando mantiene el derecho de
+acceso al bus (llamado de forma común “testigo”).
+Los dispositivos Esclavo son dispositivos periféricos. Algunos de ellos son las
+entradas y salidas, las válvulas y los transmisores de medida. No tienen derecho de
+acceso al bus y sólo pueden reconocer mensajes recibidos o enviar mensajes al Maestro
+cuando este se lo ordena (por lo que se les llama estaciones pasivas). Su
+implementación es especialmente económica ya que sólo requieren una pequeña parte
+del bus.
+
+5.1.- Arquitectura protocolar.
+PROFIBUS está basado en normas internacionalmente reconocidas. La
+arquitectura protocolar está orientada al sistema OSI (Open System Interconnection),
+modelo de referencia de acuerdo con la norma internacional SO 7498. En este modelo
+cada capa de la transmisión reliza tareas definidas de forma precisa (ver figura 5):
+
+Figura 5: Arquitectura protocolar de PROFIBUS
+
+-
+
+-
+
+PROFIBUS
+
+La Capa 1 o Capa física define las características de la transmisión.
+La Capa 2 o Capa de Enlace (FDL – Fieldbus Data Link) define el
+protocolo de acceso al bus y se encarga de establecer el orden de circulación
+del testigo una vez inicializado el bus, adjudicando el testigo en el arranque,
+en caso de pérdida del mismo, o en caso de adición o eliminación de
+estaciones activas.
+La Capa 7 o Capa de aplicación define las funciones de aplicación.
+
+13
+
+Comunicaciones Industriales
+
+PROFIBUS DP:
+-
+
+Usa las capas 1 y 2 y el interface de usuario, mientras que no define de las
+capas 3 a 7.
+Asegura una transmisión de datos rápida y eficiente.
+El DDLM (Direct Data Link Mapper) proporciona al interface de usuario un
+fácil acceso a la capa 2.
+Las funciones de aplicación disponibles por el usuario así como el
+comportamiento del sistema se especifican en el interface de usuario.
+Se permite una comunicación RS-485 o por fibra óptica.
+
+PROFIBUS FMS:
+-
+
+Define las capas 1, 2 y 7.
+La capa de aplicación está formada por las subcapas FMS (Fieldbus Message
+Specification) y LLI (Lower Layer Interface).
+FMS contiene el protocolo de aplicación y proporciona al usuario una amplia
+selección de potentes servicios de comunicación.
+LLI implementa varias relaciones de comunicación y proporciona a FMS un
+acceso independiente a la capa 2.
+La capa 2 (capa de unión de datos) ofrece el control de acceso al bus y
+garantiza la seguridad de los datos.
+
+PROFIBUS PA:
+-
+
+Utiliza el protocolo DP extendido para la transmisión de datos.
+Usa un indicador que define el comportamiento de los dispositivos de
+campo.
+La tecnología de transmisión permite un alto grado de seguridad y deja que
+los elementos de campo sean conectados al bus.
+Pueden ser integrados de una forma fácil en redes de trabajo PROFIBUS DP.
+
+Nota:
+PROFIBUS DP y PROFIBUS FMS utilizan la misma tecnología de transmisión y
+un protocolo de acceso al bus uniforme. Por tanto, ambos pueden operar simultáneamente en
+un mismo cable.
+
+El protocolo PROFIBUS establece las reglas de comunicación desde el nivel de
+enlace haste el nivel de aplicación. En una estructura de bus basada sólo en tres niveles
+(1, 2 y 7 del modelo OSI) y que desea integrar en redes de rango superior que utilizan el
+modelo OSI completo, se precisa una adaptación entre los niveles 2 y 7. Esta adaptación
+se hace mediante la anteriormente citada subcapa LLI (subcapa del nivel 7), mediante el
+enlace con los servicios de los niveles inferiores mediante una interface de protocolo
+conocida como FMA (Fieldbus Management) (ver figura 6):
+PROFIBUS
+
+14
+
+Comunicaciones Industriales
+
+Figura 6: Organización del protocolo basado
+en una estructura de 3 niveles
+
+5.2.- Trama.
+La trama admite 3 tipos de formato (ver figura 7): tramas de longitud fija sin
+datos, tramas de longitud fija con datos y tramas de longitud variable
+
+Figura 7: Distintos formatos de trama.
+
+La interpretación de dichas tramas es algo compleja debido a la variedad de tipos
+previstos para dar servicios a dispositivos con distinto nivel de complejidad, por lo que
+nos centraremos en explicarlas dentro de los mensajes básicos (cíclicos y acíclicos) que
+ofrece el protocolo a nivel de enlace.
+
+5.3.- Mensajes cíclicos y acíclicos.
+Estos dos tipos de mensajes son los que ofrece como básicos el protocolo
+estudiado. Las características que presentan son:
+
+PROFIBUS
+
+15
+
+Comunicaciones Industriales
+
+- Mensajes cíclicos: Estos mensajes permiten el intercambio de datos de baja
+prioridad y por tanto no críticos en cuanto tiempo de respuesta. Los servicios
+disponibles son los siguientes:
+SDN (Send Data with No acknowledge): Mensajes de difusión (de Maestro a
+todos los esclavos).
+SDA (Send Data with Acknowledge): Mensaje punto a punto cuya función es
+enviar datos o funciones de control del Maestro a uno de los esclavos.
+RDR (Request Data with Reply): Mensajes punto a punto cuya función es la de
+solicitar datos a uno de los esclavos.
+SRD (Send and Request Data): Mensajes punto a punto que permiten enviar
+datos y recibir datos de un esclavo.
+La respuesta a uno de estos mensajes está condicionada por el tiempo total de
+ciclo del testigo entre todos los nodos activos.
+- Mensajes acíclicos : Estos mensajes permiten acortar el tiempo de respuesta de
+los datos críticos. A cada turno de Maestro se puede enviar un mensaje de difusión
+conteniendo los valores críticos de todos los esclavos. La lista de estos valores es
+conocida por todas las estaciones maestras en una tabla. Los mensajes pueden ser de 2
+tipos:
+CRDR (Cyclic Request Data with Reply).
+CSRD (Cyclic Send and Request Data).
+La petición de estos mensajes se realiza mediante un telegrama especial de
+difusión, que contiene de forma encadenada las peticiones a todos los esclavos (ver
+figura 8 para observar el formato de estos telegramas).
+
+Figura 8: Trama de difusión para intercambios cíclicos.
+
+Las respuestas se producen de forma escalonada mediante una instrucción de
+lectura rápida en cada uno de los esclavos, pero sin tener que esperar el tiempo de
+procesamiento de la orden, puesto que la petición se hizo ya anteriormente mediante el
+mensaje de difusión (ver figura 9).
+
+16
+
+PROFIBUS
+Figura 9: Secuencia de telegramas en un intercambio cíclico.
+
+Comunicaciones Industriales
+
+Las tramas de los telegramas admiten, como ya se ha dicho, formatos muy
+diversos, dependiendo del tipo de aplicación. Dentro de la Organización de usuarios de
+PROFIBUS se han formado distintos grupos que han desarrollado los detalles de
+protocolo para distintos campos de aplicación, en ramas tan diversas como regulación
+(de velocidad, de temperatura), química, alimentación, etc..
+
+PROFIBUS
+
+17
+
+Comunicaciones Industriales
+
+6.- Versiones compatibles de la familia PROFIBUS.
+6.1. PROFIBUS-PA.
+PROFIBUS-PA es la solución PROFIBUS a los procesos de automatización. PA
+conecta los sistemas de automatización y los sistemas de control de procesos con los
+dispositivos de campo, como son los transmisores de presión, temperatura y nivel. PA
+puede ser usado como sustituto para la tecnología analógica de 4 a 20 mA. Los logros
+del PROFIBUS-PA producen un ahorro del 40% en proyecto, cableado y
+mantenimiento, y ofrece un incremento significativo en funcionalidad y seguridad. La
+figura muestra las diferencias entre cablear un sistema convencional de 4 a 20 mA y un
+sistema basado en PROFIBUS-PA.
+
+Fig 10: Comparación de técnicas de transmisión
+
+Cuando se usa el método convencional de cableado, cada línea individual de
+señal debe estar conectada al módulo I/O del sistema de control del proceso. Para cada
+aparato se requiere una fuente de energía distinta. Como contraste, cuando se usa
+PROFIBUS-PA, sólo se necesita una línea de dos cables para transmitir toda la
+información y la energía a los dispositivos de campo. Esto no solo produce ahorro en el
+cableado, sino que reduce el número de módulos I/O requeridos en los sistemas de
+control de procesos. PROFIBUS-PA permite medir, controlar y regular mediante una
+línea simple de dos cables. También permite la alimentación de los dispositivos de
+campo incluso en áreas intrínsecas de seguridad. Permite el mantenimiento y la
+conexión/desconexión de los aparatos durante la operación sin afectar a otras estaciones,
+incluso en áreas potenciales de explosión. PROFIBUS-PA ha desarrollado los requisitos
+especiales de esta área de aplicación en estrecha cooperación con los usuarios en el
+proceso industrial (NAMUR):
+-
+
+Perfiles de aplicación únicos para el proceso de automatización y la
+capacidad de cambio de los dispositivos de campo para diferentes
+proveedores.
+
+-
+
+La adición o sustracción de estaciones del bus incluso en áreas intrínsecas de
+seguridad sin influencia en otras estaciones.
+
+PROFIBUS
+
+18
+
+Comunicaciones Industriales
+
+-
+
+Comunicación transparente por medio de parejas de segmentos entre los
+segmentos del PROFIBUS-PA en procesos de automatización de la
+fabricación.
+
+-
+
+Alimentación a distancia y transmisión de datos a lo largo de los mismos dos
+cables basándose en la tecnología IEC 1158-2.
+
+-
+
+Uso en áreas potenciales de explosión con protección a explosión tipo
+“intrínseca de seguridad” o “no intrínseca de seguridad”.
+
+6.1.1.- Protocolo de transmisión.
+PROFIBUS-PA usa las funciones básicas del PROFIBUS-DP para la
+transmisión de valores de medida y de estado, y las funciones extendidas del mismo
+para la parametrización y operación de los dispositivos de campo.
+Para la transmisión se usa la tecnología de dos cables en concordancia con la
+norma IEC 1158-2.
+Los telegramas son suministrados con límites de comienzo y fin de la
+transmisión en el segmento IEC 1158-2. La figura 11 muestra como:
+
+Figura 11: Transmisión de datos con PROFIBUS Paen el bus.
+
+6.1.2.- Perfil de los dispositivos.
+El perfil PROFIBUS-PA asegura las capacidades de cambio y de interpolación
+de los dispositivos de campo de diferentes proveedores. Forma parte íntegra de
+PROFIBUS-PA y está disponible en la Organización de Usuarios de PROFIBUS bajo el
+número de orden 3.042.
+La tarea del perfil PROFIBUS-PA es seleccionar las funciones que la
+comunicación requiere actualmente para los modelos de los dispositivos de campo, y
+mantener todas las especificaciones necesarias para aquellas funciones/comportamiento
+del dispositivo.
+El perfil PA consiste en requisitos generales que contienen especificaciones
+aplicables a todos los modelos de dispositivos y hojas de datos del dispositivo que
+contienen información de la configuración para el tipo de dispositivo respectivo.
+
+PROFIBUS
+
+19
+
+Comunicaciones Industriales
+
+Los perfiles usan el modelo de funciones en bloque, como se aprecia en la figura
+12:
+
+Fig 12: Modelo de bloque de funciones en PROFIBUS PA.
+
+Este modelo también se amolda a las consideraciones de regulación
+internacionales. Hoy, las hojas de datos de dispositivos han sido especificadas para
+todos los transmisores de medida comúnmente usados y otros tipos de dispositivos
+seleccionados como:
+- Transmisores de medida de presión, nivel, temperatura y flujo.
+- Entradas y salidas digitales.
+- Entradas y salidas analógicas.
+- Válvulas.
+- Posicionadores.
+El comportamiento del dispositivo es descrito especificando variables reguladas
+dependiendo de los transmisores de medida. La figura 13 muestra el principio de un
+transmisor de presión que es descrito con la entrada analógica en la función de bloque:
+
+Fig 13: Diagrama de los parámetros de un transmisor de
+presión con PROFIBUS PA.
+
+PROFIBUS
+
+20
+
+Comunicaciones Industriales
+
+6.2.- PROFIBUS DP.
+PROFIBUS-DP está diseñado para la comunicación de datos a alta velocidad a
+nivel de dispositivo. Los controladores centrales (PLCs/PCs) se comunican con los
+dispositivos de campo distribuidos por medio de un enlace serie de alta velocidad. La
+mayoría de las comunicaciones de datos con estos dispositivos periféricos es realizada
+de una forma cíclica según la norma EN 50 170. Además de las funciones cíclicas, se
+requieren otras de tipo acíclico para dispositivos de campo inteligentes para permitir la
+configuración, diagnóstico y manejo de alarmas.
+
+6.2.1.- Funciones básicas de PROFIBUS DP.
+Características básicas de PROFIBUS DP.
+El controlador central (maestro) lee de forma cíclica la información procedente
+de los esclavos y escribe la información de salida en los esclavos. El tiempo de ciclo del
+bus debe ser más pequeño que el tiempo de ciclo del programa del PLC central (para la
+mayoría de aplicaciones es de 10 mseg.). Además PROFIBUS DP proporciona
+funciones poderosas para diagnósticos y configuración en las transmisiones de datos de
+usuario cíclicas. La comunicación de datos es monitorizada mediante la monitorización
+de las funciones tanto en el maestro como en el esclavo. En la tabla 3 se pueden
+observar las características básicas de PROFIBUS DP.
+Tecnología de transmisión
+1)RS-485, par trenzado, dos líneas de cable o fibra óptica.
+2)Velocidad en baudios: de 9.6 Kbit/seg. a 12 Mbit/seg.
+Acceso al bus
+1)El procedimiento entre maestros se realiza mediante el paso del testigo y entre
+esclavos mediante la jerarquía maestro-esclavo.
+2)Posibilidad de sistemas monoamo y multiamo.
+3)Máximo de 126 estaciones en un bus (entre maestros y esclavos).
+Comunicación
+1)Par a par (transmisión de datos de usuario) o Multicast (comandos de control).
+2)Transmisión cíclica de datos entre maestro-esclavo y transmisión acíclica entre
+maestros.
+Modos de operación
+1)Operate: Transmisión cíclica de datos de entrada y salida.
+2)Clear: Se leen las entradas manteniendo las salidas en estado de seguridad.
+3)Stop: Sólo se permite la transmision de daos entre maestros.
+Velocidad
+1)Se necesita sólo 1 mseg. para transmitir 512 bits de datos de entrada y 512 bits de
+datos de salida distribuidos en 32 estaciones a una velocidad de 12 Mbit/seg.
+Sincronización
+1)Los comandos de control permiten la sincronización de entradas y salidas.
+Modo Sync: Sincroniza salidas.
+Modo Freeze: Sincroniza entradas.
+Funcionalidad
+1)Transmisión de datos de usuario cíclica entre el maestro y el(los) esclavo(s).
+2)Activación o desactivación dinámica de DP esclavos de forma individual.
+
+PROFIBUS
+
+21
+
+Comunicaciones Industriales
+
+3)Chequeo de la configuración del DP esclavo.
+4)Poderosas funciones de diagnóstico, con 3 niveles jerárquicos de mensajes.
+5)Sincronización de las entradas y/o salidas.
+6)Asignación de direcciones sobre el bus de los DP esclavos.
+7)Configuración del DP maestro (clase 1) sobre el bus).
+8)Máximo de 244 bytes de entradas y salidas de datos por DP esclavo.
+Funciones de diagnóstico
+1)Permiten una rápida localización de los errores.
+2)Los mensajes de diagnóstico se transmiten por el bus y se recogen en el maestro,
+dividiéndose en tres niveles jerarquizados de menor a mayor especialización: relativos a
+estaciones (se refieren al estado general del dispositivo), relativos a módulos (se refieren
+a errores en rangos específicos de entrada/salida) y relativos a canales (se refieren a
+errores en bits individuales de entrada/salida).
+Funciones de seguridad y protección
+1)Todos los mensajes se transmiten con una distancia Hamming HD=4
+2)Temporizador guardián en DP esclavo.
+3)Protección de acceso para las entradas/salidas de los DP esclavos.
+4)Monitorización de los datos de usuario con un temporizador configurable en el
+maestro.
+Tipos de dispositivos
+1)DP maestro clase 2(DPM2): dispositivos de diagnóstico/programación/configuración.
+2)DP maestorclase1(DPM1):controladores programables centrales como PLCs y PCs.
+3)DP esclavo: dispositivos con entradas/salidas binarias o analógicas, esclavos, etc.
+Tabla 3: Características básicas de PROFIBUS DP
+
+Configuración del sistema y tipos de dispositivos.
+PROFIBUS DP permite sistemas monoamo y multiamo. Esto proporciona un
+alto grado de flexibilidad durante la configuración del sistema, pudiendo conectar hasta
+126 dispositivos (maestros o esclavos) en un bus. La descripción de la configuración del
+sistema consiste en el número de estaciones, la asignación entre la dirección de la
+estación y las direcciones de las entradas/salidas, el formato de los datos de
+entrada/salida, el formato de los mensajes de diagnóstico y los parámetros del bus
+usados. Cada sistema PROFIBUS DP puede contener 3 tipos diferentes de dispositivos:
+DP Maestro Clase 1 (DPM1): Controlador central que intercambia información
+con las estaciones descentralizadas (DP esclavos) con un ciclo de mensaje
+específico. Dispositivos típicos son los controladores programables (PLCs), los
+PCs y los sistemas VME.
+DP Maestro Clase 2 (DPM2): Son programadores, dispositivos de configuración
+y operadores. Se usan para la identificación de la configuración del sistema DP o
+para el funcionamiento y supervisión de operaciones.
+DP esclavo: Es un dispositivo periférico (entradas/salidas, válvulas, etc.) que
+recoge información de entrada y/o manda información de salida.
+La cantidad de información de entrada y salida depende del tipo de dispositivo,
+permitiéndose un máximo de 244 bytes de entrada y 244 bytes de salida.
+PROFIBUS
+
+22
+
+Comunicaciones Industriales
+
+En los sistemas mono- maestro sólo se encuentra activo un maestro en el bus
+durante la fase de operación, siendo el controlador programable el componente de
+control central. Los DP esclavos distribuidos son enlazados mediante el bus. Estos
+sistemas presentan el tiempo de ciclo más corto.
+
+Figura 14: Sistema mono-maestro PROFIBUS DP
+
+En la configuración multi- maestro se conectan varios maestros al bus. Estos
+maestros son subsistemas independientes consistentes cada uno en un DPM1 maestro y
+sus correspondientes DP esclavos (o dispositivos adicionales). Las imágenes de las
+entradas y las salidas de los esclavos pueden ser leídos por todos los DP maestros. Sin
+embargo, sólo un DP maestro (el asignado durante la configuración) puede tener acceso
+de escritura en las salidas. Los sistemas multi- maestro presentan un tiempo de ciclo
+mayor que los sistemas mono- maestro.
+
+Figura 15: Sistema multi-maestro PROFIBUS DP
+
+Comportamiento del sistema.
+El comportamiento del sistema es determinado principalmente por el estado de
+los DPM1. Los DPM1 pueden ser controlados localmente o mediante el bus por el
+dispositivo de configuración. Hay 3 estados principales:
+Stop: No se produce ningún tipo de transmisión entre DPM1 y los DP esclavos.
+Clear: DPM1 lee la información de entrada de los DP esclavos y mantiene las
+salidas en estado de espera (seguridad).
+Operate: DPM1 se encuentra en la fase de transferencia de datos. En una
+comunicación cíclica, se leen las entradas de los DP esclavos, y se escribe la
+información de salida en los DP esclavos.
+
+PROFIBUS
+
+23
+
+Comunicaciones Industriales
+
+El DPM1 envía de forma cíclica su estado a todos los DP esclavos que tiene
+asignados mediante un comando Multicast a intervalos de tiempo configurables. La
+reacción del sistema a un error durante la fase de transferencia de datos del DPM1 (p. ej.
+error en un DP esclavo) se determina por un parámetro de configuración “autoborrado”. Si este parámetro pasa a un estado true (verdadero), el DPM1 pone todas las
+salidas de sus DP esclavos asignados a un estado de espera (seguridad) hasta que se
+cumplan de nuevo todas las condiciones para una transmisión correcta.
+Transmisión cíclica de datos entre DPM1 y DP esclavos.
+La transmisión de datos entre DPM1 y sus DP esclavos asignados es ejecutada
+de forma automática por DPM1 en un orden definido. Al configurar el sistema del bus,
+el usuario especifica la asignación de un DP esclavo a un DPM1 y cuales de estos
+esclavos se incluirán o se excluirán de la transmisión de datos de usuario.
+La transmisión de datos de usuario entre DPM1 y DP esclavos se divide en 3
+fases:
+-
+
+Parametrización.
+Configuración.
+Transferencia de datos.
+
+Durante las fases de parametrización y configuración, cada DP eclavo compara
+su configuración real (tipo de dispositivo, formato y longitud de la innformación) con la
+configuración esperada que es la que presenta DPM1. El DP esclavo sólo será incluido
+en la fase de transferencia de datos si coinciden las dos configuraciones anteriores. Estas
+pruebas garantizan al usuario una protección adecuada contra los errores de
+parametrización.
+
+Figura 16: Transmisión de datos de usuario con PROFIBUS DP
+
+Transmisión cíclica de datos entre DPM1 y los dispositivos de
+configuración.
+Además de las funciones maestro-esclavo, también son posibles las funciones de
+comunicación entre maestros. Estas funciones hacen posible a los dispositivos de
+diagnóstico y configuración configurar el sistema sobre el bus, habilitar y deshabilitar
+transferencias de datos entre DPM1 y DP esclavos individuales e incluso cambiar el
+estado de operación de DPM1.
+
+PROFIBUS
+
+24
+
+Comunicaciones Industriales
+
+Modos Sync y Freeze.
+El maestro puede enviar comandos de control a un esclavo, a un grupo de
+esclavos, o a todos los esclavos simultáneamente. Estos comandos de control son
+enviados como comanos Multicast y permiten el uso de los modos sync y freeze para
+una eventual sincronización controlada de los DP esclavos.
+Los esclavos se sitúan en el modo sync cuando reciben un comando sync de su
+maestro. Las salidas de todos los esclavos direccionados quedan enclavadas en su
+estado actual. Durante las siguientes transmisiones de datos, las salidas de datos son
+guardadas por los esclavos, pero los estados de las salidas permanecen inalterables. Los
+datos de salida almacenados no serán enviados a las salidas hasta que se reciba un
+nuevo comando sync. El modo sync acaba con el comando unsync.
+De forma parecida, un comando de control freeze provoca que los esclavos
+direccionados adopten el estado freeze. En este modo de operación, los estados de las
+entradas son enclavados en su valor actual. Los datos de salida no serán actualizados
+hasta que el maestro envíe el siguiente comando freeze. El modo freeze termina con el
+comando unfreeze.
+Mecanismos de protección.
+La seguridad y la fiabilidad hacen necesario proporcionar a los dispositivos DP
+unas funciones de protección efectivas contra los errores de parametrización o los fallos
+en la transmisión. El tiempo de monitorización viene dado por el DP maestro y los DP
+esclavos. El intervalo de monitorización se especifica durante la configuración.
+En los sistemas multi- maestro es también necesaria una protección de acceso
+para las entradas y salidas de los DP esclavos. Esto asegura que el acceso directo puede
+realizarse sólo por el maestro autorizado. Para todos los demás maestros, los esclavos
+ofrecen una imagen de sus entradas y salidas que pueden ser leídas por cualquier
+maestro, incluso sin tener derechos de acceso.
+
+6.2.2.- Funciones extendidas de PROFIBUS DP.
+Las funciones extendidas permiten funciones de lectura y escritura acíclicas e
+interrupciones que pueden ser realizadas de forma paralela a la transmisión de datos
+cíclica. Además, los accesos acíclicos a los parámetros y valores de medida de un
+esclavo pueden ser utilizados para el diagnóstico y el control de operación sobre
+estaciones. Con estas funciones PROFIBUS DP cumple los requerimientos de
+dispositivos complejos que de otra forma deberían ser parametrizados durante la
+operación. Algunos ejemplos típicos son los elementos usados en procesos de
+automatización, operadores de control inteligentes y dispositivos de monitorización así
+como los convertidores de frecuencia. En comparación con los valores medidos en la
+transmisión cíclica, estos valores son raramente cambiados. Por esta razón, la
+transmisión se realiza con una menor prioridad en relación con la alta velocidad de la
+transferencia de datos cíclica.
+Dentro de este tipo de funciones se encuentran:
+
+PROFIBUS
+
+25
+
+Comunicaciones Industriales
+
+-
+
+Comunicaciones extendidas de datos entre DPM1 y DP esclavos:
+Presenta funciones que posibilitan el acceso directo (escritura/lectura) de
+DPM1 a una parte deseada dentro del esclavo, así como el reconocimiento de
+alarmas.
+
+-
+
+Transmisión extendida de datos entre DPM2 y DP esclavos:
+Permite a los dispositivos DPM2 realizar procesos de lectura/escritura en
+cualquier bloque que se desee del DP esclavo.
+
+6.2.3.- Perfiles de PROFIBUS DP.
+El protocolo PROFIBUS DP define cómo los datos de usuario van a ser
+transmitidos entre las estaciones por el bus. Los datos de usuario no son evaluados por
+el protocolo de transmisión de PROFIBUS DP. De esto se encargan los perfiles que
+además especifican cómo será utilizado el PROFIBUS DP en el área de aplicación. Al
+utilizar los perfiles, los operadores de planta y los usuarios tienen la ventaja de poder
+interconectar elementos de distintos vendedores. Los perfiles también reducen
+significativamente los costes de ingeniería y el intercambio de componentes
+individuales entre distintos fabricantes dentro de una planta industrial puede ser
+realizado sin temor a notar la más mínima diferencia.
+Dos de los perfiles más significativos son:
+-
+
+Perfil para dispositivos HM1 (3.082):
+Especifica el enlace de dispositivos de monitorización de procesos y control
+de operaciones con componentes de automatización de niveles superiores
+mediante PROFIBUS DP.
+
+-
+
+Perfil de velocidad variable (3.072):
+Los fabricantes líderes han definido el perfil PROFIDRIVE, que especifica
+la parametrización y los valores a transmitir entre diferentes componentes, lo
+que permite la comunicación entre dispositivos de distintos vendedores.
+
+6.3. PROFIBUS-FMS.
+PROFIBUS-FMS está diseñado para la comunicación a nivel celular. A este
+nivel los controladores programables (ej. PLC’s y PC’s) se comunican en principio
+entre sí. En esta área de aplicación es más importante un alto grado de funcionalidad
+que unos tiempos rápidos de reacción del sistema.
+OBJETO - CLIENTE ORIENTADO - MODELO DE SERVIDOR
+Servicios del FMS:
+- Establece y desconecta conexiones lógicas.
+- Lee y escribe variables.
+PROFIBUS
+
+26
+
+Comunicaciones Industriales
+
+- Carga y lee áreas de memoria.
+- Compila, empieza y detiene programas.
+- Transmite mensajes de sucesos con más o menos prioridad.
+- Peticiones de estado y de identificación de dispositivos.
+- Servicios para la dirección del diccionario de objeto.
+Buses de campo – tipos relacionados de relaciones de comunicación
+- Conexiones maestro-maestro.
+- Conexiones maestro- esclavo para la transmisión de datos cíclica o acíclica.
+- Conexiones maestro- esclavo para la transmisión de datos cíclica o acíclica con
+iniciativa del esclavo.
+- Conexiones para relaciones de comunicaciones.
+- Atributos de conexión.
+
+6.3.1. Capas de aplicación.
+La capa de aplicación proporciona los servicios de comunicación que pueden ser
+usados por el usuario. Estos servicios hacen posible el acceder a variables, transmitir
+programas y controlar su ejecución así como la transmisión de sucesos. Formado por las
+siguientes partes:
+-
+
+La especificación de mensajes del bus de campo, la cual describe los objetos
+y servicios de comunicación.
+El interface de la capa más baja que es usado para adaptar los servicios de la
+anterior con esta segunda capa.
+
+6.3.2. Modelo de comunicación.
+El modelo de comunicación PROFIBUS-FMS permite a los procesos de
+aplicación distribuidos ser unificados en un proceso común usando relaciones de
+comunicación. Esa porción de un proceso de aplicación en un dispositivo de campo que
+puede ser alcanzado vía comunicación se llama “dispositivo virtual de campo”. La
+siguiente figura muestra la relación entre el dispositivo real de campo y el dispositivo
+virtual de campo. En este ejemplo, solo ciertas variables, como número de unidades,
+proporción de fallo y tiempo fuera de servicio, son parte del dispositivo virtual de
+campo y pueden ser leídas y escritas vía las dos relaciones de comunicación.
+
+Fig. 17: Dispositivo de campo virtual.
+
+PROFIBUS
+
+27
+
+Comunicaciones Industriales
+
+6.3.3. Objetos de comunicación y diccionario de objetos.
+Todos los objetos de comunicación de un dispositivo FMS están por completo
+en el diccionario de objetos locales del dispositivo. El diccionario de objetos contiene la
+descripción, estructura y tipos de datos, así como la relación entre las direcciones
+internas del dispositivo de los objetos de comunicación y su designación en el bus (
+índice/nombre ). El diccionario de objetos se compone de los siguientes elementos:
+- Cabecera.
+- Lista de tipos de datos estáticos.
+- Diccionario de objetos estáticos.
+- Lista dinámica de listas de variables.
+- Lista dinámica de programa.
+Las partes individuales del diccionario de objetos solo deben estar presentes
+cuando el dispositivo soporte en dicho momento esas funciones.
+Los objetos estáticos de comunicación están por completo en el diccionario de
+objetos estáticos. Pueden ser predefinidos por el fabricante del dispositivo o
+especificados durante la configuración del bus del sistema. FMS reconoce cinco tipos de
+objetos de comunicación:
+-
+
+Variable simple.
+Array: series de variables simples del mismo tipo.
+Registro: series de variables simples de distinto tipo.
+Dominio.
+Suceso.
+
+Los objetos dinámicos de comunicación están por completo en la parte dinámica
+del diccionario de objetos. Pueden ser predefinidos o definidos, borrados o cambiados
+con los servicios de FMS. FMS reconoce dos tipos de objetos dinámicos de
+comunicación:
+- Invocación del programa.
+- Lista de variable: series de variables simples, arrays o registros.
+El direccionamiento lógico es el método preferido de direccionar para objetos de
+comunicación FMS. El acceso es interpretado con una dirección corta (el índice) que es
+un número del tipo hexadecimal sin signo. Cada objeto tiene un índice individual.
+Como opción, los objetos también pueden ser direccionados por nombre o con sus
+direcciones físicas.
+Cada objeto de comunicación puede ser opcionalmente protegido contra accesos
+no autorizados. El acceso a un objeto puede ser solo permitido con una cierta contraseña
+o puede ser solo permitido para cierto grupo de dispositivos. La contraseña y el grupo
+de dispositivos pueden ser especificados en el diccionario de objetos para cada objeto
+individualmente. Además, los servicios permitidos (accesos de solo lectura) para
+acceder a un objeto pueden ser restringidos.
+
+PROFIBUS
+
+28
+
+Comunicaciones Industriales
+
+6.3.4.- Servicios.
+Los servicios de FMS provienen de los servicios que ha n sido optimizados para
+aplicaciones del bus de campo y a los que se les ha añadido funciones para la
+administración de objetos de comunicación y para la dirección de la red. La ejecución
+de servicios FMS vía bus es descrita por secuencias de servicio cons istentes en serias
+interacciones que se llaman primitivas de servicio. Las primitivas de servicio describen
+la interacción entre el que pregunta y el que responde. La figura 18 muestra los servicios
+disponibles de PROFIBUS:
+
+Fig 18: Servicios de PROFIBUS FMS
+
+Los servicios confirmados sólo pueden ser usados para la conexión
+orientada en las relaciones de comunicación. La figura 19 muestra la ejecución
+de un servicio confirmado:
+
+Figura 19: Ejecución de un servicio FMS.
+
+PROFIBUS
+
+29
+
+Comunicaciones Industriales
+
+Los servicios no confirmados pueden ser también usados en conexiones en
+relaciones de comunicación. Pueden ser transmitidos con alta o baja prioridad. Un
+servicio no confirmado es solicitado con una demanda a una primitiva de servicio.
+Después de la transmisión a través del bus, una indicación de la primitiva de servicio es
+provista al proceso de aplicación de los receptores. La confirmación/respuesta de la
+primitiva de servicio no existen para los servicios no confirmados.
+Los servicios FMS están divididos en los siguientes grupos:
+- Los servicios de dirección de contexto se usan para establecer y liberar
+conexiones lógicas y para el relanzamiento de servicios no permitidos.
+- Servicios de acceso variable se usan para acceder a variables simples, registros,
+arrays y listas de variables.
+- Servicios de dirección de dominio se usan para transmitir grandes áreas de
+memoria. Los datos a transferir son divididos en segmentos por el usuario.
+- Servicios de invocación del programa se usan para el control de programa.
+- Servicios de dirección de sucesos se usan para transmitir mensajes de alarma y
+sucesos.
+- Servicios de soporte VFD se usan para la identificación y sondeos de estado.
+- Servicios de dirección OD se usan para accesos de lectura/escritura del
+diccionario de objetos.
+El gran número de servicios de aplicación de PROFIBUS-FMS hacen posible
+conocer una amplia variedad de demandas en comunicación llevada a cabo por varios
+dispositivos. La selección depende de la aplicación y está especificada en perfiles para
+áreas especificas de aplicación.
+
+6.3.5. Interface de la capa más baja.
+El mapa de la capa 7 a la capa 2 es manejada por este interface. Sus tareas
+incluyen el control de flujo y la supervisión de la conexión.
+El usuario se comunica con los otros procesos de aplicación a través de canales
+lógicos llamados relaciones de comunicación. El interface mantiene varios tipos de
+relaciones de comunicación para la ejecución de los servicios FMS y FMA7. Las
+relaciones de comunicación tienen diferentes capacidades de conexión (por ejemplo,
+supervisión, transmisión y demandas a los compañeros de comunicación ).
+Las relaciones de comunicación de conexión-orientada representan una conexión
+lógica par a par entre dos procesos de aplicación. La conexión debe ser primero
+establecida con un servicio de iniciación antes de que pueda ser usada para la
+transmisión de datos. Antes de ser establecida con éxito, la conexión está protegida
+contra accesos no autorizados y queda disponible para la transmisión de datos. Cuando
+una conexión establecida no se necesita más, se puede desconectar con un servicio de
+PROFIBUS
+
+30
+
+Comunicaciones Industriales
+
+aborto. El interface permite la supervisión de la conexión controlada en tiempo para las
+relaciones de comunicación de conexión-orientada.
+Los atributos de conexión “abierto” y “definido” son otros rasgos característicos
+de las relaciones de comunicación de conexión orientada.
+En conexiones definidas el compañero de la comunicación se especifica durante
+la configuración.
+6.3.5.1. Transmisión de datos cíclica/acíclica.
+FMS permite la transmisión de datos de manera cíclica o acíclica. La
+transmisión de datos cíclica quiere decir que exactamente una variable es continuamente
+leída o escrita en una conexión. El interface proporciona un método eficaz de manejo
+que reduce los tiempos de transmisión en comparación con la transmisión de datos
+acíclica.
+La transmisión de datos acíclica quiere decir que varios objetos de comunicación
+son direccionados periódicamente en una conexión a la llamada del proceso de
+aplicación.
+6.3.5.2. Lista de relaciones de comunicación.
+Todas las relaciones de comunicación de un dispositivo FMS están
+completamente en esta lista. Para dispositivos simples la lista está predefinida por el
+fabricante. Para los complejos es configurada. Cada relación de comunicación es
+direccionada por una referencia local corta llamada referencia de comunicació n. Desde
+el punto de vista del bus, una referencia de comunicación es definida por la dirección de
+la estación, el punto de acceso al servicio de la capa 2 y el punto de acceso al servicio
+del interface. La lista contiene las relaciones entre la referencia y las direcciones de la
+capa 2 y del interface. Además, los servicios prestados por FMS, longitudes de
+telegramas, etc., están especificados en la lista para cada referencia.
+
+6.3.6. Dirección de la red.
+Además de los servicios FMS, están disponibles las funciones de dirección de la
+red. Las funciones de FMA7 son opcionales. Permiten la configuración central y pueden
+ser puestas en marcha local o remotamente.
+La dirección de contexto puede ser usada para establecer y desconectar una
+conexión FMA7.
+La dirección de configuración puede ser usada para accederá listas, contadores
+estadísticos y los parámetros de capa 1/2. También puede ser usado para la
+identificación y registro de estaciones. Todo esto puede verse en la figura 20.
+
+PROFIBUS
+
+31
+
+Comunicaciones Industriales
+
+Figura 20: Servicios de FMA7.
+
+La dirección de fallos puede usarse para indicar fallos/sucesos y para resetear los
+dispositivos.
+Un acceso uniforme a los dispositivos de configuración se obtiene por
+especificación de conexión de dirección predefinida. Una conexión de dirección
+predefinida debe introducirse con referencia igual a 1 en la lista para cada dispositivo
+que apoya servicios FMA7 como contestador.
+
+6.3.7. Operación mixta de PROFIBUS-FMS y PROFIBUS-DP.
+La operación mixta de dispositivos FMS y DP en un bus es una de las ventajas
+más robustas de PROFIBUS. Ambos protocolos también pueden ser ejecutados
+simultáneamente en un dispositivo. Estos dispositivos se llaman dispositivos
+combinados.
+La operación mixta es posible porque ambas versiones de los protocolos usan
+una tecnología de transmisión y protocolos de acceso al bus uniformes. Las diferentes
+funciones de aplicación están separadas por diferentes puntos de acceso de la capa 2.
+
+6.3.8. Perfiles.
+FMS ofrece un amplio rango de funciones para asegurar la aplicación universal.
+Actualmente el alcance de funciones en diferentes áreas de aplicación requiere ser
+adaptado a requisitos específicos.
+Las definiciones de aplicación relatadas son necesarias para las funciones del
+dispositivo. Estas declaraciones se llaman perfiles. Los perfiles proporcionan a los
+dispositivos capacidad de cambio asegurando que dispositivos de diferentes vendedores
+están equipados con la misma funcionalidad de comunicación. Los perfiles que han sido
+definidos para FMS están listados en la parte baja. Están disponibles desde la
+Organización de Usuarios de PROFIBUS usando el número de orden del documento
+entre paréntesis:
+
+PROFIBUS
+
+32
+
+Comunicaciones Industriales
+
+- Comunicación entre controladores (3.002).
+Este perfil de comunicación define los servicios FMS a usar para la
+comunicación entre controladores PLC. Los servicios, parámetros y tipos
+de datos que cada PLC debe soportar son especificados basándose en las
+clases de controladores.
+-
+
+Perfil en la construcción de automatismos (3.011, lengua Alemana).
+Este perfil está dedicado a una rama específica y sirve como base
+para muchas procuraciones públicas en construcción de automatismos. El
+perfil describe la supervisión, control en lazo cerrado y abierto, control
+de operación, manejo de la alarma y archivación para sistemas de
+construcción de automatismos usando FMS.
+
+PROFIBUS
+
+33
+
+Comunicaciones Industriales
+
+7.- Aplicaciones y posibilidades de implementación.
+La implementación del protocolo PROFIBUS es sencilla y barata debido a la
+amplia gama de chips disponibles en la actualidad. Esto ahorra el tiempo consumido y
+tareas caras como implementaciones individuales, consiguiendo una disponibilidad
+rápida de los productos.
+En principio, el protocolo PROFIBUS puede ser implementado en cualquier
+microprocesador equipado interna o externamente con una interface serie asíncrona
+(UART). Sin embargo, el uso de chips protocolares (ASICs) es muy recomendable
+cuando el protocolo vaya a ser ejecutado a velocidades mayores de 500 Kbits/seg. O
+cuando se requiere una conexión en cierto tipo de tecnologías (p. ej. IEC 1158-2).
+La decisión sobre el método a seguir en la implementación dependerá
+básicamente de la complejidad del elemento de campo, la actuación necesaria y la
+funcionalidad requerida. Se muestran a continuación algunos ejemplos de
+implementación:
+-
+
+Implementación por Chip sencillo para esclavos DP:
+
+Es la forma más simple. Todas las funciones del protocolo están integradas en
+un único chip, sin necesidad de un microprocesador o software adicional. Sólo
+se necesita un director de interface y un reloj como componentes esternos (ver
+figura 21).
+
+Figura 21: Ejemplo de dispositivo creado por Siemens.
+
+-
+
+Implementación de esclavos inteligentes FMS y DP:
+
+Las partes críticas en el tiempo del protocolo PROFIBUS son implementadas en
+un chip protocolar y las partes restantes som implementadas bajo software en un
+microcontrolador. Hay una amplia gama de chips disponibles para esclavos
+inteligentes (68360 de Motorola, SPC3 de Siemens, V-SPC3 de VIPA, etc.).
+-
+
+Implementación de maestros complejos FMS y DP:
+
+Se implementan de la misma forma que los explicados en al apartado anterior y
+presentan también una amplia oferta de dispositivos (PBM de IAM, ASPC2 de
+Siemens, etc.).
+
+PROFIBUS
+
+34
+
+Comunicaciones Industriales
+
+-
+
+Implementación de dispositivos de campo PA:
+
+Cuando se implementa un dispositivo de campo PROFIBUS PA, es
+particularmente importante un bajo consumo de energía ya que generalmente
+sólo está permitido una circulación de corriente de 10mA. En dispositivos
+protegidos internamente. Chips especiales (SIM 1 de Siemens, FCHIP-1 de
+ShipStar, etc.) están diseñados para cumplir tales requisitos. En la figura 22 se
+muestra la implementación de un dispositivo de campo PA mediante la
+utilización del chip SIM 1 de Siemens.
+
+Figura 22: Implementación de un dispositivo de campo
+PA mediante SIM 1 y SPC 4
+
+Se puede por tanto concluir que la aplicación de PROFIBUS está orientada a una
+serie de servicios orientados a la conexión de dispositivos de muy distinta índole. Se
+pretende garantizar así la fácil integración del bus en la estructura de automatización
+jerárquica, manejando a nivel inferior el control del flujo de información y el estado de
+las conexiones.
+
+PROFIBUS
+
+35
+
+Comunicaciones Industriales
+
+8.- La importancia actual de PROFIBUS.
+PROFIBUS ha adquirido una aceptación creciente (en un principio en Alemania
+para después implantarse por Europa y abrir su mercado al resto del mundo). Los
+pioneros fueron fabricantes como ABB, AEG, Bauer, Danfoss, Kllöckner Möeller,
+Phoenix o Siemens, llegando en la actualidad a ofrecer un elevado número de productos
+compatibles y exhibiciones conjuntas que demuestran que la red es capaz de integrar y
+gestionar productos de diferentes marcas bajo un bus de comunicaciones gestionado con
+un software único.
+Las ventajas más importantes de PROFIBUS comparado con otros buses de
+campo son la existencia de una norma estable EN 50 170 y sus características
+universales que cubren una amplia gama de aplicaciones en fabricación, procesado y
+automatización de procesos. La independencia de los vendedores junto con la eficacia
+del bus, demostrada en más de 200000 aplicaciones, han provocado un aumento en el
+porcentaje de mercado industrial en Europa de más del 40% según diversos estudios
+indepedientes de mercado.
+Los fabric antes líderes de tecnología de automatización apoyan la tecnología
+PROFIBUS y presentan una oferta cada vez mayor de productos y servicios
+innovadores. Algunos de los sectores en los que ha cobrado una mayor importancia la
+tecnología PROFIBUS son los siguientes:
+-
+
+Computadores industriales.
+Módulos de Pc.
+Componentes neumáticos.
+Herramientas de software.
+Componentes de red.
+Procesos de automatización.
+HMI.
+Descentralización de entradas/salidas.
+
+Se presentan a continuación noticioas recogidas en diferentes publicaciones
+especializadas que recogen de forma clara y específica la situación actual de
+PROFIBUS en el mercado industrial:
+“ Avalancha de soluciones PROFIBUS para procesos”
+PROFIBUS PA continúa con su aumento de ganacias alrededor del mundo.
+Según Andreas Schimanski, líder del grupo de Marketing PROFIBUS PA, el
+nuevo incremento puede considerarse como una verdadera avalancha. ”Parece
+que estamos experimentando una explosión de mercado de proporciones
+históricas” dijo Schimanski. “Sabíamos que los procesos industriales buscaban
+una solución pero la demanda en todos los sectores ha cogido a los fabricantes
+por sorpresa”.
+Países como Singapur, África del Sur, E.E.U.U. y la mayoría de los países
+europeos tiene proyectos en este terreno. Reino Unido y Alemania tienen varias
+
+PROFIBUS
+
+36
+
+Comunicaciones Industriales
+
+plantas industriales con PROFIBUS PA, y los beneficios no han tardado en
+llegar.
+
+“Ahora ... 2 millones de nodos. 50000 dispositivos vendidos en los próximos 12
+meses”
+PROFIBUS-PA se ha establecido internacionalmente como el bus de campo
+preferido para los procesos de automatización en plantas industriales. En el
+primer cuarto de 1998, los fabricantes de sistemas y dispositivos de campo
+construyeron 23 plantas de procesamiento en 14 países.empezaron a operar casi
+3000 dispositivos PA, ayudando a aumentar el número total de nodos
+PROFIBUS instalados por todo el mundo a más de 2000000 para un total de
+200000 aplicaciones (Junio 1998).
+La gran mayoría de las aplicaciones se han aplicado en sistemas pequeños o
+medios, de forma que los usuarios puedan adquirir experiencia. Según Lindner:
+“estimamos que cada una de estas aplicaciones será potencialmente de 10 a 50
+veces mayor el año que viene, y esperamos en los próximos 12 meses haber
+vendido más de 50000 dispositivos de campo PROFIBUS PA”.
+
+“PROFIBUS es ahora una industria global”: Lindner
+Los éxitos de mercado de PROFIBUS continúan escalando en todas las áreas de
+las empresas. Los anuncios recientes de que Schneider Automation, Matsushita
+Weidmuller y otros 10 distribuidores de PROFIBUS se han unido a la
+PROFIBUS Trade Organization(PTO) en Norte América, la línea ascendente
+que este está sufriendo fuera de Europa, la inclusión de la mayoría de PLCs en
+la PROFIBUS User Organization, indican el incremento “a pleno mercado” del
+sistema.Chequia y Singapur son los últimos países en aceptar nuevas
+organizaciones establecidas de PROFIBUS User Group (Abril 1998).
+
+“88 plantas industriales usan ya PROFIBUS”
+Hasta Septiembre de 1998, los fabricantes de sistemas y dispositivos de campo
+han instalado redes de trabajo PROFIBUS PA en 88 plantas de procesos en 24
+países (19 Octubre 1998).
+
+“Destilerías canadienses adaptan PROFIBUS-PA para actualizar inventario”
+UDV, uno de los más importantes fabricantes de bebidas alcohólicas de
+Canadá, están instalando 2 redes de buses de campo PROFIBUS-PA como
+parte de un proyecto de reinstrumentación para una aplicación de almacenaje
+de 19 tanques en su destilería en Valleyfield, Quebec. Las mejoras están
+destinadas a mejorar la fiabilidad del sistema, mejorar la monitorización del
+sistema y mejorar el manejo de todo el inventario (19 Octubre 1998).
+
+PROFIBUS
+
+37
+
+Comunicaciones Industriales
+
+9.- Ejemplos de productos de diversos fabricantes.
+En la tabla 23 se muestran algunos dispositivos indicando algunas de sus
+características e indicando las versiones de PROFIBUS con las que pueden trabajar.
+
+Tabla 23: Algunos modelos disponibles de dispositivos
+PROFIBUS (Año 1998)
+
+PROFIBUS
+
+38
+
+Comunicaciones Industriales
+
+10.- Bibliografía utilizada.
+En la elaboración del presente texto se han utilizado las siguientes fuentes de
+documentación:
+LIBROS:
+- “Autómatas programables”, por Josep Balcells y José Luis Romeral, Serie
+Mundo Electrónico, de Ediciones Marcombo.
+PÁGINAS WEB:
+-
+
+www.profibus.com
+eya.swin.net
+
+REVISTAS:
+- “Automática e Instrumentación”, nº 293, Febrero 1999.
+
+PROFIBUS
+
+39
+
+Comunicaciones Industriales
+
+PROFIBUS
+
+40
+
+
