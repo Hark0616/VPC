@@ -557,35 +557,31 @@ void print_vpc3_registers(void) {
 
 void print_vpc3_state(void) {
     uint8_t status_l = Vpc3Read(0x04);
-    uint8_t dp_state = (status_l & MASK_DP_STATE) >> 5;
 
     printf("PROFIBUS STATE: STATUS_L = 0x%02X -> ", status_l);
 
-    switch(dp_state) {
-        case WAIT_PRM:
-            printf("WAIT_PRM (Waiting for parameterization telegram)");
+    switch (status_l & 0x0C) {
+        case 0x00:
+            if (status_l & VPC3_PASS_IDLE) {
+                printf("PASSIVE_IDLE");
+            } else {
+                printf("OFFLINE");
+            }
             break;
-        case WAIT_CFG:
-            printf("WAIT_CFG (Waiting for configuration telegram)");
+        case 0x04:
+            printf("WAIT_PRM (waiting for parameterization)");
             break;
-        case DATA_EX:
-            printf("DATA_EX (Data Exchange Active)");
+        case 0x08:
+            printf("WAIT_CFG (waiting for configuration)");
             break;
-        case DP_ERROR:
-             printf("DP_ERROR (PROFIBUS Error State)");
-             break;
+        case 0x0C:
+            printf("DATA_EX (data exchange active)");
+            break;
         default:
-            // Check other status flags if not in a standard DP state
-            if (!(status_l & 0x01)) { // Check if OFFLINE
-                 printf("OFFLINE");
-            } else if (status_l & 0x80) { // Check for PASSIVE_IDLE (older method)
-                 printf("PASSIVE_IDLE");
-            }
-            else {
-                 printf("UNKNOWN (DP_STATE: %d)", dp_state);
-            }
+            printf("UNKNOWN");
             break;
     }
+
     printf("\r\n");
 }
 
