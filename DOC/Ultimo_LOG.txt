@@ -1,6 +1,3 @@
-
-==============================================================================
-VPC3+S PROFIBUS Slave - Standard Initialization Approach
 ==============================================================================
 
 Using standard DpAppl_ProfibusInit() for complete initialization
@@ -229,7 +226,7 @@ DEBUG: [DETAILED_DIAG] MODE_REG_0_L (0x06): 0xC0
 DEBUG: [DETAILED_DIAG] MODE_REG_0_H (0x07): 0x25
 DEBUG: [DETAILED_DIAG] Control Reg (0x08): 0x93
 DEBUG: [DETAILED_DIAG] MODE_REG_1_R (0x09): 0x02
-DEBUG: [DETAILED_DIAG] MODE_REG_2 (0x0C): 0x07 (puede cambiar según estado)
+DEBUG: [DETAILED_DIAG] MODE_REG_2 (0x0C): 0x06 (puede cambiar según estado)
 DEBUG: [DETAILED_DIAG] MODE_REG_1 (0x15): 0x01 (se actualiza automáticamente)
 DEBUG: Esperando que el chip procese el comando START...
 DEBUG: [CRITICAL_FIX] STATUS_L después de 50ms: 0x91
@@ -254,7 +251,7 @@ DEBUG: Verificando estado después del comando START...
 DEBUG: STATUS_L post-START: 0x91
 DEBUG: EXITO - Chip ha entrado en Passive_Idle (bit 0 = 1)
 DEBUG: Obteniendo puntero del buffer de diagnostico...
-DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x07
 DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
 DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
 DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
@@ -346,6 +343,11 @@ DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
 DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
 DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
 DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x0D
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
 VPC3+S REGISTERS:
 STATUS_L   (0x04): 0x95
 STATUS_H   (0x05): 0xE3
@@ -354,7 +356,7 @@ MODE_REG_0_H (0x07): 0x25
 MODE_REG_1   (0x15): 0x21 (se actualiza automáticamente)
 MODE_REG_2   (shadow 0x0C): 0x05 (puede cambiar según estado)
 INT_REG_L    (0x02): 0x04
-INT_REG_H    (0x03): 0x1C
+INT_REG_H    (0x03): 0x2C
 CFG_PTR    (0x34): 0x15
 
 DEBUG: [VPC3_DiagnoseMemoryMode] === DIAGNÓSTICO DE MODO DE MEMORIA ===
@@ -369,6 +371,68 @@ DEBUG: [VPC3_ValidateSegmentPointers] Cfg: Segment=0x14, Addr=0x00A0
 DEBUG: [VPC3_ValidateSegmentPointers] Prm: Segment=0x16, Addr=0x00B0
 DEBUG: [VPC3_ValidateSegmentPointers] All segment pointers are valid.
 [VPC3_MonitorModeReg2] Inicialización - MODE_REG_2 = 0x05
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+VPC3+S REGISTERS:
+STATUS_L   (0x04): 0x45
+STATUS_H   (0x05): 0xE3
+MODE_REG_0_L (0x06): 0xC0
+MODE_REG_0_H (0x07): 0x25
+MODE_REG_1   (0x15): 0x21 (se actualiza automáticamente)
+MODE_REG_2   (shadow 0x0C): 0x05 (puede cambiar según estado)
+INT_REG_L    (0x02): 0x04
+INT_REG_H    (0x03): 0x08
+CFG_PTR    (0x34): 0x15
+
+==============================================
+PROFIBUS STATE: STATUS_L = 0x45 -> WAIT_PRM (waiting for parameterization)
+==============================================
+[HEARTBEAT] El sistema está vivo. STATUS_L: 0x45
+[INFO] State: Waiting for Set_Prm from master...
+[ISR_LOG] 127 entradas disponibles en buffer de log
+[ISR_LOG] Últimas 5 entradas del ISR:
+[ISR_LOG] [DpCfg_Init] sDpAppl.sCfgData.abData inicializado (2 bytes):
+[ISR_LOG] DpCfg_InitLongitudes I/O programadas en ASIC
+[ISR_LOG] DpCfg_InitInput length 0x1
+[ISR_LOG] DpCfg_InitOutput length 0x1
+[ISR_LOG] DpCfg_InitBuffer de configuración del ASIC programado
+[ISR_LOG] ⚠️ OVERFLOW detectado - limpiando flag
+[INT_POLL] INT_REG_H=0x08 -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
 DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
 DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
 DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
@@ -394,6 +458,671 @@ DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
 DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
 DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
 DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+[INT_POLL] INT_REG_H=0x2C -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x07
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+[INT_POLL] INT_REG_H=0x08 -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x0D
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+[INT_POLL] INT_REG_H=0x2C -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x07
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+[INT_POLL] INT_REG_H=0x08 -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+[HEARTBEAT] El sistema está vivo. STATUS_L: 0x95
+[INFO] State: Waiting for Set_Prm from master...
+[ISR_LOG] 127 entradas disponibles en buffer de log
+[ISR_LOG] Últimas 5 entradas del ISR:
+[ISR_LOG] DpCfg_InitLongitud programada en ASIC 0x2
+[ISR_LOG] [dp_isr]Procesando eventos del chip...
+[ISR_LOG] [VPC3_Poll]Eventos hardware leidos 0x2C14
+[ISR_LOG] [VPC3_Poll]Mascara de software aplicada 0x3D2
+[ISR_LOG] [VPC3_Poll]BAUDRATE_DETECT (0x0004)
+[ISR_LOG] ⚠️ OVERFLOW detectado - limpiando flag
+[INT_POLL] INT_REG_H=0x2C -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x0D
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x07
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+[INT_POLL] INT_REG_H=0x08 -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x0D
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x07
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+[INT_POLL] INT_REG_H=0x2C -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x07
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+[INT_POLL] INT_REG_H=0x08 -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+[INT_POLL] INT_REG_H=0x2C -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x07
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x07
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+[HEARTBEAT] El sistema está vivo. STATUS_L: 0x45
+[INFO] State: Waiting for Set_Prm from master...
+[ISR_LOG] 127 entradas disponibles en buffer de log
+[ISR_LOG] Últimas 5 entradas del ISR:
+[ISR_LOG] [VPC3_Poll]USER_TIMER_CLOCK (0x0010)
+[ISR_LOG] [VPC3_Poll]NEW_CFG_DATA (0x0400)
+[ISR_LOG] [VPC3_Poll]NEW_PRM_DATA (0x0800)
+[ISR_LOG] [VPC3_Poll]DX_OUT (0x2000)
+[ISR_LOG] [dp_isr]=== ETAPA 1: Trama de Parametrizacion (Set_Param) recib
+[ISR_LOG] ⚠️ OVERFLOW detectado - limpiando flag
+[INT_POLL] INT_REG_H=0x08 -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x0D
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
 VPC3+S REGISTERS:
 STATUS_L   (0x04): 0x45
 STATUS_H   (0x05): 0xE3
@@ -402,19 +1131,250 @@ MODE_REG_0_H (0x07): 0x25
 MODE_REG_1   (0x15): 0x21 (se actualiza automáticamente)
 MODE_REG_2   (shadow 0x0C): 0x05 (puede cambiar según estado)
 INT_REG_L    (0x02): 0x04
-INT_REG_H    (0x03): 0x20
+INT_REG_H    (0x03): 0x08
+CFG_PTR    (0x34): 0x15
+
+DEBUG: [VPC3_ValidateSegmentPointers] Validating ASIC segment pointers...
+DEBUG: [VPC3_ValidateSegmentPointers] Diag1: Segment=0x10, Addr=0x0080
+DEBUG: [VPC3_ValidateSegmentPointers] Diag2: Segment=0x12, Addr=0x0090
+DEBUG: [VPC3_ValidateSegmentPointers] Cfg: Segment=0x14, Addr=0x00A0
+DEBUG: [VPC3_ValidateSegmentPointers] Prm: Segment=0x16, Addr=0x00B0
+DEBUG: [VPC3_ValidateSegmentPointers] All segment pointers are valid.
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+VPC3+S REGISTERS:
+STATUS_L   (0x04): 0x95
+STATUS_H   (0x05): 0xE3
+MODE_REG_0_L (0x06): 0xC0
+MODE_REG_0_H (0x07): 0x25
+MODE_REG_1   (0x15): 0x21 (se actualiza automáticamente)
+MODE_REG_2   (shadow 0x0C): 0x05 (puede cambiar según estado)
+INT_REG_L    (0x02): 0x04
+INT_REG_H    (0x03): 0x2C
 CFG_PTR    (0x34): 0x15
 
 ==============================================
-PROFIBUS STATE: STATUS_L = 0x45 -> WAIT_PRM (waiting for parameterization)
+PROFIBUS STATE: STATUS_L = 0x95 -> WAIT_PRM (waiting for parameterization)
 ==============================================
+[INT_POLL] INT_REG_H=0x2C -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x0D
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+[INT_POLL] INT_REG_H=0x08 -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x0D
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x07
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x0D
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+[INT_POLL] INT_REG_H=0x2C -> dp_isr()
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x07
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=0, bDiagControl=0x00, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=0, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x00...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x09
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[0]=0x10, CalculatedAddr=0x0080
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer1 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000080
+DEBUG: [VPC3_SetDiagnosis] INICIO - bUserDiagLength=8, bDiagControl=0x02, bCheckDiagFlag=0
+DEBUG: [VPC3_SetDiagnosis] Verificando VPC3_CheckDiagBufPtr()...
+DEBUG: [VPC3_SetDiagnosis] Buffer de diagnóstico disponible
+DEBUG: [VPC3_SetDiagnosis] bDpState=0x00, DATA_EX=0x04
+DEBUG: [VPC3_SetDiagnosis] Verificando longitud: bUserDiagLength=8, DIAG_BUFSIZE-6=10
+DEBUG: [VPC3_SetDiagnosis] Verificando bDiagControl=0x02...
+DEBUG: [VPC3_SetDiagnosis] Caso default para bDiagControl
+DEBUG: [VPC3_SetDiagnosis] Verificando contenido del buffer de diagnóstico...
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x42, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_KEN
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=2, bTmpUserDiagnosisLength=8
+DEBUG: [VPC3_SetDiagnosis] Procesando header: 0x06, DIAG_TYPE_MASK=0xC0
+DEBUG: [VPC3_SetDiagnosis] Caso DIAG_TYPE_DEV
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, STATUS_DIAG_HEAD_SIZE=4
+DEBUG: [VPC3_SetDiagnosis] bTmpLength=6, bTmpUserDiagnosisLength=6
+DEBUG: [VPC3_SetDiagnosis] Verificando pDiagBuffer y estado DP...
+DEBUG: [VPC3_SetDiagnosis] Llamando VPC3_UpdateDiagnosis...
+DEBUG: [VPC3_SetDiagnosis] VPC3_UpdateDiagnosis completado
+DEBUG: [VPC3_SetDiagnosis] FINAL - Retornando bRetValue=1
+DEBUG: [VPC3_GetDiagBufPtr] bDiagBufferSm=0x06
+DEBUG: [VPC3_GetDiagBufPtr] pDiagBuffer1=0x00000080, pDiagBuffer2=0x00000090
+DEBUG: [VPC3_GetDiagBufPtr] Segment[1]=0x12, CalculatedAddr=0x0090
+DEBUG: [VPC3_GetDiagBufPtr] Seleccionado pDiagBuffer2 (validado)
+DEBUG: [VPC3_GetDiagBufPtr] Retornando puntero: 0x00000090
 [HEARTBEAT] El sistema está vivo. STATUS_L: 0x45
 [INFO] State: Waiting for Set_Prm from master...
-[ISR_LOG] 120 entradas disponibles en buffer de log
+[ISR_LOG] 127 entradas disponibles en buffer de log
 [ISR_LOG] Últimas 5 entradas del ISR:
-[ISR_LOG] [DpCfg_Init] sDpAppl.sCfgData.abData inicializado (2 bytes):
-[ISR_LOG] DpCfg_InitLongitudes I/O programadas en ASIC
-[ISR_LOG] DpCfg_InitInput length 0x1
-[ISR_LOG] DpCfg_InitOutput length 0x1
-[ISR_LOG] DpCfg_InitBuffer de configuración del ASIC programado
-[INT_POLL] INT_REG_H=0x20 -> dp_isr()
+[ISR_LOG] [dp_isr]TIMESTAMP 0x29E6
+[ISR_LOG] [dp_isr]STATUS_L antes de procesar PRM 0x91
+[ISR_LOG] [dp_isr]STATUS_H antes de procesar PRM 0xE3
+[ISR_LOG] [dp_isr]ESTADO ACTUAL 0x0
+[ISR_LOG] [dp_isr](Deberia ser WAIT_PRM)
+[ISR_LOG] ⚠️ OVERFLOW detectado - limpiando flag
+[INT_POLL] INT_REG_H=0x08 -> dp_isr()

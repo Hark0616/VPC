@@ -197,29 +197,21 @@ void isr_log_get_stats(uint8_t* total_entries, uint8_t* available_entries, uint8
 uint16_t VPC3_Poll( void )
 {
 volatile uint8_t bResult;
-
    #if DP_INTERRUPT_MASK_8BIT == 0
-
       #if VPC3_SERIAL_MODE
-
          pDpSystem->wPollInterruptEvent = MakeWord( Vpc3Read( bVpc3RwIntReqReg_H ), Vpc3Read( bVpc3RwIntReqReg_L ) );
-
       #else
-
          CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->wPollInterruptEvent, ((uint8_t *)(VPC3_ADR)( Vpc3AsicAddress )), 2 );
-
          #if BIG_ENDIAN
             Swap16( &pDpSystem->wPollInterruptEvent );
          #endif /* #if BIG_ENDIAN */
-
       #endif /* #if VPC3_SERIAL_MODE */
-
+      
       // Log para verificar la máscara de software (usando ring buffer)
       uint16_t events = pDpSystem->wPollInterruptEvent;
       ISR_LOG_VAL("[VPC3_Poll]", "Eventos hardware leidos", events);
-      ISR_LOG("[VPC3_Poll]", (events & 0x0800) ? "events & 0x0800 activo" : "events & 0x0800 inactivo");
       ISR_LOG_VAL("[VPC3_Poll]", "Mascara de software aplicada", pDpSystem->wPollInterruptMask);
-
+      
       // Decodificar eventos específicos para análisis (sin printf)
       if (events & 0x0001) ISR_LOG("[VPC3_Poll]", "MAC_RESET/CLOCK_SYNC (0x0001)");
       if (events & 0x0002) ISR_LOG("[VPC3_Poll]", "GO_LEAVE_DATA_EX (0x0002)");
@@ -237,14 +229,11 @@ volatile uint8_t bResult;
       if (events & 0x2000) ISR_LOG("[VPC3_Poll]", "DX_OUT (0x2000)");
       if (events & 0x4000) ISR_LOG("[VPC3_Poll]", "POLL_END_IND (0x4000)");
       if (events & 0x8000) ISR_LOG("[VPC3_Poll]", "FDL_IND (0x8000)");
-
+      
       pDpSystem->wPollInterruptEvent &= pDpSystem->wPollInterruptMask;
-
       if( pDpSystem->wPollInterruptEvent > 0 )
       {
-
    #endif /* #if DP_INTERRUPT_MASK_8BIT == 0 */
-
          #if( DP_TIMESTAMP == 0 )
             /*---------------------------------------------------------------*/
             /* IND_MAC_RESET                                                 */
@@ -252,11 +241,10 @@ volatile uint8_t bResult;
             if( VPC3_POLL_IND_MAC_RESET() )
             {
                DpAppl_MacReset();
-
                VPC3_CON_IND_MAC_RESET();
             } /* if( VPC3_POLL_IND_MAC_RESET() ) */
          #endif /* #if( DP_TIMESTAMP == 0 ) */
-
+         
          /*------------------------------------------------------------------*/
          /* IND_DIAG_BUF_CHANGED                                             */
          /*------------------------------------------------------------------*/
@@ -281,66 +269,104 @@ volatile uint8_t bResult;
                 ISR_LOG("[dp_isr]", "Llamando DpDiag_IsrDiagBufferChanged...");
                 DpDiag_IsrDiagBufferChanged();
                 
-                // Verificar integridad de punteros después del evento
+                // RESTAURAR: Validación crítica de punteros (si la función existe)
+                #ifdef VPC3_ValidateSegmentPointers
                 ISR_LOG("[dp_isr]", "Verificando integridad de punteros después del evento...");
-                // Comentado temporalmente - función no disponible
-                // if (VPC3_GetSegmentPointer(0) == 0xFFFF || VPC3_GetSegmentPointer(1) == 0xFFFF) {
-                //     ISR_LOG("[dp_isr]", "PUNTEROS CORRUPTOS DETECTADOS! Intentando recuperación...");
-                //     // Intentar recuperación de punteros
-                // } else {
-                //     ISR_LOG("[dp_isr]", "Punteros de segmentos validados correctamente");
-                // }
+                if (VPC3_ValidateSegmentPointers() != DP_OK) {
+                    ISR_LOG("[dp_isr]", "PUNTEROS CORRUPTOS DETECTADOS! Intentando recuperación...");
+                } else {
+                    ISR_LOG("[dp_isr]", "Punteros de segmentos validados correctamente");
+                }
+                #else
                 ISR_LOG("[dp_isr]", "Verificación de punteros de segmentos (función no disponible)");
+                #endif
                 
                 ISR_LOG_VAL("[dp_isr]", "STATUS_L después del evento", VPC3_GET_STATUS_L());
                 ISR_LOG_VAL("[dp_isr]", "STATUS_H después del evento", VPC3_GET_STATUS_H());
                 ISR_LOG_VAL("[dp_isr]", "DP_STATE después del evento", VPC3_GET_DP_STATE());
                 ISR_LOG("[dp_isr]", "=== FIN IND_DIAG_BUFFER_CHANGED ===");
             }
+            
+            // CRÍTICO: Restaurar confirmación de evento
+            VPC3_POLL_CON_IND_DIAG_BUFFER_CHANGED();
          } /* if( VPC3_POLL_IND_DIAG_BUFFER_CHANGED() ) */
-
+         
          /*------------------------------------------------------------------*/
-         /* IND_NEW_PRM_DATA                                                 */
+         /* IND_NEW_PRM_DATA - RESTAURAR BUCLE DO-WHILE                     */
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_NEW_PRM_DATA() )
          {
+            ISR_LOG("[dp_isr]", "=== ETAPA 1: Trama de Parametrizacion (Set_Param) recibida ===");
+            ISR_LOG_VAL("[dp_isr]", "TIMESTAMP", HAL_GetTick());
+            ISR_LOG_VAL("[dp_isr]", "STATUS_L antes de procesar PRM", VPC3_GET_STATUS_L());
+            ISR_LOG_VAL("[dp_isr]", "STATUS_H antes de procesar PRM", VPC3_GET_STATUS_H());
+            ISR_LOG_VAL("[dp_isr]", "ESTADO ACTUAL", VPC3_GET_DP_STATE());
+            ISR_LOG("[dp_isr]", "(Deberia ser WAIT_PRM)");
+            
             uint8_t bPrmLength;
-            uint8_t* prmBufPtr;
-            DP_ERROR_CODE prmCheckResult;
-
-            /* 1. Acusar recibo de la interrupción para que no se quede activa */
-            VPC3_POLL_CON_IND_NEW_PRM_DATA();
-
-            /* 2. Obtener longitud y puntero de los datos de parámetro */
-            bPrmLength = VPC3_GET_PRM_LEN();
-            prmBufPtr = VPC3_GET_PRM_BUF_PTR();
-
-            /* 3. Validación de seguridad ANTES de copiar los datos */
-            if ((uint32_t)prmBufPtr >= ASIC_RAM_LENGTH || ((uint32_t)prmBufPtr + bPrmLength) > ASIC_RAM_LENGTH || bPrmLength > HELP_BUFSIZE)
+            #if DP_INTERRUPT_MASK_8BIT == 0
+               VPC3_POLL_CON_IND_NEW_PRM_DATA();
+            #endif /* #if DP_INTERRUPT_MASK_8BIT == 0 */
+            
+            // RESTAURAR: Bucle do-while para manejo de conflictos
+            bResult = VPC3_PRM_FINISHED;
+            do
             {
-                /* Puntero o longitud corrupta. Rechazar para evitar un HardFault. */
-                VPC3_SET_PRM_DATA_NOT_OK();
-            }
-            else
-            {
-                /* 4. Copia segura de los datos a un buffer local */
+                uint8_t* prmBufPtr;
+                VPC3_ADR prmAddr;
+                
+                bPrmLength = VPC3_GET_PRM_LEN();
+                ISR_LOG_VAL("[dp_isr]", "PRM Length", bPrmLength);
+                
+                // Validación de seguridad ANTES de copiar los datos
+                prmBufPtr = VPC3_GET_PRM_BUF_PTR();
+                prmAddr = (VPC3_ADR)(uint32_t)prmBufPtr;
+                
+                ISR_LOG_VAL("[dp_isr]", "PRM Buffer Ptr", (unsigned int)prmBufPtr);
+                ISR_LOG_VAL("[dp_isr]", "Addr", prmAddr);
+                
+                // Validar que la dirección está dentro del rango válido
+                if (prmAddr >= ASIC_RAM_LENGTH || ((uint32_t)prmAddr + bPrmLength) > ASIC_RAM_LENGTH || bPrmLength > HELP_BUFSIZE) {
+                    ISR_LOG("[dp_isr]", "ERROR: Puntero o longitud PRM corrupta!");
+                    ISR_LOG_VAL("[dp_isr]", "Addr", prmAddr);
+                    ISR_LOG_VAL("[dp_isr]", "Length", bPrmLength);
+                    ISR_LOG("[dp_isr]", "Rechazando trama PRM para evitar LECTURA ILEGAL");
+                    bResult = VPC3_SET_PRM_DATA_NOT_OK();
+                    break; // Salir del bucle do-while
+                }
+                
+                // Copia segura de los datos a un buffer local
+                ISR_LOG("[dp_isr]", "Validaciones PRM exitosas - procediendo con copia segura");
                 CopyFromVpc3_((MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], prmBufPtr, bPrmLength);
-
-                /* 5. Llamar a la función de validación lógica (la que corregimos antes) */
-                prmCheckResult = DpPrm_ChkNewPrmData((MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bPrmLength);
-
-                /* 6. Informar al chip VPC3+ del resultado de la validación */
-                if (prmCheckResult == DP_OK)
+                
+                // Llamar a la función de validación lógica
+                ISR_LOG_VAL("[dp_isr]", "Validando parametros", bPrmLength);
+                if( DpPrm_ChkNewPrmData( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bPrmLength ) == DP_OK )
                 {
-                    VPC3_SET_PRM_DATA_OK();
+                   #if REDUNDANCY
+                      #if DP_MSAC_C1
+                         if( VPC3_GET_PRM_LEN() != PRM_CMD_LENGTH )
+                         {
+                            MSAC_C1_CheckIndNewPrmData( (MEM_STRUC_PRM_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bPrmLength );
+                         }
+                      #endif /* #if DP_MSAC_C1 */
+                   #else
+                      #if DP_MSAC_C1
+                         MSAC_C1_CheckIndNewPrmData( (MEM_STRUC_PRM_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bPrmLength );
+                      #endif /* #if DP_MSAC_C1 */
+                   #endif /* #if REDUNDANCY */
+                   bResult = VPC3_SET_PRM_DATA_OK();
+                   ISR_LOG("[dp_isr]", "-> RESULTADO: Parametros ACEPTADOS");
                 }
                 else
                 {
-                    VPC3_SET_PRM_DATA_NOT_OK();
+                   bResult = VPC3_SET_PRM_DATA_NOT_OK();
+                   ISR_LOG("[dp_isr]", "-> RESULTADO: Parametros RECHAZADOS");
                 }
             }
+            while( bResult == VPC3_PRM_CONFLICT ); // RESTAURADO: Bucle de reintentos
          } /* if( VPC3_POLL_IND_NEW_PRM_DATA() ) */
-
+         
          /*------------------------------------------------------------------*/
          /* check config data , application specific!                        */
          /*------------------------------------------------------------------*/
@@ -354,86 +380,40 @@ volatile uint8_t bResult;
             ISR_LOG("[dp_isr]", "(Deberia ser WAIT_CFG)");
             
             uint8_t bCfgLength;
-
             #if DP_INTERRUPT_MASK_8BIT == 0
                VPC3_POLL_CON_IND_NEW_CFG_DATA();
             #endif /* #if DP_INTERRUPT_MASK_8BIT == 0 */
-
+            
             bResult = VPC3_CFG_FINISHED;
-
             do
             {
                uint8_t* cfgBufPtr;
                VPC3_ADR cfgAddr;
                
                bCfgLength = VPC3_GET_CFG_LEN();
-               
                ISR_LOG_VAL("[dp_isr]", "CFG Length", bCfgLength);
                
-               // --- VALIDACIÓN CRÍTICA: Verificar puntero CFG antes de leer ---
+               // Validación crítica: Verificar puntero CFG antes de leer
                cfgBufPtr = VPC3_GET_CFG_BUF_PTR();
-                               cfgAddr = (VPC3_ADR)(uint32_t)cfgBufPtr;
+               cfgAddr = (VPC3_ADR)(uint32_t)cfgBufPtr;
                
                ISR_LOG_VAL("[dp_isr]", "CFG Buffer Ptr", (unsigned int)cfgBufPtr);
                ISR_LOG_VAL("[dp_isr]", "Addr", cfgAddr);
                
-               // Validar que la dirección está dentro del rango válido
-               if (cfgAddr >= ASIC_RAM_LENGTH) {
-                   ISR_LOG("[dp_isr]", "ERROR: Puntero CFG corrupto!");
+               // Validaciones de seguridad
+               if (cfgAddr >= ASIC_RAM_LENGTH || (cfgAddr + bCfgLength) > ASIC_RAM_LENGTH || bCfgLength > HELP_BUFSIZE) {
+                   ISR_LOG("[dp_isr]", "ERROR: Puntero CFG corrupto o longitud inválida!");
                    ISR_LOG_VAL("[dp_isr]", "Addr", cfgAddr);
-                   ISR_LOG_VAL("[dp_isr]", "ASIC_RAM_LENGTH", ASIC_RAM_LENGTH);
-                   ISR_LOG("[dp_isr]", "Rechazando trama CFG corrupta para evitar LECTURA ILEGAL");
-                   VPC3_SET_CFG_DATA_NOT_OK();
-                   break; // Salir del bucle do-while
-               }
-               
-               // Validar que la longitud es razonable según manual VPC3+ (1..244 bytes)
-               if (bCfgLength > HELP_BUFSIZE) {
-                   ISR_LOG("[dp_isr]", "ERROR: Longitud CFG excede buffer destino");
-                   ISR_LOG_VAL("[dp_isr]", "bCfgLength", bCfgLength);
-                   ISR_LOG_VAL("[dp_isr]", "buffer size", HELP_BUFSIZE);
-                   ISR_LOG("[dp_isr]", "Rechazando.");
-                   VPC3_SET_CFG_DATA_NOT_OK();
-                   break; // Salir del bucle do-while
-               }
-               
-               // *** VALIDACIONES CRÍTICAS ADICIONALES ***
-               
-               // 3. Validar que la dirección final no excede el rango de memoria
-               if ((cfgAddr + bCfgLength) > ASIC_RAM_LENGTH) {
-                   ISR_LOG("[dp_isr]", "ERROR: Rango CFG excede memoria ASIC");
-                   ISR_LOG_VAL("[dp_isr]", "cfgAddr + bCfgLength", cfgAddr + bCfgLength);
-                   ISR_LOG_VAL("[dp_isr]", "ASIC_RAM_LENGTH", ASIC_RAM_LENGTH);
-                   VPC3_SET_CFG_DATA_NOT_OK();
+                   ISR_LOG_VAL("[dp_isr]", "Length", bCfgLength);
+                   ISR_LOG("[dp_isr]", "Rechazando trama CFG corrupta");
+                   bResult = VPC3_SET_CFG_DATA_NOT_OK();
                    break;
                }
                
-               // 4. Validar que la longitud no excede el buffer de destino
-               if (bCfgLength > HELP_BUFSIZE) {
-                   ISR_LOG("[dp_isr]", "ERROR: Longitud CFG excede buffer destino");
-                   ISR_LOG_VAL("[dp_isr]", "bCfgLength", bCfgLength);
-                   ISR_LOG_VAL("[dp_isr]", "buffer size", HELP_BUFSIZE);
-                   VPC3_SET_CFG_DATA_NOT_OK();
-                   break;
-               }
-               
-               // *** TODAS LAS VALIDACIONES PASARON - PROCEDER CON COPIA SEGURA ***
                ISR_LOG("[dp_isr]", "Validaciones CFG exitosas - procediendo con copia segura");
-               
                CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], cfgBufPtr, bCfgLength );
                
-               // *** DIAGNÓSTICO Y LOGGING: Validación inteligente para análisis ***
-               // NOTA: Esta validación es SOLO para diagnóstico. La decisión final
-               // siempre la toma DpCfg_ChkNewCfgData() independientemente de este resultado.
-               uint8_t cfg_validation_result = dp_isr_validate_and_process_cfg(bCfgLength, pDpSystem->abPrmCfgSsaHelpBuffer);
-               
-               // Procesamiento adicional para configuraciones extendidas (solo logging)
-               if (cfg_validation_result == DP_CFG_UPDATE) {
-                   cfg_validation_result = dp_isr_process_extended_cfg(bCfgLength, pDpSystem->abPrmCfgSsaHelpBuffer);
-               }
-               
-               // Log del resultado de validación (solo para análisis)
-               ISR_LOG_VAL("[dp_isr]", "Resultado validación CFG (diagnóstico)", cfg_validation_result);
+               ISR_LOG_VAL("[dp_isr]", "Validando configuracion", bCfgLength);
                switch( DpCfg_ChkNewCfgData( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bCfgLength ) )
                {
                   case DP_CFG_OK:
@@ -441,47 +421,21 @@ volatile uint8_t bResult;
                      #if DP_MSAC_C1
                         MSAC_C1_DoCfgOk();
                      #endif /* #if DP_MSAC_C1 */
-
-                     // *** CRÍTICO: Sincronizar Read_Config cuando aceptamos configuraciones extendidas ***
-                     // Esto asegura que si el maestro solicita Get_Cfg, siempre reciba la configuración correcta
-                     // independientemente de si la última PDU recibida fue extendida o no
-                     if (bCfgLength > DpApplCfgDataLength) {
-                         ISR_LOG("[dp_isr]", "Configuracion extendida aceptada - sincronizando Read_Config");
-                         ISR_LOG_VAL("[dp_isr]", "Longitud recibida", bCfgLength);
-                         ISR_LOG_VAL("[dp_isr]", "Longitud real GSD", DpApplCfgDataLength);
-                         
-                         // Establecer la longitud del buffer de lectura a nuestra configuración real
-                         VPC3_SET_READ_CFG_LEN(DpApplCfgDataLength);
-                         
-                         // Copiar solo los bytes válidos de nuestra configuración al buffer del ASIC
-                         CopyToVpc3_(VPC3_GET_READ_CFG_BUF_PTR(),
-                                    &sDpAppl.sCfgData.abData[0],
-                                    DpApplCfgDataLength);
-                         
-                         // Activar la actualización del buffer de lectura
-                         VPC3_UPDATE_CFG_BUFFER();
-                         
-                         ISR_LOG("[dp_isr]", "Read_Config sincronizado con configuración real");
-                     } else {
-                         ISR_LOG("[dp_isr]", "Configuracion normal - Read_Config ya está sincronizado");
-                     }
-
                      bResult = VPC3_SET_CFG_DATA_OK();
-                     ISR_LOG("[dp_isr]", "-> RESULTADO: Configuracion ACEPTADA (sin cambios).");
+                     ISR_LOG("[dp_isr]", "-> RESULTADO: Configuracion ACEPTADA (sin cambios)");
                      break;
-                  } /* case DP_CFG_OK: */
-
+                  }
+                  
                   case DP_CFG_FAULT:
                   {
                      #if DP_MSAC_C1
                         MSAC_C1_DoCfgNotOk();
                      #endif /* #if DP_MSAC_C1 */
-
                      bResult = VPC3_SET_CFG_DATA_NOT_OK();
-                     ISR_LOG("[dp_isr]", "-> RESULTADO: Configuracion RECHAZADA.");
+                     ISR_LOG("[dp_isr]", "-> RESULTADO: Configuracion RECHAZADA");
                      break;
-                  } /* case DP_CFG_FAULT: */
-
+                  }
+                  
                   case DP_CFG_UPDATE:
                   {
                      /* Calculate the length of the input and output using the configuration bytes */
@@ -490,57 +444,51 @@ volatile uint8_t bResult;
                         #if DP_MSAC_C1
                            MSAC_C1_DoCfgNotOk();
                         #endif /* #if DP_MSAC_C1 */
-
                         bResult = VPC3_SET_CFG_DATA_NOT_OK();
-                     } /* if( DP_OK != VPC3_CalculateInpOutpLength( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bCfgLength ) ) */
+                     }
                      else
                      {
                         /* set IO-Length */
                         VPC3_SetIoDataLength();
-
                         #if DP_MSAC_C1
                            MSAC_C1_DoCfgOk();
                         #endif /* #if DP_MSAC_C1 */
-
                         VPC3_SET_READ_CFG_LEN( bCfgLength );
                         VPC3_UPDATE_CFG_BUFFER();
-
                         bResult = VPC3_SET_CFG_DATA_OK();
-                        ISR_LOG("[dp_isr]", "-> RESULTADO: Configuracion ACEPTADA (con actualizacion de I/O).");
-                     } /* else of if( DP_OK != VPC3_CalculateInpOutpLength( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], bCfgLength ) ) */
+                        ISR_LOG("[dp_isr]", "-> RESULTADO: Configuracion ACEPTADA (con actualizacion de I/O)");
+                     }
                      break;
-                  } /* case DP_CFG_UPDATE: */
-
+                  }
+                  
                   default:
                   {
-                     ISR_LOG("[dp_isr]", "-> RESULTADO: Configuracion con estado desconocido.");
-                     VPC3_SET_CFG_DATA_NOT_OK();
+                     ISR_LOG("[dp_isr]", "-> RESULTADO: Configuracion con estado desconocido");
+                     bResult = VPC3_SET_CFG_DATA_NOT_OK();
                      break;
-                  } /* default: */
-               } /* switch( DpCfg_ChkNewCfgData( pCfgData, bCfgLength ) ) */
+                  }
+               }
             }
             while( bResult == VPC3_CFG_CONFLICT );
          } /* if( VPC3_POLL_IND_NEW_CFG_DATA() ) */
-
+         
          /*------------------------------------------------------------------*/
          /* IND_WD_DP_TIMEOUT                                                */
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_WD_DP_MODE_TIMEOUT() )
          {
             DpAppl_IsrNewWdDpTimeout();
-
             VPC3_CON_IND_WD_DP_MODE_TIMEOUT();
          } /* if( VPC3_POLL_IND_WD_DP_MODE_TIMEOUT() ) */
-
+         
          /*------------------------------------------------------------------*/
-         /* IND_USER_TIMER_CLOCK (Faltante)                                  */
+         /* IND_USER_TIMER_CLOCK                                             */
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_USER_TIMER_CLOCK() )
          {
-            /* Este evento a menudo solo necesita ser confirmado para limpiar la interrupción */
             VPC3_CON_IND_USER_TIMER_CLOCK();
          } /* if( VPC3_POLL_IND_USER_TIMER_CLOCK() ) */
-
+         
          /*------------------------------------------------------------------*/
          /* IND_GO_LEAVE_DATA_EX                                             */
          /*------------------------------------------------------------------*/
@@ -555,7 +503,6 @@ volatile uint8_t bResult;
             ISR_LOG_VAL("[dp_isr]", "DP_STATE antes del evento", VPC3_GET_DP_STATE());
             ISR_LOG_VAL("[dp_isr]", "MODE_REG_2 antes del evento", VPC3_GetModeReg2Shadow());
             ISR_LOG_VAL("[dp_isr]", "ESTADO ANTES del cambio", state_before);
-
             
             // Análisis del estado de comunicación
             uint8_t status_l = VPC3_GET_STATUS_L();
@@ -574,21 +521,17 @@ volatile uint8_t bResult;
             #if DP_MSAC_C1
                MSAC_C1_LeaveDx();
             #endif /* #if DP_MSAC_C1 */
-
             DpAppl_IsrGoLeaveDataExchange( VPC3_GET_DP_STATE() );
-
             uint8_t state_after = VPC3_GET_DP_STATE();
             ISR_LOG_VAL("[dp_isr]", "ESTADO DESPUES del cambio", state_after);
-
             if (state_before != DATA_EX && state_after == DATA_EX)
             {
-                ISR_LOG("[dp_isr]", "-> RESULTADO: Transicion a DataExchange EXITOSA.");
+                ISR_LOG("[dp_isr]", "-> RESULTADO: Transicion a DataExchange EXITOSA");
             }
             else if (state_before == DATA_EX && state_after != DATA_EX)
             {
-                 ISR_LOG("[dp_isr]", "-> RESULTADO: Se ha salido de DataExchange.");
+                 ISR_LOG("[dp_isr]", "-> RESULTADO: Se ha salido de DataExchange");
             }
-
             VPC3_CON_IND_GO_LEAVE_DATA_EX();
             ISR_LOG_VAL("[dp_isr]", "STATUS_L después del evento", VPC3_GET_STATUS_L());
             ISR_LOG_VAL("[dp_isr]", "STATUS_H después del evento", VPC3_GET_STATUS_H());
@@ -597,51 +540,38 @@ volatile uint8_t bResult;
             ISR_LOG("[dp_isr]", "=== FIN IND_GO_LEAVE_DATA_EX ===");
             ISR_LOG("[dp_isr]", "=== FIN ETAPA 3 ===");
          } /* if( VPC3_POLL_IND_GO_LEAVE_DATA_EX() ) */
-
+         
          /*------------------------------------------------------------------*/
          /* IND_DX_OUT                                                       */
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_DX_OUT() )
          {
-            // ESTE MENSAJE NO DEBERÍA APARECER NUNCA
-            ISR_LOG("[dp_isr]", "--- ALERTA: IND_DX_OUT detectado INESPERADAMENTE via polling. La condición de carrera puede persistir. ---");
-            
+            ISR_LOG("[dp_isr]", "--- ALERTA: IND_DX_OUT detectado INESPERADAMENTE via polling ---");
             ISR_LOG("[dp_isr]", "DEBUG: IND_DX_OUT detectado - procesando Data Exchange Output");
             ISR_LOG_VAL("[dp_isr]", "STATUS antes de DpAppl_IsrDxOut L", VPC3_GET_STATUS_L());
             ISR_LOG_VAL("[dp_isr]", "STATUS antes de DpAppl_IsrDxOut H", VPC3_GET_STATUS_H());
-            ISR_LOG_VAL("[dp_isr]", "STATUS_L antes", VPC3_GET_STATUS_L());
-            ISR_LOG("[dp_isr]", "(esperado DATA_EX=0x45)");
-            ISR_LOG_VAL("[dp_isr]", "STATUS_H antes", VPC3_GET_STATUS_H());
-            ISR_LOG("[dp_isr]", "(esperado 0xE3)");
             
             #if DP_MSAC_C1
                MSAC_C1_CheckIndDxOut();
             #endif /* #if DP_MSAC_C1 */
-
             DpAppl_IsrDxOut();
             ISR_LOG_VAL("[dp_isr]", "STATUS después de DpAppl_IsrDxOut L", VPC3_GET_STATUS_L());
             ISR_LOG_VAL("[dp_isr]", "STATUS después de DpAppl_IsrDxOut H", VPC3_GET_STATUS_H());
-            ISR_LOG_VAL("[dp_isr]", "STATUS_L después de DpAppl_IsrDxOut", VPC3_GET_STATUS_L());
-            ISR_LOG_VAL("[dp_isr]", "STATUS_H después de DpAppl_IsrDxOut", VPC3_GET_STATUS_H());
-
             VPC3_CON_IND_DX_OUT();
             ISR_LOG_VAL("[dp_isr]", "STATUS después de VPC3_CON_IND_DX_OUT L", VPC3_GET_STATUS_L());
             ISR_LOG_VAL("[dp_isr]", "STATUS después de VPC3_CON_IND_DX_OUT H", VPC3_GET_STATUS_H());
-            ISR_LOG_VAL("[dp_isr]", "STATUS_L después de VPC3_CON_IND_DX_OUT", VPC3_GET_STATUS_L());
-            ISR_LOG_VAL("[dp_isr]", "STATUS_H después de VPC3_CON_IND_DX_OUT", VPC3_GET_STATUS_H());
             ISR_LOG("[dp_isr]", "DEBUG: IND_DX_OUT procesado");
          } /* if( VPC3_POLL_IND_DX_OUT() ) */
-
+         
          /*------------------------------------------------------------------*/
          /* IND_NEW_GC_COMMAND                                               */
          /*------------------------------------------------------------------*/
          if( VPC3_POLL_IND_NEW_GC_COMMAND() )
          {
             DpAppl_IsrNewGlobalControlCommand( VPC3_GET_GC_COMMAND() );
-
             VPC3_CON_IND_NEW_GC_COMMAND();
          } /* if( VPC3_POLL_IND_NEW_GC_COMMAND() ) */
-
+         
          /*------------------------------------------------------------------*/
          /* IND_NEW_SSA_DATA                                                 */
          /*------------------------------------------------------------------*/
@@ -649,12 +579,10 @@ volatile uint8_t bResult;
          {
             CopyFromVpc3_( (MEM_UNSIGNED8_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0], VPC3_GET_SSA_BUF_PTR(), 4 );
             DpAppl_IsrNewSetSlaveAddress( (MEM_STRUC_SSA_BLOCK_PTR)&pDpSystem->abPrmCfgSsaHelpBuffer[0] );
-
             bResult = VPC3_FREE_SSA_BUF();
-
             VPC3_CON_IND_NEW_SSA_DATA();
          } /* if( VPC3_POLL_IND_NEW_SSA_DATA() ) */
-
+         
          /*------------------------------------------------------------------*/
          /* IND_BAUDRATE_DETECT                                              */
          /*------------------------------------------------------------------*/
@@ -663,48 +591,40 @@ volatile uint8_t bResult;
             #if DP_MSAC_C2
                MSAC_C2_SetTimeoutIsr();
             #endif /* #if DP_MSAC_C2 */
-
             DpAppl_IsrBaudrateDetect();
-
             VPC3_CON_IND_BAUDRATE_DETECT();
          } /* if( VPC3_POLL_IND_BAUDRATE_DETECT() ) */
-
+         
          #if DP_SUBSCRIBER
-
             /*---------------------------------------------------------------*/
             /* IND_DXB_OUT                                                   */
             /*---------------------------------------------------------------*/
             if( VPC3_POLL_IND_DXB_OUT() )
             {
                DpAppl_IsrDxbOut();
-
                VPC3_CON_IND_DXB_OUT();
             } /* if( VPC3_POLL_IND_DXB_OUT() ) */
-
+            
             /*---------------------------------------------------------------*/
             /* IND_DXB_LINK_ERROR                                            */
             /*---------------------------------------------------------------*/
             if( VPC3_POLL_IND_DXB_LINK_ERROR() )
             {
                DpAppl_IsrDxbLinkError();
-
                VPC3_CON_IND_DXB_LINK_ERROR();
             } /* if( VPC3_POLL_IND_DXB_LINK_ERROR() ) */
-
          #endif /* #if DP_SUBSCRIBER */
-
+         
          #if DP_FDL
-
             /*---------------------------------------------------------------*/
             /* IND_POLL_END                                                  */
             /*---------------------------------------------------------------*/
             if( VPC3_POLL_IND_POLL_END_IND() )
             {
                VPC3_CON_IND_POLL_END_IND();
-
                FDL_PollEndIsr();
             } /* if( VPC3_POLL_IND_POLL_END_IND() ) */
-
+            
             /*---------------------------------------------------------------*/
             /* IND_REQ_PDU                                                   */
             /*---------------------------------------------------------------*/
@@ -713,38 +633,27 @@ volatile uint8_t bResult;
                VPC3_CON_IND_FDL_IND();
                FDL_IndicationIsr();
             } /* if( VPC3_POLL_IND_FDL_IND() ) */
-
          #endif /* #if DP_FDL */
-
+         
          #if DP_INTERRUPT_MASK_8BIT == 0
-
             #if VPC3_SERIAL_MODE
-
                Vpc3Write( bVpc3WoIntAck_L, (uint8_t)(pDpSystem->wPollInterruptEvent & 0xFF) );
                Vpc3Write( bVpc3WoIntAck_H, (uint8_t)(pDpSystem->wPollInterruptEvent >> 8) );
-
             #else
-
                #if BIG_ENDIAN
                   Swap16( &pDpSystem->wPollInterruptEvent );
                #endif /* #if BIG_ENDIAN */
-
                CopyToVpc3_( ((uint8_t *)(VPC3_ADR)( Vpc3AsicAddress + 0x02 )), (MEM_UNSIGNED8_PTR)&pDpSystem->wPollInterruptEvent, 2 );
-
             #endif /* #if VPC3_SERIAL_MODE */
-
             pDpSystem->wPollInterruptEvent = 0;
-
          #endif /* #if DP_INTERRUPT_MASK_8BIT == 0 */
-
+         
    #if DP_INTERRUPT_MASK_8BIT == 0
-
       } /* if( pDpSystem->wPollInterruptEvent > 0 ) */
-
    #endif /* #if DP_INTERRUPT_MASK_8BIT == 0 */
+   
    return pDpSystem->wPollInterruptEvent;
 } /* uint16_t VPC3_Poll( void ) */
-
 #endif /* #if VPC3_SERIAL_MODE */
 
 
