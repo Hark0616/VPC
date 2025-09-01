@@ -143,11 +143,12 @@ volatile uint8_t bResult;
       #endif /* #if VPC3_SERIAL_MODE */
 
       // Log para verificar la máscara de software (usando ring buffer)
-      ISR_LOG_VAL("[VPC3_Poll]", "Eventos hardware leidos", pDpSystem->wPollInterruptEvent);
-      ISR_LOG_VAL("[VPC3_Poll]", "Mascara de software aplicada", pDpSystem->wPollInterruptMask);
-      
-      // Decodificar eventos específicos para análisis (sin printf)
       uint16_t events = pDpSystem->wPollInterruptEvent;
+      ISR_LOG_VAL("[VPC3_Poll]", "Eventos hardware leidos", events);
+      ISR_LOG("[VPC3_Poll]", (events & 0x0800) ? "events & 0x0800 activo" : "events & 0x0800 inactivo");
+      ISR_LOG_VAL("[VPC3_Poll]", "Mascara de software aplicada", pDpSystem->wPollInterruptMask);
+
+      // Decodificar eventos específicos para análisis (sin printf)
       if (events & 0x0001) ISR_LOG("[VPC3_Poll]", "MAC_RESET/CLOCK_SYNC (0x0001)");
       if (events & 0x0002) ISR_LOG("[VPC3_Poll]", "GO_LEAVE_DATA_EX (0x0002)");
       if (events & 0x0004) ISR_LOG("[VPC3_Poll]", "BAUDRATE_DETECT (0x0004)");
