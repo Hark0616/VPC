@@ -38,6 +38,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define INT_REG_H 0x03
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -61,6 +62,7 @@ static void MX_SPI1_Init(void);
 void print_vpc3_registers(void);
 void print_vpc3_state(void);
 void debug_vpc3_reset_status(void);
+void dp_isr(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -287,11 +289,18 @@ int main(void)
     enum AppState { APP_WAITING_CFG, APP_IN_DATA_EX };
     static enum AppState app_state = APP_WAITING_CFG;
 
-	while (1)
-	{
-		/* USER CODE END WHILE */
+        while (1)
+        {
+                /* USER CODE END WHILE */
 
-		/* USER CODE BEGIN 3 */
+                /* USER CODE BEGIN 3 */
+
+        uint8_t int_reg_h = Vpc3Read(INT_REG_H);
+        if (int_reg_h != 0)
+        {
+            printf("[INT_POLL] INT_REG_H=0x%02X -> dp_isr()\r\n", int_reg_h);
+            dp_isr();
+        }
 
         // Process PROFIBUS communication
         DpAppl_ProfibusMain();
